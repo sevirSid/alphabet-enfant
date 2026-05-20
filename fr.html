@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alphabet Magique</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pink:    #ff4d6d;
+      --blue:    #3a86ff;
+      --green:   #06d6a0;
+      --yellow:  #ffd166;
+      --purple:  #c77dff;
+      --bg:      #e8f4fd;
+      --card-bg: #fff9e6;
+      --white:   #ffffff;
+      --text:    #2d3436;
+      --shadow:  0 8px 32px rgba(58,134,255,0.13);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(255,77,109,0.10) 0%, transparent 50%),
+        radial-gradient(circle at 85% 80%, rgba(58,134,255,0.12) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(6,214,160,0.08) 0%, transparent 70%);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 560px;
+      background: var(--white);
+      border-radius: 36px;
+      padding: 32px 28px 28px;
+      box-shadow: var(--shadow), 0 2px 0 rgba(0,0,0,0.04);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--pink), var(--yellow), var(--green), var(--blue), var(--purple));
+      border-radius: 36px 36px 0 0;
+    }
+
+    h1 {
+      font-family: 'Baloo 2', cursive;
+      color: var(--pink);
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      color: #888;
+      font-size: 0.95rem;
+      margin-bottom: 22px;
+    }
+
+    /* ── Top bar ── */
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    .badge {
+      background: #f1f5ff;
+      padding: 9px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      color: var(--text);
+      font-size: 0.95rem;
+      flex: 1;
+      text-align: center;
+    }
+
+    .lives {
+      display: flex;
+      gap: 4px;
+      background: #fff0f3;
+      padding: 9px 14px;
+      border-radius: 14px;
+    }
+
+    .heart {
+      font-size: 1.3rem;
+      transition: transform 0.3s;
+    }
+
+    .heart.lost {
+      filter: grayscale(1) opacity(0.35);
+      transform: scale(0.85);
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card-bg);
+      border-radius: 26px;
+      padding: 24px 20px 20px;
+      margin-bottom: 22px;
+      position: relative;
+      border: 3px solid #ffe9a0;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .card.fade-out {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+
+    .card.fade-in {
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0); }
+    }
+
+    .letters-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .letter {
+      font-family: 'Baloo 2', cursive;
+      font-size: 110px;
+      color: var(--blue);
+      font-weight: 800;
+      line-height: 1;
+      animation: bounce 1.4s ease-in-out infinite alternate;
+    }
+
+    .lowercase {
+      font-family: 'Baloo 2', cursive;
+      font-size: 72px;
+      color: var(--purple);
+      font-weight: 800;
+      line-height: 1;
+      animation: bounce 1.4s ease-in-out infinite alternate 0.2s;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-10px); }
+    }
+
+    .emoji {
+      font-size: 76px;
+      margin: 10px 0 8px;
+      display: block;
+    }
+
+    .word {
+      font-size: 1.9rem;
+      color: var(--text);
+      font-weight: 900;
+      letter-spacing: 0.3px;
+    }
+
+    .listen-row {
+      margin-top: 14px;
+    }
+
+    .listen {
+      border: none;
+      background: var(--blue);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    .listen:hover { transform: scale(1.06); background: #2176f5; }
+    .listen:active { transform: scale(0.97); }
+
+    /* ── Question ── */
+    .question {
+      margin: 0 0 16px;
+      font-size: 1.25rem;
+      color: #555;
+      font-weight: 700;
+    }
+
+    /* ── Choices ── */
+    .choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .choice {
+      border: 3px solid transparent;
+      border-radius: 18px;
+      padding: 16px 10px;
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.8rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+      background: var(--yellow);
+      color: var(--text);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+    }
+
+    .choice:hover:not(:disabled) { transform: translateY(-3px) scale(1.04); box-shadow: 0 8px 18px rgba(255,209,102,0.4); }
+    .choice:active:not(:disabled) { transform: scale(0.97); }
+
+    .choice:disabled { cursor: not-allowed; }
+
+    .choice.correct {
+      background: var(--green);
+      color: white;
+      border-color: #04b889;
+      animation: popCorrect 0.4s ease forwards;
+    }
+
+    .choice.wrong {
+      background: var(--pink);
+      color: white;
+      border-color: #e03050;
+      animation: shake 0.4s ease forwards;
+    }
+
+    @keyframes popCorrect {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%     { transform: translateX(-7px); }
+      40%     { transform: translateX(7px); }
+      60%     { transform: translateX(-5px); }
+      80%     { transform: translateX(5px); }
+    }
+
+    /* ── Message ── */
+    .message {
+      margin-top: 18px;
+      font-size: 1.4rem;
+      min-height: 38px;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+
+    /* ── Next ── */
+    .next {
+      margin-top: 16px;
+      width: 100%;
+      border: none;
+      background: linear-gradient(135deg, var(--green), #04b889);
+      color: white;
+      padding: 18px;
+      border-radius: 20px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: none;
+      box-shadow: 0 4px 0 #04a07a;
+      transition: transform 0.15s;
+    }
+
+    .next:hover  { transform: translateY(-2px); }
+    .next:active { transform: translateY(1px); box-shadow: 0 2px 0 #04a07a; }
+
+    /* ── Progress dots ── */
+    .progress {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #e0e7ef;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .dot.done  { background: var(--green); transform: scale(1.1); }
+    .dot.curr  { background: var(--blue); transform: scale(1.2); box-shadow: 0 0 0 3px rgba(58,134,255,0.2); }
+
+    /* ── Best score banner ── */
+    .best-banner {
+      margin-top: 12px;
+      font-size: 0.88rem;
+      color: #aaa;
+    }
+
+    /* ── Final screen ── */
+    .final {
+      padding: 40px 10px 20px;
+    }
+
+    .final h2 {
+      font-family: 'Baloo 2', cursive;
+      font-size: 2.8rem;
+      margin-bottom: 14px;
+      color: var(--pink);
+      font-weight: 800;
+    }
+
+    .final-score {
+      margin-top: 18px;
+      font-size: 2.2rem;
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .star-row {
+      font-size: 2.5rem;
+      margin: 10px 0;
+      letter-spacing: 4px;
+    }
+
+    .restart {
+      margin-top: 28px;
+      border: none;
+      background: linear-gradient(135deg, var(--blue), #2176f5);
+      color: white;
+      padding: 18px 36px;
+      border-radius: 20px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #1a5fd4;
+      transition: transform 0.15s;
+    }
+
+    .restart:hover  { transform: translateY(-2px); }
+    .restart:active { transform: translateY(1px); }
+
+    /* ── Confetti burst (CSS only) ── */
+    .confetti-wrap {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      pointer-events: none;
+      overflow: hidden;
+      height: 100vh;
+      z-index: 999;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      top: -20px;
+      width: 10px;
+      height: 14px;
+      border-radius: 3px;
+      opacity: 0;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      0%   { opacity: 1; transform: translateY(0)      rotate(0deg); }
+      100% { opacity: 0; transform: translateY(110vh)  rotate(720deg); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      h1 { font-size: 1.9rem; }
+      .letter  { font-size: 84px; }
+      .lowercase { font-size: 56px; }
+      .emoji   { font-size: 60px; }
+      .word    { font-size: 1.5rem; }
+      .choice  { font-size: 1.5rem; padding: 14px 8px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app" id="app">
+
+  <h1>🌈 Alphabet Magique</h1>
+  <p class="subtitle">Apprends les lettres en t'amusant !</p>
+
+  <div class="top">
+    <div class="badge">⭐ Score : <span id="score">0</span></div>
+    <div class="lives" id="lives"></div>
+    <div class="badge">Lettre <span id="level">1/26</span></div>
+  </div>
+
+  <div class="card fade-in" id="card">
+    <div class="letters-row">
+      <div class="letter"   id="letter">A</div>
+      <div class="lowercase" id="lowercase">a</div>
+    </div>
+    <span class="emoji" id="emoji">✈️</span>
+    <div class="word"   id="word">Avion</div>
+    <div class="listen-row">
+      <button class="listen" id="listenBtn">🔊 Écouter</button>
+    </div>
+  </div>
+
+  <div class="question">Quelle est la bonne lettre ?</div>
+  <div class="choices" id="choices"></div>
+  <div class="message" id="message"></div>
+  <button class="next" id="nextBtn">Lettre suivante ➜</button>
+
+  <div class="progress" id="progress"></div>
+  <div class="best-banner" id="bestBanner"></div>
+
+</div>
+
+<script>
+const alphabet = [
+  { letter:"A", word:"Avion",     emoji:"✈️" },
+  { letter:"B", word:"Banane",    emoji:"🍌" },
+  { letter:"C", word:"Chat",      emoji:"🐱" },
+  { letter:"D", word:"Dauphin",   emoji:"🐬" },
+  { letter:"E", word:"Éléphant",  emoji:"🐘" },
+  { letter:"F", word:"Fraise",    emoji:"🍓" },
+  { letter:"G", word:"Gâteau",    emoji:"🎂" },
+  { letter:"H", word:"Hérisson",  emoji:"🦔" },
+  { letter:"I", word:"Igloo",     emoji:"🧊" },
+  { letter:"J", word:"Jus",       emoji:"🧃" },
+  { letter:"K", word:"Koala",     emoji:"🐨" },
+  { letter:"L", word:"Lion",      emoji:"🦁" },
+  { letter:"M", word:"Maison",    emoji:"🏠" },
+  { letter:"N", word:"Nuage",     emoji:"☁️" },
+  { letter:"O", word:"Oiseau",    emoji:"🐦" },
+  { letter:"P", word:"Pizza",     emoji:"🍕" },
+  { letter:"Q", word:"Quille",    emoji:"🎳" },
+  { letter:"R", word:"Robot",     emoji:"🤖" },
+  { letter:"S", word:"Soleil",    emoji:"☀️" },
+  { letter:"T", word:"Tortue",    emoji:"🐢" },
+  { letter:"U", word:"Usine",     emoji:"🏭" },
+  { letter:"V", word:"Voiture",   emoji:"🚗" },
+  { letter:"W", word:"Wagon",     emoji:"🚃" },
+  { letter:"X", word:"Xylophone", emoji:"🎼" },
+  { letter:"Y", word:"Yoyo",      emoji:"🪀" },
+  { letter:"Z", word:"Zèbre",     emoji:"🦓" }
+];
+
+/* ── State ── */
+let current  = 0;
+let score    = 0;
+let lives    = 3;
+let answered = false;
+
+/* ── DOM ── */
+const $  = id => document.getElementById(id);
+const letterEl  = $("letter");
+const lcEl      = $("lowercase");
+const emojiEl   = $("emoji");
+const wordEl    = $("word");
+const choicesEl = $("choices");
+const messageEl = $("message");
+const nextBtn   = $("nextBtn");
+const scoreEl   = $("score");
+const levelEl   = $("level");
+const progressEl= $("progress");
+const livesEl   = $("lives");
+const bestEl    = $("bestBanner");
+const card      = $("card");
+const listenBtn = $("listenBtn");
+
+/* ── localStorage best score ── */
+function getBest(){ return parseInt(localStorage.getItem("alphabetBest") || "0"); }
+function setBest(v){ localStorage.setItem("alphabetBest", v); }
+
+function updateBestBanner(){
+  const b = getBest();
+  bestEl.textContent = b > 0 ? `🏅 Meilleur score : ${b}/${alphabet.length}` : "";
+}
+
+/* ── Voices ── */
+let frVoice = null;
+function loadVoices(){
+  const v = speechSynthesis.getVoices();
+  frVoice = v.find(x => x.lang.startsWith("fr")) || null;
+}
+speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+
+function speak(text){
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang  = "fr-FR";
+  u.rate  = 0.85;
+  u.pitch = 1.1;
+  if(frVoice) u.voice = frVoice;
+  speechSynthesis.speak(u);
+}
+
+listenBtn.onclick = () => {
+  const d = alphabet[current];
+  speak(`${d.letter} comme ${d.word}`);
+};
+
+/* ── Helpers ── */
+function shuffle(arr){ return [...arr].sort(() => Math.random() - 0.5); }
+
+function generateChoices(correct){
+  const others = shuffle(alphabet.map(a => a.letter).filter(l => l !== correct)).slice(0,3);
+  return shuffle([correct, ...others]);
+}
+
+/* ── Lives display ── */
+function renderLives(){
+  livesEl.innerHTML = "";
+  for(let i=0;i<3;i++){
+    const h = document.createElement("span");
+    h.className = "heart" + (i >= lives ? " lost" : "");
+    h.textContent = "❤️";
+    livesEl.appendChild(h);
+  }
+}
+
+/* ── Progress dots ── */
+function renderProgress(){
+  progressEl.innerHTML = "";
+  alphabet.forEach((_,i)=>{
+    const d = document.createElement("div");
+    d.className = "dot" + (i < current ? " done" : i === current ? " curr" : "");
+    progressEl.appendChild(d);
+  });
+}
+
+/* ── Load question ── */
+function loadQuestion(){
+  answered = false;
+  const data = alphabet[current];
+
+  letterEl.textContent = data.letter;
+  lcEl.textContent     = data.letter.toLowerCase();
+  emojiEl.textContent  = data.emoji;
+  wordEl.textContent   = data.word;
+
+  levelEl.textContent  = `${current+1}/${alphabet.length}`;
+  messageEl.textContent = "";
+  nextBtn.style.display = "none";
+
+  choicesEl.innerHTML = "";
+  generateChoices(data.letter).forEach(ch => {
+    const btn = document.createElement("button");
+    btn.className   = "choice";
+    btn.textContent = ch;
+    btn.onclick = () => checkAnswer(ch, btn);
+    choicesEl.appendChild(btn);
+  });
+
+  renderProgress();
+  renderLives();
+  updateBestBanner();
+
+  /* Animate card in */
+  card.classList.remove("fade-in");
+  void card.offsetWidth;
+  card.classList.add("fade-in");
+
+  /* Auto-speak after a short delay */
+  setTimeout(() => speak(`${data.letter} comme ${data.word}`), 300);
+}
+
+/* ── Check answer ── */
+function checkAnswer(choice, btn){
+  if(answered) return;
+
+  const correct = alphabet[current].letter;
+
+  if(choice === correct){
+    answered = true;
+    btn.classList.add("correct");
+    score++;
+    scoreEl.textContent = score;
+    messageEl.innerHTML  = "🎉 Bravo !";
+    messageEl.style.color = "var(--green)";
+    speak("Bravo !");
+    nextBtn.style.display = "block";
+    /* Disable all buttons */
+    choicesEl.querySelectorAll(".choice").forEach(b => b.disabled = true);
+
+  } else {
+    btn.classList.add("wrong");
+    lives--;
+    renderLives();
+    speak("Essaie encore");
+    if(lives <= 0){
+      answered = true;
+      messageEl.innerHTML  = `❌ C'était <strong>${correct}</strong>`;
+      messageEl.style.color = "var(--pink)";
+      nextBtn.style.display = "block";
+      nextBtn.textContent = "Lettre suivante ➜";
+      choicesEl.querySelectorAll(".choice").forEach(b => b.disabled = true);
+    } else {
+      messageEl.innerHTML  = `😊 Essaie encore (${lives} ❤️ restant${lives>1?"s":""})`;
+      messageEl.style.color = "var(--pink)";
+      /* Re-enable the wrong button after shake */
+      setTimeout(()=> btn.classList.remove("wrong"), 450);
+    }
+  }
+}
+
+/* ── Confetti ── */
+function launchConfetti(){
+  const wrap = document.createElement("div");
+  wrap.className = "confetti-wrap";
+  document.body.appendChild(wrap);
+  const colors = ["#ff4d6d","#3a86ff","#ffd166","#06d6a0","#c77dff","#ff9f1c"];
+  for(let i=0;i<80;i++){
+    const p = document.createElement("div");
+    p.className = "confetti-piece";
+    p.style.left     = Math.random()*100 + "vw";
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDuration = (1.5 + Math.random()*2) + "s";
+    p.style.animationDelay   = (Math.random()*1.2) + "s";
+    p.style.width  = (8+Math.random()*8) + "px";
+    p.style.height = (10+Math.random()*12)+ "px";
+    p.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+    wrap.appendChild(p);
+  }
+  setTimeout(()=> wrap.remove(), 4000);
+}
+
+/* ── Next button ── */
+nextBtn.onclick = () => {
+  current++;
+  lives = 3;      /* reset lives each letter */
+
+  if(current >= alphabet.length){
+    /* Save best */
+    if(score > getBest()) setBest(score);
+
+    /* Stars */
+    const pct  = score/alphabet.length;
+    const stars = pct >= 0.9 ? "⭐⭐⭐" : pct >= 0.65 ? "⭐⭐" : "⭐";
+
+    if(pct >= 0.65) launchConfetti();
+
+    document.getElementById("app").innerHTML = `
+      <div class="final">
+        <h2>🏆 Bravo !</h2>
+        <p style="font-size:1.4rem;color:#555;">Tu as terminé l'alphabet !</p>
+        <div class="star-row">${stars}</div>
+        <div class="final-score">⭐ ${score} / ${alphabet.length}</div>
+        <p style="margin-top:10px;color:#aaa;font-size:0.9rem;">Meilleur score : ${getBest()}/${alphabet.length}</p>
+        <button class="restart" onclick="location.reload()">Rejouer 🔄</button>
+      </div>
+    `;
+    speak("Bravo, tu as terminé l'alphabet !");
+    return;
+  }
+
+  loadQuestion();
+};
+
+/* ── Init ── */
+loadQuestion();
+</script>
+</body>
+</html>
