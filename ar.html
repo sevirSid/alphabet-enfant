@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>الحروف العربية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --pink:#e63946;--blue:#457b9d;--green:#2a9d8f;
+      --yellow:#e9c46a;--purple:#9b72cf;--orange:#f4a261;
+      --bg:#f0ede6;--card-bg:#fdf8ee;--white:#ffffff;
+      --text:#1d2d3a;--shadow:0 8px 32px rgba(69,123,157,0.13);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      font-family:'Nunito',sans-serif;
+      background:var(--bg);min-height:100vh;
+      display:flex;justify-content:center;align-items:center;
+      padding:20px;
+      background-image:
+        radial-gradient(circle at 10% 20%,rgba(230,57,70,.09) 0%,transparent 50%),
+        radial-gradient(circle at 90% 80%,rgba(69,123,157,.11) 0%,transparent 50%);
+    }
+    .app{
+      width:100%;max-width:580px;
+      background:var(--white);border-radius:36px;
+      padding:32px 28px 28px;
+      box-shadow:var(--shadow),0 2px 0 rgba(0,0,0,.04);
+      text-align:center;position:relative;overflow:hidden;
+    }
+    .app::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:6px;
+      background:linear-gradient(90deg,var(--pink),var(--yellow),var(--green),var(--blue),var(--purple));
+      border-radius:36px 36px 0 0;
+    }
+    h1{
+      font-family:'Amiri',serif;color:var(--pink);
+      font-size:2.4rem;font-weight:700;margin-bottom:4px;
+    }
+    .subtitle{color:#888;font-size:.9rem;margin-bottom:22px;font-family:'Nunito',sans-serif;}
+
+    /* ══ MODE SELECT SCREEN ══ */
+    #modeSelect{padding:10px 0 20px;}
+    #modeSelect h2{
+      font-family:'Amiri',serif;font-size:1.8rem;color:var(--text);
+      margin-bottom:6px;
+    }
+    #modeSelect .hint{color:#999;font-size:.85rem;margin-bottom:24px;}
+    .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .mode-card{
+      border:3px solid var(--yellow);background:var(--card-bg);
+      border-radius:22px;padding:18px 12px;cursor:pointer;
+      transition:transform .15s,box-shadow .15s,border-color .15s;
+    }
+    .mode-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(233,196,106,.3);border-color:var(--orange);}
+    .mode-card .mc-letter{font-family:'Amiri',serif;font-size:2.8rem;color:var(--blue);line-height:1.2;}
+    .mode-card .mc-title{font-weight:800;font-size:1rem;color:var(--text);margin-top:6px;}
+    .mode-card .mc-sub{font-size:.78rem;color:#999;margin-top:2px;}
+    .mode-card.selected{border-color:var(--green);background:#f0faf8;}
+
+    /* ══ TOP BAR ══ */
+    .mode-badge{
+      display:inline-block;margin-bottom:14px;padding:6px 14px;border-radius:20px;
+      font-size:.82rem;font-weight:800;font-family:'Nunito',sans-serif;
+    }
+    .mode-badge.isolated{background:#e8f4ff;color:var(--blue);}
+    .mode-badge.initial {background:#fff3e0;color:var(--orange);}
+    .mode-badge.medial  {background:#f3f0ff;color:var(--purple);}
+    .mode-badge.final   {background:#f0faf8;color:var(--green);}
+
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:10px;}
+    .badge{
+      background:#f1f5ff;padding:9px 14px;border-radius:14px;
+      font-weight:700;color:var(--text);font-size:.9rem;flex:1;text-align:center;
+      font-family:'Nunito',sans-serif;
+    }
+    .lives{display:flex;gap:4px;background:#fff0f3;padding:9px 14px;border-radius:14px;}
+    .heart{font-size:1.3rem;transition:transform .3s;}
+    .heart.lost{filter:grayscale(1) opacity(.35);transform:scale(.85);}
+
+    /* ══ CARD ══ */
+    .card{
+      background:var(--card-bg);border-radius:26px;padding:24px 20px 20px;
+      margin-bottom:22px;border:3px solid #ffe9a0;
+    }
+    .card.fade-in{animation:fadeIn .4s ease forwards;}
+    @keyframes fadeIn{
+      from{opacity:0;transform:scale(.96) translateY(8px);}
+      to  {opacity:1;transform:scale(1)   translateY(0);}
+    }
+
+    /* All 4 forms row */
+    .forms-row{
+      display:flex;justify-content:center;align-items:center;
+      gap:6px;margin-bottom:8px;flex-wrap:wrap;
+    }
+    .form-box{
+      display:flex;flex-direction:column;align-items:center;
+      background:white;border-radius:14px;padding:8px 14px;
+      border:2px solid #ede8d8;min-width:60px;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    .form-box.active{border-color:var(--blue);box-shadow:0 0 0 3px rgba(69,123,157,.15);}
+    .form-letter{font-family:'Amiri',serif;font-size:2.4rem;color:var(--blue);line-height:1.2;}
+    .form-label{font-size:.65rem;color:#aaa;margin-top:2px;font-family:'Nunito',sans-serif;}
+
+    .big-letter{
+      font-family:'Amiri',serif;font-size:120px;color:var(--blue);
+      font-weight:700;line-height:1;
+      animation:bounce 1.4s ease-in-out infinite alternate;
+      margin-bottom:4px;
+    }
+    @keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-10px);}}
+
+    .emoji{font-size:72px;margin:8px 0 6px;display:block;}
+    .word{font-family:'Amiri',serif;font-size:2rem;color:var(--text);font-weight:700;}
+    .word-fr{font-size:.9rem;color:#aaa;margin-top:4px;font-family:'Nunito',sans-serif;}
+    .listen-row{margin-top:14px;}
+    .listen{
+      border:none;background:var(--blue);color:white;
+      padding:10px 20px;border-radius:12px;cursor:pointer;
+      font-size:.9rem;font-weight:700;font-family:'Nunito',sans-serif;
+      transition:transform .15s,background .15s;
+    }
+    .listen:hover{transform:scale(1.06);background:#356a8a;}
+    .listen:active{transform:scale(.97);}
+
+    /* ══ QUESTION ══ */
+    .question{margin:0 0 16px;font-size:1.1rem;color:#555;font-weight:700;font-family:'Nunito',sans-serif;}
+
+    /* ══ CHOICES ══ */
+    .choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .choice{
+      border:3px solid transparent;border-radius:18px;padding:16px 10px;
+      font-family:'Amiri',serif;font-size:2.2rem;font-weight:700;
+      cursor:pointer;background:var(--yellow);color:var(--text);
+      box-shadow:0 4px 0 rgba(0,0,0,.08);
+      transition:transform .15s,background .2s,border-color .2s,box-shadow .2s;
+    }
+    .choice:hover:not(:disabled){transform:translateY(-3px) scale(1.04);}
+    .choice:active:not(:disabled){transform:scale(.97);}
+    .choice:disabled{cursor:not-allowed;}
+    .choice.correct{background:var(--green);color:white;border-color:#1f7d73;animation:popCorrect .4s ease forwards;}
+    .choice.wrong  {background:var(--pink); color:white;border-color:#c0001a;animation:shake .4s ease forwards;}
+    @keyframes popCorrect{0%{transform:scale(1);}40%{transform:scale(1.12);}100%{transform:scale(1);}}
+    @keyframes shake{
+      0%,100%{transform:translateX(0);}
+      20%{transform:translateX(-7px);}40%{transform:translateX(7px);}
+      60%{transform:translateX(-5px);}80%{transform:translateX(5px);}
+    }
+
+    .message{margin-top:18px;font-size:1.3rem;min-height:38px;font-weight:900;font-family:'Nunito',sans-serif;}
+    .next{
+      margin-top:16px;width:100%;border:none;
+      background:linear-gradient(135deg,var(--green),#1f7d73);
+      color:white;padding:18px;border-radius:20px;
+      font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;
+      cursor:pointer;display:none;box-shadow:0 4px 0 #186860;transition:transform .15s;
+    }
+    .next:hover{transform:translateY(-2px);}
+    .next:active{transform:translateY(1px);}
+
+    /* ══ PROGRESS ══ */
+    .progress{margin-top:22px;display:flex;flex-wrap:wrap;justify-content:center;gap:7px;}
+    .dot{width:15px;height:15px;border-radius:50%;background:#e0ddd5;transition:background .3s,transform .3s;}
+    .dot.done     {background:var(--green);transform:scale(1.1);}
+    .dot.done.weak{background:var(--orange);}
+    .dot.curr     {background:var(--blue);transform:scale(1.2);box-shadow:0 0 0 3px rgba(69,123,157,.25);}
+
+    /* ══ WEAK PANEL ══ */
+    .weak-panel{
+      margin-top:20px;background:#fff8f0;border:2px solid #ffe0b2;
+      border-radius:18px;padding:14px 16px;text-align:right;
+    }
+    .weak-panel h3{font-size:.95rem;color:var(--orange);margin-bottom:10px;font-weight:800;font-family:'Nunito',sans-serif;}
+    .weak-letters{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;}
+    .weak-tag{
+      background:white;border:2px solid #ffcc80;border-radius:10px;
+      padding:4px 12px;font-family:'Amiri',serif;font-size:1.3rem;color:var(--orange);
+    }
+    .best-banner{margin-top:12px;font-size:.85rem;color:#aaa;font-family:'Nunito',sans-serif;}
+
+    /* ══ FINAL ══ */
+    .final{padding:36px 10px 20px;}
+    .final h2{font-family:'Amiri',serif;font-size:2.8rem;margin-bottom:14px;color:var(--pink);}
+    .final-score{margin-top:18px;font-size:2.2rem;color:var(--green);font-weight:900;font-family:'Nunito',sans-serif;}
+    .star-row{font-size:2.5rem;margin:10px 0;letter-spacing:4px;}
+    .weak-summary{margin-top:20px;background:#fff8f0;border:2px solid #ffe0b2;border-radius:18px;padding:14px 16px;}
+    .weak-summary h3{font-size:.95rem;color:var(--orange);margin-bottom:10px;font-weight:800;font-family:'Nunito',sans-serif;}
+    .btn-row{display:flex;flex-direction:column;gap:12px;margin-top:24px;}
+    .restart,.retry-weak,.change-mode-btn{
+      border:none;padding:16px 24px;border-radius:20px;
+      font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+      cursor:pointer;transition:transform .15s;
+    }
+    .restart        {background:linear-gradient(135deg,var(--blue),#356a8a);color:white;box-shadow:0 4px 0 #2a5570;}
+    .retry-weak     {background:linear-gradient(135deg,var(--orange),#d4833a);color:white;box-shadow:0 4px 0 #b56a28;}
+    .change-mode-btn{background:#f0ede6;color:var(--text);box-shadow:0 4px 0 #d8d5ce;}
+    .restart:hover,.retry-weak:hover,.change-mode-btn:hover{transform:translateY(-2px);}
+
+    /* ══ CONFETTI ══ */
+    .confetti-wrap{position:fixed;top:0;left:0;right:0;pointer-events:none;overflow:hidden;height:100vh;z-index:999;}
+    .confetti-piece{position:absolute;top:-20px;opacity:0;animation:fall linear forwards;}
+    @keyframes fall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(110vh) rotate(720deg);}}
+
+    @media(max-width:480px){
+      h1{font-size:1.9rem;}.big-letter{font-size:88px;}.emoji{font-size:58px;}
+      .word{font-size:1.6rem;}.choice{font-size:1.8rem;padding:14px 8px;}
+      .form-letter{font-size:1.9rem;}.form-box{padding:6px 10px;min-width:50px;}
+    }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ═══ MODE SELECT ═══ -->
+  <div id="modeSelect">
+    <h1>🌙 الحروف العربية</h1>
+    <p class="subtitle">Choisis la forme à apprendre</p>
+    <h2 style="font-family:'Amiri',serif;font-size:1.5rem;color:#555;margin-bottom:6px;">اختر شكل الحرف</h2>
+    <p class="hint">Chaque lettre arabe a jusqu'à 4 formes selon sa position dans le mot</p>
+    <div class="mode-grid">
+      <div class="mode-card" data-mode="isolated" onclick="selectMode('isolated')">
+        <div class="mc-letter">ب</div>
+        <div class="mc-title">Isolée — مُنْفَرِدة</div>
+        <div class="mc-sub">Lettre seule</div>
+      </div>
+      <div class="mode-card" data-mode="initial" onclick="selectMode('initial')">
+        <div class="mc-letter">بـ</div>
+        <div class="mc-title">Initiale — أَوَّلِيَّة</div>
+        <div class="mc-sub">Début de mot</div>
+      </div>
+      <div class="mode-card" data-mode="medial" onclick="selectMode('medial')">
+        <div class="mc-letter">ـبـ</div>
+        <div class="mc-title">Médiane — وُسْطى</div>
+        <div class="mc-sub">Milieu de mot</div>
+      </div>
+      <div class="mode-card" data-mode="final" onclick="selectMode('final')">
+        <div class="mc-letter">ـب</div>
+        <div class="mc-title">Finale — نِهَائِيَّة</div>
+        <div class="mc-sub">Fin de mot</div>
+      </div>
+    </div>
+    <button id="startBtn" onclick="startGame()" style="
+      margin-top:24px;border:none;width:100%;padding:18px;border-radius:20px;
+      background:linear-gradient(135deg,var(--green),#1f7d73);color:white;
+      font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;
+      cursor:pointer;box-shadow:0 4px 0 #186860;opacity:.4;pointer-events:none;
+      transition:opacity .2s;">
+      ابدأ — Commencer
+    </button>
+  </div>
+
+  <!-- ═══ GAME VIEW ═══ -->
+  <div id="gameView" style="display:none;">
+    <h1>🌙 الحروف العربية</h1>
+    <p class="subtitle">Apprends les lettres arabes en t'amusant !</p>
+    <div id="modeBadgeWrap"></div>
+    <div class="top">
+      <div class="badge">⭐ <span id="score">0</span></div>
+      <div class="lives" id="lives"></div>
+      <div class="badge"><span id="level">1/28</span></div>
+    </div>
+    <div class="card" id="card">
+      <!-- 4 forms row -->
+      <div class="forms-row" id="formsRow"></div>
+      <!-- Big active letter -->
+      <div class="big-letter" id="bigLetter">ا</div>
+      <span class="emoji" id="emoji">🦁</span>
+      <div class="word"   id="word">أَسَد</div>
+      <div class="word-fr" id="wordFr">Lion</div>
+      <div class="listen-row">
+        <button class="listen" id="listenBtn">🔊 استمع</button>
+      </div>
+    </div>
+    <div class="question" id="questionText">ما هو الحرف الصحيح ؟</div>
+    <div class="choices"  id="choices"></div>
+    <div class="message"  id="message"></div>
+    <button class="next"  id="nextBtn">الحرف التالي ←</button>
+    <div class="progress" id="progress"></div>
+    <div class="best-banner" id="bestBanner"></div>
+    <div id="weakPanelWrap"></div>
+  </div>
+
+  <!-- ═══ FINAL VIEW ═══ -->
+  <div id="finalView" style="display:none;">
+    <div class="final">
+      <h2>🏆 أحسنت !</h2>
+      <p id="finalSubtitle" style="font-size:1.2rem;color:#555;font-family:'Nunito',sans-serif;"></p>
+      <div class="star-row" id="finalStars"></div>
+      <div class="final-score" id="finalScore"></div>
+      <p id="finalBest" style="margin-top:8px;color:#aaa;font-size:.85rem;font-family:'Nunito',sans-serif;"></p>
+      <div id="finalWeakSummary"></div>
+      <div class="btn-row">
+        <button class="retry-weak"      id="retryWeakBtn"  style="display:none;">🔥 Retravailler les lettres difficiles</button>
+        <button class="restart"         id="restartBtn">إعادة اللعب — Rejouer 🔄</button>
+        <button class="change-mode-btn" id="changeModeBtn">Changer de forme — تغيير الشكل</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+/* ══════════════════════════════
+   ALPHABET DATA
+   Each letter: name, isolated, initial, medial, final, word (Arabic), wordFr, emoji
+══════════════════════════════ */
+const letters = [
+  {name:"ألف",  iso:"ا", ini:"ا",  med:"ـا", fin:"ـا", word:"أَسَد",   wordFr:"Lion",      emoji:"🦁"},
+  {name:"باء",  iso:"ب", ini:"بـ", med:"ـبـ",fin:"ـب", word:"بَاب",    wordFr:"Porte",     emoji:"🚪"},
+  {name:"تاء",  iso:"ت", ini:"تـ", med:"ـتـ",fin:"ـت", word:"تُفَّاح", wordFr:"Pomme",     emoji:"🍎"},
+  {name:"ثاء",  iso:"ث", ini:"ثـ", med:"ـثـ",fin:"ـث", word:"ثَعْلَب", wordFr:"Renard",    emoji:"🦊"},
+  {name:"جيم",  iso:"ج", ini:"جـ", med:"ـجـ",fin:"ـج", word:"جَمَل",   wordFr:"Chameau",   emoji:"🐪"},
+  {name:"حاء",  iso:"ح", ini:"حـ", med:"ـحـ",fin:"ـح", word:"حِصَان",  wordFr:"Cheval",    emoji:"🐴"},
+  {name:"خاء",  iso:"خ", ini:"خـ", med:"ـخـ",fin:"ـخ", word:"خُبْز",   wordFr:"Pain",      emoji:"🍞"},
+  {name:"دال",  iso:"د", ini:"د",  med:"ـد", fin:"ـد", word:"دُبّ",    wordFr:"Ours",      emoji:"🐻"},
+  {name:"ذال",  iso:"ذ", ini:"ذ",  med:"ـذ", fin:"ـذ", word:"ذِئْب",   wordFr:"Loup",      emoji:"🐺"},
+  {name:"راء",  iso:"ر", ini:"ر",  med:"ـر", fin:"ـر", word:"رُمَّان", wordFr:"Grenade",   emoji:"🍈"},
+  {name:"زاي",  iso:"ز", ini:"ز",  med:"ـز", fin:"ـز", word:"زَرَافة", wordFr:"Girafe",    emoji:"🦒"},
+  {name:"سين",  iso:"س", ini:"سـ", med:"ـسـ",fin:"ـس", word:"سَمَكَة", wordFr:"Poisson",   emoji:"🐟"},
+  {name:"شين",  iso:"ش", ini:"شـ", med:"ـشـ",fin:"ـش", word:"شَمْس",   wordFr:"Soleil",    emoji:"☀️"},
+  {name:"صاد",  iso:"ص", ini:"صـ", med:"ـصـ",fin:"ـص", word:"صَقْر",   wordFr:"Faucon",    emoji:"🦅"},
+  {name:"ضاد",  iso:"ض", ini:"ضـ", med:"ـضـ",fin:"ـض", word:"ضِفْدَع", wordFr:"Grenouille",emoji:"🐸"},
+  {name:"طاء",  iso:"ط", ini:"طـ", med:"ـطـ",fin:"ـط", word:"طَاوُوس", wordFr:"Paon",      emoji:"🦚"},
+  {name:"ظاء",  iso:"ظ", ini:"ظـ", med:"ـظـ",fin:"ـظ", word:"ظَبْي",   wordFr:"Gazelle",   emoji:"🦌"},
+  {name:"عين",  iso:"ع", ini:"عـ", med:"ـعـ",fin:"ـع", word:"عِنَب",   wordFr:"Raisin",    emoji:"🍇"},
+  {name:"غين",  iso:"غ", ini:"غـ", med:"ـغـ",fin:"ـغ", word:"غَزَال",  wordFr:"Gazelle",   emoji:"🦌"},
+  {name:"فاء",  iso:"ف", ini:"فـ", med:"ـفـ",fin:"ـف", word:"فِيل",    wordFr:"Éléphant",  emoji:"🐘"},
+  {name:"قاف",  iso:"ق", ini:"قـ", med:"ـقـ",fin:"ـق", word:"قِطّ",    wordFr:"Chat",      emoji:"🐱"},
+  {name:"كاف",  iso:"ك", ini:"كـ", med:"ـكـ",fin:"ـك", word:"كَلْب",   wordFr:"Chien",     emoji:"🐶"},
+  {name:"لام",  iso:"ل", ini:"لـ", med:"ـلـ",fin:"ـل", word:"لَيْمُون",wordFr:"Citron",    emoji:"🍋"},
+  {name:"ميم",  iso:"م", ini:"مـ", med:"ـمـ",fin:"ـم", word:"مَوْز",   wordFr:"Banane",    emoji:"🍌"},
+  {name:"نون",  iso:"ن", ini:"نـ", med:"ـنـ",fin:"ـن", word:"نَمِر",   wordFr:"Tigre",     emoji:"🐯"},
+  {name:"هاء",  iso:"ه", ini:"هـ", med:"ـهـ",fin:"ـه", word:"هِلَال",  wordFr:"Croissant", emoji:"🌙"},
+  {name:"واو",  iso:"و", ini:"و",  med:"ـو", fin:"ـو", word:"وَرْد",   wordFr:"Rose",      emoji:"🌹"},
+  {name:"ياء",  iso:"ي", ini:"يـ", med:"ـيـ",fin:"ـي", word:"يَدّ",    wordFr:"Main",      emoji:"✋"},
+];
+
+const FORM_KEY  = {isolated:"iso", initial:"ini", medial:"med", final:"fin"};
+const FORM_LABEL= {isolated:"مُنْفَرِدة — Isolée", initial:"أَوَّلِيَّة — Initiale", medial:"وُسْطى — Médiane", final:"نِهَائِيَّة — Finale"};
+const FORM_BADGE= {isolated:"isolated", initial:"initial", medial:"medial", final:"final"};
+const QUESTION  = {isolated:"ما هو الحرف المُنْفَرِد الصحيح ؟", initial:"ما هو الحرف في بداية الكلمة ؟", medial:"ما هو الحرف في وسط الكلمة ؟", final:"ما هو الحرف في نهاية الكلمة ؟"};
+
+/* ══════════════════════════════
+   STATE
+══════════════════════════════ */
+let selectedMode     = null;
+let currentIdx       = 0;
+let score            = 0;
+let lives            = 3;
+let answered         = false;
+let mistakeThisRound = false;
+let queue            = [];
+
+/* ══════════════════════════════
+   WEAK LETTERS
+══════════════════════════════ */
+function weakKey(){ return `arabicWeak_${selectedMode}`; }
+function getWeak(){  try{ return JSON.parse(localStorage.getItem(weakKey())||"{}"); }catch(e){ return {}; } }
+function saveWeak(o){ localStorage.setItem(weakKey(),JSON.stringify(o)); }
+function markWeak(n){    const w=getWeak(); w[n]=(w[n]||0)+1; saveWeak(w); }
+function markMastered(n){ const w=getWeak(); if(w[n]){ w[n]=Math.max(0,w[n]-1); if(!w[n]) delete w[n]; saveWeak(w); } }
+function getWeakNames(){ return Object.entries(getWeak()).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).map(([k])=>k); }
+
+function getBest(){ return parseInt(localStorage.getItem(`arabicBest_${selectedMode}`)||"0"); }
+function setBest(v){ localStorage.setItem(`arabicBest_${selectedMode}`,v); }
+
+/* ══════════════════════════════
+   MODE SELECT
+══════════════════════════════ */
+function selectMode(m){
+  selectedMode = m;
+  document.querySelectorAll(".mode-card").forEach(c=>c.classList.remove("selected"));
+  document.querySelector(`[data-mode="${m}"]`).classList.add("selected");
+  const btn=document.getElementById("startBtn");
+  btn.style.opacity="1"; btn.style.pointerEvents="auto";
+}
+
+function startGame(){
+  if(!selectedMode) return;
+  buildQueue(); currentIdx=0; score=0;
+  document.getElementById("modeSelect").style.display="none";
+  document.getElementById("gameView").style.display="";
+  document.getElementById("finalView").style.display="none";
+  loadQuestion();
+}
+
+/* ══════════════════════════════
+   QUEUE
+══════════════════════════════ */
+function buildQueue(weak=false){
+  if(weak){
+    const wn=getWeakNames();
+    queue=wn.map(n=>letters.findIndex(l=>l.name===n)).filter(i=>i>=0);
+  } else {
+    queue=letters.map((_,i)=>i);
+  }
+  currentIdx=0; score=0;
+}
+
+/* ══════════════════════════════
+   SPEECH
+══════════════════════════════ */
+let arVoice=null;
+function loadVoices(){ arVoice=speechSynthesis.getVoices().find(v=>v.lang.startsWith("ar"))||null; }
+speechSynthesis.onvoiceschanged=loadVoices; loadVoices();
+function speak(text,lang="ar"){
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=lang==="ar"?"ar-SA":"fr-FR"; u.rate=0.8; u.pitch=1.1;
+  if(lang==="ar"&&arVoice) u.voice=arVoice;
+  speechSynthesis.speak(u);
+}
+
+/* ══════════════════════════════
+   HELPERS
+══════════════════════════════ */
+function shuffle(a){ return [...a].sort(()=>Math.random()-.5); }
+function getForm(l){ return l[FORM_KEY[selectedMode]]; }
+
+function generateChoices(correctName){
+  const others=shuffle(letters.filter(l=>l.name!==correctName)).slice(0,3);
+  return shuffle([letters.find(l=>l.name===correctName),...others]);
+}
+
+/* ══════════════════════════════
+   RENDER
+══════════════════════════════ */
+function renderLives(){
+  const el=document.getElementById("lives"); el.innerHTML="";
+  for(let i=0;i<3;i++){
+    const h=document.createElement("span");
+    h.className="heart"+(i>=lives?" lost":""); h.textContent="❤️";
+    el.appendChild(h);
+  }
+}
+
+function renderFormsRow(letter){
+  const el=document.getElementById("formsRow"); el.innerHTML="";
+  const forms=[
+    {key:"iso",label:"مُنْفَرِدة",fr:"Isolée",   mode:"isolated"},
+    {key:"ini",label:"أَوَّلِيَّة",fr:"Initiale",mode:"initial"},
+    {key:"med",label:"وُسْطى",    fr:"Médiane",  mode:"medial"},
+    {key:"fin",label:"نِهَائِيَّة",fr:"Finale",  mode:"final"},
+  ];
+  forms.forEach(f=>{
+    const box=document.createElement("div");
+    box.className="form-box"+(f.mode===selectedMode?" active":"");
+    box.innerHTML=`<span class="form-letter">${letter[f.key]}</span><span class="form-label">${f.fr}</span>`;
+    el.appendChild(box);
+  });
+}
+
+function renderProgress(){
+  const el=document.getElementById("progress"); el.innerHTML="";
+  const w=getWeak();
+  queue.forEach((li,i)=>{
+    const d=document.createElement("div");
+    let cls="dot";
+    if(i<currentIdx)        cls+=" done"+(w[letters[li].name]?" weak":"");
+    else if(i===currentIdx) cls+=" curr";
+    d.className=cls; d.title=letters[li].name;
+    el.appendChild(d);
+  });
+}
+
+function renderModeBadge(){
+  document.getElementById("modeBadgeWrap").innerHTML=
+    `<span class="mode-badge ${FORM_BADGE[selectedMode]}">${FORM_LABEL[selectedMode]}</span>`;
+}
+
+function renderWeakPanel(){
+  const el=document.getElementById("weakPanelWrap");
+  const wn=getWeakNames();
+  if(!wn.length){ el.innerHTML=""; return; }
+  const tags=wn.map(n=>{
+    const l=letters.find(x=>x.name===n);
+    return `<span class="weak-tag">${getForm(l)} <small style="font-size:.7rem;color:#bbb;">${l.name}</small></span>`;
+  }).join("");
+  el.innerHTML=`<div class="weak-panel"><h3>🔴 حروف صعبة — À retravailler</h3><div class="weak-letters">${tags}</div></div>`;
+}
+
+function updateBestBanner(){
+  const b=getBest();
+  document.getElementById("bestBanner").textContent=b>0?`🏅 Meilleur : ${b}/${letters.length}`:"";
+}
+
+/* ══════════════════════════════
+   LOAD QUESTION
+══════════════════════════════ */
+function loadQuestion(){
+  answered=false; mistakeThisRound=false; lives=3;
+
+  const letter=letters[queue[currentIdx]];
+  const form=getForm(letter);
+
+  document.getElementById("bigLetter").textContent=form;
+  document.getElementById("emoji").textContent    =letter.emoji;
+  document.getElementById("word").textContent     =letter.word;
+  document.getElementById("wordFr").textContent   =letter.wordFr;
+  document.getElementById("level").textContent    =`${currentIdx+1}/${queue.length}`;
+  document.getElementById("score").textContent    =score;
+  document.getElementById("message").textContent  ="";
+  document.getElementById("nextBtn").style.display="none";
+  document.getElementById("questionText").textContent=QUESTION[selectedMode];
+
+  renderFormsRow(letter);
+
+  const choicesEl=document.getElementById("choices");
+  choicesEl.innerHTML="";
+  generateChoices(letter.name).forEach(l=>{
+    const btn=document.createElement("button");
+    btn.className="choice"; btn.textContent=getForm(l);
+    btn.onclick=()=>checkAnswer(l.name,btn);
+    choicesEl.appendChild(btn);
+  });
+
+  renderProgress(); renderLives(); renderModeBadge(); renderWeakPanel(); updateBestBanner();
+
+  const card=document.getElementById("card");
+  card.classList.remove("fade-in"); void card.offsetWidth; card.classList.add("fade-in");
+
+  setTimeout(()=>speak(`${letter.name} ، ${letter.word}`),350);
+}
+
+/* ══════════════════════════════
+   CHECK ANSWER
+══════════════════════════════ */
+function checkAnswer(name,btn){
+  if(answered) return;
+  const correct=letters[queue[currentIdx]].name;
+  const msgEl=document.getElementById("message");
+
+  if(name===correct){
+    answered=true; btn.classList.add("correct");
+    score++; document.getElementById("score").textContent=score;
+    msgEl.innerHTML=mistakeThisRound?"✅ أحسنت !":"🎉 ممتاز !";
+    msgEl.style.color="var(--green)";
+    speak(mistakeThisRound?"أحسنت":"ممتاز");
+    if(!mistakeThisRound) markMastered(correct);
+    document.getElementById("nextBtn").style.display="block";
+    document.getElementById("choices").querySelectorAll(".choice").forEach(b=>b.disabled=true);
+  } else {
+    mistakeThisRound=true; btn.classList.add("wrong");
+    lives--; renderLives();
+    markWeak(letters[queue[currentIdx]].name);
+    renderWeakPanel();
+    speak("حاول مرة أخرى");
+    if(lives<=0){
+      answered=true;
+      const cLetter=letters[queue[currentIdx]];
+      msgEl.innerHTML=`❌ الحرف هو <strong>${getForm(cLetter)}</strong> (${cLetter.name})`;
+      msgEl.style.color="var(--pink)";
+      document.getElementById("nextBtn").style.display="block";
+      document.getElementById("choices").querySelectorAll(".choice").forEach(b=>b.disabled=true);
+    } else {
+      msgEl.innerHTML=`😊 حاول مرة أخرى (${lives} ❤️)`;
+      msgEl.style.color="var(--pink)";
+      setTimeout(()=>btn.classList.remove("wrong"),450);
+    }
+  }
+}
+
+/* ══════════════════════════════
+   CONFETTI
+══════════════════════════════ */
+function launchConfetti(){
+  const wrap=document.createElement("div"); wrap.className="confetti-wrap"; document.body.appendChild(wrap);
+  const colors=["#e63946","#457b9d","#2a9d8f","#e9c46a","#9b72cf","#f4a261"];
+  for(let i=0;i<80;i++){
+    const p=document.createElement("div"); p.className="confetti-piece";
+    p.style.left             =Math.random()*100+"vw";
+    p.style.background       =colors[~~(Math.random()*colors.length)];
+    p.style.animationDuration=(1.5+Math.random()*2)+"s";
+    p.style.animationDelay   =(Math.random()*1.2)+"s";
+    p.style.width            =(8+Math.random()*8)+"px";
+    p.style.height           =(10+Math.random()*12)+"px";
+    p.style.borderRadius     =Math.random()>.5?"50%":"2px";
+    wrap.appendChild(p);
+  }
+  setTimeout(()=>wrap.remove(),4000);
+}
+
+/* ══════════════════════════════
+   FINAL SCREEN
+══════════════════════════════ */
+function showFinalScreen(){
+  if(score>getBest()) setBest(score);
+  const pct=score/queue.length;
+  const stars=pct>=.9?"⭐⭐⭐":pct>=.65?"⭐⭐":"⭐";
+  if(pct>=.65) launchConfetti();
+
+  const wn=getWeakNames();
+  document.getElementById("finalSubtitle").textContent=`لقد أكملت الحروف ! — Tu as terminé !`;
+  document.getElementById("finalStars").textContent=stars;
+  document.getElementById("finalScore").textContent=`⭐ ${score} / ${queue.length}`;
+  document.getElementById("finalBest").textContent=`Meilleur : ${getBest()}/${letters.length}`;
+
+  if(wn.length){
+    const tags=wn.map(n=>{const l=letters.find(x=>x.name===n);return `<span class="weak-tag">${getForm(l)} ${l.name}</span>`;}).join("");
+    document.getElementById("finalWeakSummary").innerHTML=
+      `<div class="weak-summary"><h3>🔴 حروف صعبة — À retravailler :</h3><div class="weak-letters" style="justify-content:center;margin-top:6px;">${tags}</div></div>`;
+    document.getElementById("retryWeakBtn").style.display="";
+  } else {
+    document.getElementById("finalWeakSummary").innerHTML=
+      `<p style="margin-top:16px;color:var(--green);font-weight:800;font-size:1rem;">🟢 كل الحروف محفوظة — Toutes les lettres maîtrisées !</p>`;
+    document.getElementById("retryWeakBtn").style.display="none";
+  }
+
+  document.getElementById("gameView").style.display="none";
+  document.getElementById("finalView").style.display="";
+  speak("أحسنت، لقد أتممت الحروف");
+}
+
+/* ══════════════════════════════
+   BUTTONS
+══════════════════════════════ */
+document.getElementById("listenBtn").onclick=()=>{
+  const l=letters[queue[currentIdx]];
+  speak(`${l.name} ، ${l.word}`);
+};
+
+document.getElementById("nextBtn").onclick=()=>{
+  currentIdx++;
+  if(currentIdx>=queue.length){ showFinalScreen(); return; }
+  loadQuestion();
+};
+
+document.getElementById("restartBtn").onclick=()=>{
+  buildQueue(false); loadQuestion();
+  document.getElementById("gameView").style.display="";
+  document.getElementById("finalView").style.display="none";
+};
+
+document.getElementById("retryWeakBtn").onclick=()=>{
+  buildQueue(true); loadQuestion();
+  document.getElementById("gameView").style.display="";
+  document.getElementById("finalView").style.display="none";
+};
+
+document.getElementById("changeModeBtn").onclick=()=>{
+  document.getElementById("finalView").style.display="none";
+  document.getElementById("gameView").style.display="none";
+  document.getElementById("modeSelect").style.display="";
+};
+</script>
+</body>
+</html>
