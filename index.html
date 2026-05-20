@@ -1,529 +1,326 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Alphabet Magique</title>
-
+  <title>Mes Alphabets</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700;800&family=Amiri:wght@400;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
+    :root{
+      --pink:#ff4d6d; --blue:#3a86ff; --green:#06d6a0;
+      --yellow:#ffd166; --purple:#c77dff; --orange:#f4a261;
+      --ar-blue:#457b9d; --ar-green:#2a9d8f; --ar-red:#e63946;
+      --bg:#eef4fb; --white:#fff; --text:#1d2d3a;
     }
-
+    *{margin:0;padding:0;box-sizing:border-box;}
     body{
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, #b8e7ff, #ffffff);
+      font-family:'Nunito',sans-serif;
       min-height:100vh;
-      display:flex;
+      background:var(--bg);
+      display:flex;flex-direction:column;align-items:center;
       justify-content:center;
-      align-items:center;
-      padding:20px;
+      padding:24px 16px;
+      background-image:
+        radial-gradient(circle at 10% 15%, rgba(255,77,109,.10) 0%,transparent 45%),
+        radial-gradient(circle at 90% 85%, rgba(58,134,255,.10) 0%,transparent 45%),
+        radial-gradient(circle at 55% 50%, rgba(6,214,160,.07)  0%,transparent 55%);
     }
 
-    .app{
-      width:100%;
-      max-width:600px;
-      background:white;
-      border-radius:30px;
-      padding:30px;
-      box-shadow:0 10px 40px rgba(0,0,0,0.12);
-      text-align:center;
+    /* ── HEADER ── */
+    header{text-align:center;margin-bottom:36px;}
+    header h1{
+      font-family:'Baloo 2',cursive;
+      font-size:2.8rem;font-weight:800;
+      background:linear-gradient(135deg,var(--pink),var(--blue));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;
+      margin-bottom:6px;
     }
+    header p{color:#888;font-size:1rem;}
 
-    h1{
-      color:#ff4d6d;
-      margin-bottom:10px;
-      font-size:2.5rem;
-    }
-
-    .subtitle{
-      color:#666;
-      margin-bottom:25px;
-    }
-
-    .top{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:20px;
-    }
-
-    .score,
-    .level{
-      background:#f1f5ff;
-      padding:10px 15px;
-      border-radius:15px;
-      font-weight:bold;
-      color:#333;
-    }
-
-    .card{
-      background:#fff7d6;
-      border-radius:25px;
-      padding:30px;
-      margin-bottom:25px;
-    }
-
-    .letter{
-      font-size:120px;
-      color:#3a86ff;
-      font-weight:bold;
-      animation:bounce 1s infinite alternate;
-    }
-
-    .lowercase{
-      font-size:50px;
-      color:#777;
-      margin-top:-15px;
-      margin-bottom:15px;
-    }
-
-    .emoji{
-      font-size:90px;
-      margin:20px 0;
-    }
-
-    .word{
-      font-size:2rem;
-      color:#333;
-      font-weight:bold;
-    }
-
-    .question{
-      margin:25px 0;
-      font-size:1.4rem;
-      color:#444;
-    }
-
-    .choices{
+    /* ── CARDS GRID ── */
+    .grid{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:15px;
+      gap:20px;
+      width:100%;max-width:680px;
     }
 
-    .choice{
-      border:none;
-      border-radius:20px;
-      padding:18px;
-      font-size:1.5rem;
-      font-weight:bold;
-      cursor:pointer;
-      transition:0.2s;
-      background:#ffd166;
+    /* ── LANGUAGE CARD ── */
+    .lang-card{
+      background:var(--white);
+      border-radius:28px;
+      padding:28px 22px 22px;
+      box-shadow:0 6px 28px rgba(0,0,0,.08);
+      text-decoration:none;color:inherit;
+      display:flex;flex-direction:column;align-items:center;gap:12px;
+      position:relative;overflow:hidden;
+      transition:transform .2s, box-shadow .2s;
+      border:3px solid transparent;
     }
-
-    .choice:hover{
-      transform:scale(1.05);
+    .lang-card:hover{transform:translateY(-5px);box-shadow:0 14px 36px rgba(0,0,0,.13);}
+    .lang-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:5px;border-radius:28px 28px 0 0;
     }
+    .lang-card.fr::before{background:linear-gradient(90deg,#002395,#fff,#ED2939);}
+    .lang-card.ar::before{background:linear-gradient(90deg,var(--ar-red),var(--ar-green),var(--ar-blue));}
 
-    .message{
-      margin-top:20px;
-      font-size:1.5rem;
-      min-height:40px;
-      font-weight:bold;
+    .lang-flag{font-size:3.2rem;line-height:1;}
+    .lang-title{
+      font-family:'Baloo 2',cursive;
+      font-size:1.5rem;font-weight:800;
+      color:var(--text);text-align:center;
     }
-
-    .next{
-      margin-top:20px;
-      width:100%;
-      border:none;
-      background:#06d6a0;
-      color:white;
-      padding:18px;
-      border-radius:20px;
-      font-size:1.2rem;
-      font-weight:bold;
-      cursor:pointer;
-      display:none;
+    .lang-title .ar-title{
+      font-family:'Amiri',serif;
+      display:block;font-size:1.3rem;color:#555;margin-top:2px;
     }
+    .lang-info{font-size:.82rem;color:#aaa;text-align:center;}
 
-    .listen{
-      margin-top:15px;
-      border:none;
-      background:#3a86ff;
-      color:white;
-      padding:12px 18px;
-      border-radius:15px;
-      cursor:pointer;
-      font-size:1rem;
+    /* ── SCORE BAR ── */
+    .score-section{width:100%;}
+    .score-label{
+      display:flex;justify-content:space-between;
+      font-size:.8rem;font-weight:700;color:#888;margin-bottom:5px;
     }
+    .score-label .val{color:var(--text);}
+    .bar-bg{background:#eef0f5;border-radius:10px;height:10px;overflow:hidden;}
+    .bar-fill{height:100%;border-radius:10px;transition:width .8s ease;width:0%;}
+    .fr .bar-fill{background:linear-gradient(90deg,var(--blue),var(--green));}
+    .ar .bar-fill{background:linear-gradient(90deg,var(--ar-red),var(--ar-green));}
 
-    .progress{
-      margin-top:25px;
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:10px;
+    /* ── BADGES ROW ── */
+    .badges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:100%;}
+    .badge-pill{
+      padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:800;
     }
+    .badge-pill.weak  {background:#fff3e0;color:var(--orange);}
+    .badge-pill.ok    {background:#f0faf8;color:var(--ar-green);}
+    .badge-pill.last  {background:#f1f5ff;color:var(--blue);}
+    .badge-pill.no-data{background:#f5f5f5;color:#bbb;}
 
-    .dot{
-      width:20px;
-      height:20px;
-      border-radius:50%;
-      background:#ddd;
+    /* ── PLAY BUTTON ── */
+    .play-btn{
+      width:100%;border:none;border-radius:16px;padding:14px;
+      font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+      cursor:pointer;color:white;margin-top:4px;
+      transition:transform .15s,opacity .15s;
     }
+    .fr .play-btn{background:linear-gradient(135deg,var(--blue),#2176f5);box-shadow:0 4px 0 #1a5fd4;}
+    .ar .play-btn{background:linear-gradient(135deg,var(--ar-red),#b52030);box-shadow:0 4px 0 #8a1525;}
+    .play-btn:hover{transform:translateY(-2px);}
+    .play-btn:active{transform:translateY(1px);}
 
-    .done{
-      background:#06d6a0;
+    /* ── LAST ACTIVITY ── */
+    .last-activity{
+      width:100%;max-width:680px;
+      margin-top:10px;
+      background:var(--white);border-radius:20px;
+      padding:16px 20px;
+      box-shadow:0 4px 16px rgba(0,0,0,.06);
+      display:flex;align-items:center;gap:12px;
     }
-
-    @keyframes bounce{
-      from{
-        transform:translateY(0px);
-      }
-
-      to{
-        transform:translateY(-10px);
-      }
+    .last-activity .la-icon{font-size:1.8rem;}
+    .last-activity .la-text{flex:1;}
+    .last-activity .la-title{font-weight:800;font-size:.9rem;color:var(--text);}
+    .last-activity .la-sub  {font-size:.78rem;color:#aaa;margin-top:2px;}
+    .last-activity .la-link{
+      text-decoration:none;background:var(--yellow);color:var(--text);
+      padding:8px 14px;border-radius:12px;font-weight:800;font-size:.82rem;
+      transition:transform .15s;white-space:nowrap;
     }
+    .last-activity .la-link:hover{transform:scale(1.05);}
+    #lastActivity{display:none;}
 
-    .final{
-      padding:40px 20px;
-    }
-
-    .final h2{
-      font-size:3rem;
-      margin-bottom:20px;
-      color:#ff4d6d;
-    }
-
-    .restart{
-      margin-top:30px;
-      border:none;
-      background:#3a86ff;
-      color:white;
-      padding:18px 30px;
-      border-radius:20px;
-      font-size:1.2rem;
-      cursor:pointer;
-    }
+    /* ── FOOTER ── */
+    footer{margin-top:32px;font-size:.78rem;color:#ccc;text-align:center;}
 
     @media(max-width:500px){
-
-      .letter{
-        font-size:90px;
-      }
-
-      .emoji{
-        font-size:70px;
-      }
-
-      .word{
-        font-size:1.5rem;
-      }
-
-      .choice{
-        font-size:1.2rem;
-      }
+      header h1{font-size:2rem;}
+      .grid{grid-template-columns:1fr;}
+      .lang-card{padding:22px 18px 18px;}
     }
-
   </style>
 </head>
-
 <body>
 
-<div class="app" id="app">
+<header>
+  <h1>📚 Mes Alphabets</h1>
+  <p>Choisis ta langue et apprends en jouant !</p>
+</header>
 
-  <h1>🌈 Alphabet Magique</h1>
+<div class="grid">
 
-  <p class="subtitle">
-    Apprends les lettres en t'amusant !
-  </p>
+  <!-- ── FRANÇAIS ── -->
+  <div class="lang-card fr" id="cardFr">
+    <div class="lang-flag">🇫🇷</div>
+    <div class="lang-title">Alphabet Français</div>
+    <div class="lang-info">26 lettres · majuscules &amp; minuscules</div>
 
-  <div class="top">
-    <div class="score">
-      ⭐ Score : <span id="score">0</span>
+    <div class="score-section">
+      <div class="score-label">
+        <span>Meilleur score</span>
+        <span class="val" id="frScoreLabel">—</span>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" id="frBar"></div></div>
     </div>
 
-    <div class="level">
-      Lettre : <span id="level">1</span>
-    </div>
-  </div>
+    <div class="badges" id="frBadges"></div>
 
-  <div class="card">
-
-    <div class="letter" id="letter">A</div>
-
-    <div class="lowercase" id="lowercase">a</div>
-
-    <div class="emoji" id="emoji">✈️</div>
-
-    <div class="word" id="word">
-      Avion
-    </div>
-
-    <button class="listen" id="listenBtn">
-      🔊 Écouter
+    <button class="play-btn" onclick="location.href='fr.html'">
+      Jouer ▶
     </button>
-
   </div>
 
-  <div class="question">
-    Quelle est la bonne lettre ?
+  <!-- ── ARABE ── -->
+  <div class="lang-card ar" id="cardAr">
+    <div class="lang-flag">🌙</div>
+    <div class="lang-title">
+      Alphabet Arabe
+      <span class="ar-title">الحروف العربية</span>
+    </div>
+    <div class="lang-info">28 lettres · 4 formes par lettre</div>
+
+    <div class="score-section">
+      <div class="score-label">
+        <span>Meilleur score</span>
+        <span class="val" id="arScoreLabel">—</span>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" id="arBar"></div></div>
+    </div>
+
+    <div class="badges" id="arBadges"></div>
+
+    <button class="play-btn" onclick="location.href='ar.html'">
+      Jouer · العب ▶
+    </button>
   </div>
-
-  <div class="choices" id="choices"></div>
-
-  <div class="message" id="message"></div>
-
-  <button class="next" id="nextBtn">
-    Lettre suivante ➜
-  </button>
-
-  <div class="progress" id="progress"></div>
 
 </div>
 
-  <script>
+<!-- ── DERNIÈRE ACTIVITÉ ── -->
+<div class="last-activity" id="lastActivity">
+  <div class="la-icon" id="laIcon">📖</div>
+  <div class="la-text">
+    <div class="la-title" id="laTitle">Dernière activité</div>
+    <div class="la-sub"   id="laSub"></div>
+  </div>
+  <a class="la-link" id="laLink" href="#">Reprendre →</a>
+</div>
 
-const alphabet = [
-  { letter:"A", word:"Avion", emoji:"✈️" },
-  { letter:"B", word:"Banane", emoji:"🍌" },
-  { letter:"C", word:"Chat", emoji:"🐱" },
-  { letter:"D", word:"Dauphin", emoji:"🐬" },
-  { letter:"E", word:"Éléphant", emoji:"🐘" },
-  { letter:"F", word:"Fraise", emoji:"🍓" },
-  { letter:"G", word:"Gâteau", emoji:"🎂" },
-  { letter:"H", word:"Hérisson", emoji:"🦔" },
-  { letter:"I", word:"Igloo", emoji:"🧊" },
-  { letter:"J", word:"Jus", emoji:"🧃" },
-  { letter:"K", word:"Koala", emoji:"🐨" },
-  { letter:"L", word:"Lion", emoji:"🦁" },
-  { letter:"M", word:"Maison", emoji:"🏠" },
-  { letter:"N", word:"Nuage", emoji:"☁️" },
-  { letter:"O", word:"Oiseau", emoji:"🐦" },
-  { letter:"P", word:"Pizza", emoji:"🍕" },
-  { letter:"Q", word:"Quille", emoji:"🎳" },
-  { letter:"R", word:"Robot", emoji:"🤖" },
-  { letter:"S", word:"Soleil", emoji:"☀️" },
-  { letter:"T", word:"Tortue", emoji:"🐢" },
-  { letter:"U", word:"Usine", emoji:"🏭" },
-  { letter:"V", word:"Voiture", emoji:"🚗" },
-  { letter:"W", word:"Wagon", emoji:"🚃" },
-  { letter:"X", word:"Xylophone", emoji:"🎼" },
-  { letter:"Y", word:"Yaourt", emoji:"🥛" },
-  { letter:"Z", word:"Zèbre", emoji:"🦓" }
-];
+<footer>Les progrès sont sauvegardés sur cet appareil.</footer>
 
-let current = 0;
-let score = 0;
+<script>
+/* ═══════════════════════════════════
+   READ localStorage from both pages
+═══════════════════════════════════ */
 
-const letter = document.getElementById("letter");
-const lowercase = document.getElementById("lowercase");
-const emoji = document.getElementById("emoji");
-const word = document.getElementById("word");
-const choices = document.getElementById("choices");
-const message = document.getElementById("message");
-const nextBtn = document.getElementById("nextBtn");
-const scoreText = document.getElementById("score");
-const level = document.getElementById("level");
-const progress = document.getElementById("progress");
-const listenBtn = document.getElementById("listenBtn");
+/* ── FRANÇAIS ── */
+const frBest  = parseInt(localStorage.getItem("alphabetBest")||"0");
+const frWeak  = (() => { try{ return JSON.parse(localStorage.getItem("alphabetWeak")||"{}"); }catch(e){ return {}; } })();
+const frWeakList = Object.entries(frWeak).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).map(([k])=>k);
+const FR_TOTAL = 26;
 
-let frenchVoice = null;
+/* ── ARABE (best across all 4 modes) ── */
+const AR_TOTAL = 28;
+const arModes  = ["isolated","initial","medial","final"];
+const arModeLabels = {isolated:"Isolée",initial:"Initiale",medial:"Médiane",final:"Finale"};
 
-function loadFrenchVoice(){
+let arBestVal  = 0;
+let arBestMode = null;
+arModes.forEach(m => {
+  const v = parseInt(localStorage.getItem(`arabicBest_${m}`)||"0");
+  if(v > arBestVal){ arBestVal=v; arBestMode=m; }
+});
 
-  const voices = speechSynthesis.getVoices();
+// Merge all weak letters across modes
+const arWeakMerged = {};
+arModes.forEach(m => {
+  try{
+    const w = JSON.parse(localStorage.getItem(`arabicWeak_${m}`)||"{}");
+    Object.entries(w).forEach(([k,v])=>{ arWeakMerged[k]=(arWeakMerged[k]||0)+v; });
+  }catch(e){}
+});
+const arWeakList = Object.entries(arWeakMerged).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).map(([k])=>k);
 
-  frenchVoice = voices.find(v =>
-    v.lang.includes("fr")
-  );
+/* ── LAST ACTIVITY ── */
+// We store a small "lastActivity" object when the user plays
+const lastAct = (() => { try{ return JSON.parse(localStorage.getItem("lastActivity")||"null"); }catch(e){ return null; } })();
 
-}
-
-speechSynthesis.onvoiceschanged = loadFrenchVoice;
-
-loadFrenchVoice();
-
-function speak(text){
-
-  speechSynthesis.cancel();
-
-  const speech = new SpeechSynthesisUtterance(text);
-
-  speech.lang = "fr-FR";
-
-  speech.rate = 0.85;
-
-  speech.pitch = 1.1;
-
-  if(frenchVoice){
-    speech.voice = frenchVoice;
+/* ═══════════════════════════════════
+   RENDER FR CARD
+═══════════════════════════════════ */
+function renderFr(){
+  if(frBest > 0){
+    document.getElementById("frScoreLabel").textContent = `${frBest} / ${FR_TOTAL}`;
+    document.getElementById("frBar").style.width = `${Math.round(frBest/FR_TOTAL*100)}%`;
   }
 
-  speechSynthesis.speak(speech);
+  const badges = document.getElementById("frBadges");
+  if(frWeakList.length){
+    badges.innerHTML = `<span class="badge-pill weak">🔴 ${frWeakList.length} lettre${frWeakList.length>1?"s":""} à retravailler</span>`;
+    frWeakList.slice(0,5).forEach(l => {
+      const s = document.createElement("span");
+      s.className="badge-pill weak"; s.textContent=l;
+      badges.appendChild(s);
+    });
+  } else if(frBest > 0){
+    badges.innerHTML = `<span class="badge-pill ok">🟢 Toutes maîtrisées</span>`;
+  } else {
+    badges.innerHTML = `<span class="badge-pill no-data">Pas encore joué</span>`;
+  }
 }
 
-listenBtn.onclick = () => {
+/* ═══════════════════════════════════
+   RENDER AR CARD
+═══════════════════════════════════ */
+function renderAr(){
+  if(arBestVal > 0){
+    document.getElementById("arScoreLabel").textContent = `${arBestVal} / ${AR_TOTAL} (${arModeLabels[arBestMode]})`;
+    document.getElementById("arBar").style.width = `${Math.round(arBestVal/AR_TOTAL*100)}%`;
+  }
 
-  const data = alphabet[current];
-
-  speak(
-    data.letter +
-    " comme " +
-    data.word
-  );
-};
-
-function shuffle(array){
-
-  return array.sort(() => Math.random() - 0.5);
+  const badges = document.getElementById("arBadges");
+  if(arWeakList.length){
+    badges.innerHTML = `<span class="badge-pill weak">🔴 ${arWeakList.length} lettre${arWeakList.length>1?"s":""} à retravailler</span>`;
+    arWeakList.slice(0,4).forEach(n => {
+      const s = document.createElement("span");
+      s.className="badge-pill weak"; s.textContent=n;
+      badges.appendChild(s);
+    });
+  } else if(arBestVal > 0){
+    badges.innerHTML = `<span class="badge-pill ok">🟢 Toutes maîtrisées</span>`;
+  } else {
+    badges.innerHTML = `<span class="badge-pill no-data">Pas encore joué</span>`;
+  }
 }
 
-function generateChoices(correctLetter){
-
-  const allLetters = alphabet.map(a => a.letter);
-
-  const wrongChoices = shuffle(
-    allLetters.filter(l => l !== correctLetter)
-  ).slice(0,3);
-
-  const finalChoices = shuffle([
-    correctLetter,
-    ...wrongChoices
-  ]);
-
-  return finalChoices;
+/* ═══════════════════════════════════
+   RENDER LAST ACTIVITY
+═══════════════════════════════════ */
+function renderLastActivity(){
+  if(!lastAct) return;
+  const el = document.getElementById("lastActivity");
+  el.style.display = "flex";
+  document.getElementById("laIcon").textContent  = lastAct.lang==="fr" ? "🇫🇷" : "🌙";
+  document.getElementById("laTitle").textContent = lastAct.lang==="fr" ? "Alphabet Français" : "الحروف العربية";
+  document.getElementById("laSub").textContent   = lastAct.detail;
+  document.getElementById("laLink").href         = lastAct.lang==="fr" ? "fr.html" : "ar.html";
 }
 
-function renderProgress(){
-
-  progress.innerHTML = "";
-
-  alphabet.forEach((_, index) => {
-
-    const dot = document.createElement("div");
-
-    dot.classList.add("dot");
-
-    if(index < current){
-      dot.classList.add("done");
-    }
-
-    progress.appendChild(dot);
+/* ═══════════════════════════════════
+   ANIMATE BARS ON LOAD
+═══════════════════════════════════ */
+window.addEventListener("load", ()=>{
+  renderFr();
+  renderAr();
+  renderLastActivity();
+  // Trigger bar animation after paint
+  requestAnimationFrame(()=>{
+    document.getElementById("frBar").style.width = frBest>0 ? `${Math.round(frBest/FR_TOTAL*100)}%` : "0%";
+    document.getElementById("arBar").style.width = arBestVal>0 ? `${Math.round(arBestVal/AR_TOTAL*100)}%` : "0%";
   });
-}
-
-function loadQuestion(){
-
-  const data = alphabet[current];
-
-  letter.textContent = data.letter;
-
-  lowercase.textContent =
-    data.letter.toLowerCase();
-
-  emoji.textContent = data.emoji;
-
-  word.textContent = data.word;
-
-  level.textContent =
-    `${current + 1}/${alphabet.length}`;
-
-  message.textContent = "";
-
-  nextBtn.style.display = "none";
-
-  choices.innerHTML = "";
-
-  const generated =
-    generateChoices(data.letter);
-
-  generated.forEach(choice => {
-
-    const btn = document.createElement("button");
-
-    btn.classList.add("choice");
-
-    btn.textContent = choice;
-
-    btn.onclick = () =>
-      checkAnswer(choice);
-
-    choices.appendChild(btn);
-  });
-
-  renderProgress();
-}
-
-function checkAnswer(choice){
-
-  const correct =
-    alphabet[current].letter;
-
-  if(choice === correct){
-
-    score++;
-
-    scoreText.textContent = score;
-
-    message.innerHTML =
-      "🎉 Bravo !";
-
-    message.style.color = "green";
-
-    speak("Bravo");
-
-    nextBtn.style.display = "block";
-
-  }else{
-
-    message.innerHTML =
-      "😊 Essaie encore";
-
-    message.style.color = "red";
-
-    speak("Essaie encore");
-  }
-}
-
-nextBtn.onclick = () => {
-
-  current++;
-
-  if(current >= alphabet.length){
-
-    document.getElementById("app").innerHTML = `
-      <div class="final">
-
-        <h2>🏆 Bravo !</h2>
-
-        <p style="font-size:1.5rem;">
-          Tu as terminé l'alphabet !
-        </p>
-
-        <p style="
-          margin-top:20px;
-          font-size:2rem;
-          color:#06d6a0;
-          font-weight:bold;
-        ">
-          ⭐ ${score}/${alphabet.length}
-        </p>
-
-        <button
-          class="restart"
-          onclick="location.reload()"
-        >
-          Rejouer 🔄
-        </button>
-
-      </div>
-    `;
-
-    speak("Bravo tu as terminé");
-
-    return;
-  }
-
-  loadQuestion();
-};
-
-loadQuestion();
-
+});
 </script>
 
 </body>
