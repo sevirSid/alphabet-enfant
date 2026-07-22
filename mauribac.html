@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mauribac - Résultats BAC 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.2/confetti.browser.min.js"></script>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f1efe7;
+    color: #14213d;
+  }
+
+  /* ---------- Header ---------- */
+  .topbar {
+    background: #ffffff;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; }
+  .brand .cap { font-size: 24px; line-height: 1; }
+  .brand .name { font-weight: 800; font-size: 19px; color: #16a2b8; letter-spacing: -0.3px; }
+  .live {
+    display: flex; align-items: center; gap: 6px;
+    background: #0d1b3d; color: white;
+    padding: 7px 14px; border-radius: 999px;
+    font-weight: 700; font-size: 13px;
+  }
+  .dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; display: inline-block; }
+  .social { display: flex; gap: 10px; align-items: center; }
+  .social span {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+
+  /* ---------- Content ---------- */
+  .content { padding: 16px 16px 60px; max-width: 480px; margin: 0 auto; }
+
+  /* ---- Landing view ---- */
+  .pills {
+    display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .pill {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border-radius: 999px;
+    font-weight: 700; font-size: 14px; white-space: nowrap;
+  }
+  .pill.wait { background: #fdf3d9; color: #c58a1c; border: 1px solid #f2e0a8; }
+  .pill.copy { background: #ffffff; color: #14213d; border: 1px solid #e4e4e4; cursor: pointer; }
+
+  h1.title { font-size: 27px; font-weight: 800; margin: 4px 0 18px; }
+
+  .card {
+    background: #ffffff; border-radius: 20px; padding: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 18px;
+  }
+
+  .search-label {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-weight: 700; font-size: 16px; margin-bottom: 16px; line-height: 1.35;
+  }
+  .search-label .ico { color: #2563eb; font-size: 18px; margin-top: 2px; }
+
+  .row { display: flex; gap: 10px; }
+  input[type="text"] {
+    flex: 1; min-width: 0;
+    border: 1.5px solid #cfe3f7; border-radius: 12px;
+    padding: 14px 16px; font-size: 16px; outline: none;
+    background: #fafcff; color: #14213d;
+  }
+  input[type="text"]::placeholder { color: #b7bfca; }
+  input[type="text"]:focus { border-color: #2563eb; }
+
+  button.save {
+    background: #2563eb; color: white; border: none; border-radius: 12px;
+    padding: 0 20px; font-size: 15.5px; font-weight: 700; cursor: pointer;
+  }
+  button.save:active { transform: scale(0.97); }
+
+  .saved-row {
+    margin-top: 16px; background: #f4f4f2; border-radius: 14px;
+    padding: 16px 16px; display: flex; align-items: center; justify-content: space-between;
+    font-weight: 700; font-size: 15px; cursor: pointer;
+  }
+  .saved-row .left { display: flex; align-items: center; gap: 10px; }
+  .saved-row .bookmark { color: #2563eb; font-size: 17px; }
+  .saved-row .count {
+    background: #e9e9e6; border-radius: 50%; width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center; font-size: 12.5px; margin-left: 4px;
+  }
+  .chev { transition: transform 0.2s; color: #888; }
+  .chev.open { transform: rotate(180deg); }
+
+  .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .avatar {
+    width: 46px; height: 46px; border-radius: 50%; background: #eaf2ff;
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+  }
+  .post-header .who { line-height: 1.3; }
+  .post-header .who .top { font-weight: 700; font-size: 16.5px; display: flex; align-items: center; gap: 6px; }
+  .post-header .who .top .check { color: #2563eb; font-size: 15px; }
+  .post-header .who .sub { color: #8a8a8a; font-size: 13.5px; }
+  .post-text { font-size: 16px; line-height: 1.6; color: #24272e; }
+
+  .error-box {
+    display: none; background: #fff4f4; color: #b91c1c;
+    padding: 13px 16px; border-radius: 14px; text-align: center;
+    font-size: 14px; font-weight: 600; margin-bottom: 18px;
+  }
+  .error-box.show { display: block; }
+
+  /* ---- Landing/result toggling ---- */
+  #landingView.hide { display: none; }
+
+  /* ---- Result detail view ---- */
+  .result-wrap { display: none; position: relative; }
+  .result-wrap.show { display: block; animation: popIn 0.4s ease; }
+  @keyframes popIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+
+  .back-row {
+    display: flex; align-items: center; gap: 6px;
+    color: #2563eb; font-weight: 700; font-size: 15px;
+    margin-bottom: 14px; cursor: pointer; width: fit-content;
+  }
+
+  #confettiCanvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; border-radius: 20px; z-index: 5;
+  }
+
+  .result-card {
+    background: #ffffff; border-radius: 20px; padding: 24px 20px 6px;
+    text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    position: relative; overflow: hidden;
+  }
+
+  .top-row {
+    display: flex; justify-content: center; align-items: center;
+    gap: 10px; flex-wrap: wrap; margin-bottom: 18px;
+  }
+  .id-pill {
+    border: 1.5px solid #e3e3e3; border-radius: 999px;
+    padding: 9px 16px; font-size: 14.5px; font-weight: 600; color: #444;
+  }
+  .id-pill b { color: #2563eb; }
+  .copy-pill {
+    border: 1.5px solid #dbe8fb; border-radius: 999px;
+    padding: 9px 16px; font-size: 14.5px; font-weight: 700; color: #2563eb;
+    display: flex; align-items: center; gap: 6px; cursor: pointer; background: none;
+  }
+
+  .cand-name { font-size: 26px; font-weight: 800; line-height: 1.25; margin: 0 auto 14px; max-width: 340px; }
+  .underline { width: 130px; height: 4px; background: #22c55e; border-radius: 3px; margin: 0 auto 18px; }
+  .underline.fail { background: #ef4444; }
+
+  .decision-label { color: #8a8a8a; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .decision-value { font-size: 30px; font-weight: 800; margin-bottom: 8px; }
+  .decision-value.pass { color: #16a34a; }
+  .decision-value.fail { color: #dc2626; }
+
+  .congrats-line { color: #b8860b; font-weight: 700; font-size: 15px; margin-bottom: 20px; min-height: 21px; }
+
+  .details-card {
+    background: #f4f4f2; border-radius: 18px; padding: 20px;
+    text-align: left; margin: 0 0 22px;
+  }
+  .section-title { color: #8a8a8a; font-weight: 700; font-size: 14px; margin-bottom: 14px; }
+  .fields-grid { display: grid; grid-template-columns: 1fr 1fr; row-gap: 16px; column-gap: 10px; }
+  .field-label {
+    display: flex; align-items: center; gap: 6px;
+    color: #666; font-size: 13.5px; font-weight: 600; margin-bottom: 4px;
+  }
+  .field-label .bar { width: 3px; height: 13px; background: #2563eb; border-radius: 2px; display: inline-block; }
+  .field-value { font-size: 16.5px; font-weight: 800; color: #14213d; }
+  .field-value.blue { color: #2563eb; }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="cap">🎓</span>
+      <span class="name">Mauribac</span>
+    </div>
+    <div class="live"><span class="dot"></span>LIVE&nbsp;&nbsp;14 844</div>
+    <div class="social">
+      <span style="background:#e7f0ff;">📘</span>
+      <span style="background:#111;">🎵</span>
+      <span style="background:#fff8d6;">👻</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ============ LANDING VIEW ============ -->
+    <div id="landingView">
+
+      <div class="pills">
+        <div class="pill wait">⏳ Attendus dans quelques heures</div>
+        <div class="pill copy" onclick="copyLink()">📋 Copier lien</div>
+      </div>
+
+      <h1 class="title">Résultats BAC 2026</h1>
+
+      <div class="card">
+        <div class="search-label">
+          <span class="ico">🔍</span>
+          <span>Entrez le numéro du candidat pour obtenir le résultat</span>
+        </div>
+        <div class="row">
+          <input type="text" id="numInput" placeholder="Exemple : 01234" inputmode="numeric">
+          <button class="save" onclick="checkResult()">Enregistrer</button>
+        </div>
+
+        <div class="saved-row" onclick="toggleSaved()">
+          <div class="left">
+            <span class="bookmark">🔖</span>
+            <span>Numéros enregistrés</span>
+            <span class="count">1</span>
+          </div>
+          <span class="chev" id="chev">⌄</span>
+        </div>
+      </div>
+
+      <div class="error-box" id="errorBox">Numéro introuvable. Vérifiez et réessayez.</div>
+
+      <div class="card">
+        <div class="post-header">
+          <div class="avatar">🛡️</div>
+          <div class="who">
+            <div class="top">Mauribac <span class="check">✔️</span></div>
+            <div class="sub">Compte officiel Mauribac</div>
+          </div>
+        </div>
+        <div class="post-text">
+          Les résultats sont attendus aujourd'hui d'ici 18 h, selon le communiqué du ministère. Après leur publication sur son site officiel, ils seront également disponibles sur Mauribac, si Dieu le veut.
+          <br><br>
+          Tous nos vœux de réussite à toutes et à tous 🤲
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============ RESULT DETAIL VIEW ============ -->
+    <div class="result-wrap" id="resultWrap">
+
+      <div class="back-row" onclick="goBack()">← Retour</div>
+
+      <div class="result-card" id="resultCard">
+        <canvas id="confettiCanvas"></canvas>
+
+        <div class="top-row">
+          <div class="id-pill" id="idPill">10678 · <b>BAC O</b> · 2026</div>
+          <button class="copy-pill" onclick="copyLink()">📋 Copier lien</button>
+        </div>
+
+        <div class="cand-name" id="candName">—</div>
+        <div class="underline" id="underline"></div>
+
+        <div class="decision-label">Decision</div>
+        <div class="decision-value" id="decisionValue">—</div>
+        <div class="congrats-line" id="congratsLine"></div>
+
+        <div class="details-card">
+          <div class="section-title">Détails</div>
+          <div class="fields-grid">
+            <div>
+              <div class="field-label"><span class="bar"></span>Moyenne</div>
+              <div class="field-value" id="moyenneVal">—</div>
+            </div>
+            <div>
+              <div class="field-label"><span class="bar"></span>Wilaya</div>
+              <div class="field-value blue" id="wilayaVal">—</div>
+            </div>
+            <div>
+              <div class="field-label"><span class="bar"></span>Série</div>
+              <div class="field-value" id="serieVal">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  const data = {
+    "10678": { name: "Bechiri Mohamed Labeid", avg: 8.78, serie: "BAC O", wilaya: "Nouakchott" },
+    "00290": { name: "Abdallah Mohamed Mahmoud", avg: 11, serie: "BAC A", wilaya: "Nouakchott" }
+  };
+
+  function copyLink() {
+    navigator.clipboard?.writeText(window.location.href).catch(()=>{});
+  }
+
+  function toggleSaved() {
+    document.getElementById('chev').classList.toggle('open');
+  }
+
+  function goBack() {
+    document.getElementById('resultWrap').classList.remove('show');
+    document.getElementById('landingView').classList.remove('hide');
+    document.getElementById('errorBox').classList.remove('show');
+  }
+
+  function fireConfetti(canvas) {
+    const myConfetti = confetti.create(canvas, { resize: true, useWorker: true });
+    const end = Date.now() + 2200;
+    (function frame() {
+      myConfetti({ particleCount: 5, angle: 60, spread: 60, origin: { x: 0, y: 0.1 } });
+      myConfetti({ particleCount: 5, angle: 120, spread: 60, origin: { x: 1, y: 0.1 } });
+      myConfetti({ particleCount: 3, angle: 90, spread: 80, origin: { x: 0.5, y: 0 } });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+  }
+
+  function checkResult() {
+    const raw = document.getElementById('numInput').value.trim();
+    const errorBox = document.getElementById('errorBox');
+    const landingView = document.getElementById('landingView');
+    const resultWrap = document.getElementById('resultWrap');
+
+    let entry = data[raw];
+    if (!entry) {
+      const stripped = raw.replace(/^0+/, '');
+      for (const key in data) {
+        if (stripped !== '' && key.replace(/^0+/, '') === stripped) {
+          entry = data[key];
+          break;
+        }
+      }
+    }
+
+    if (!entry) {
+      errorBox.classList.add('show');
+      resultWrap.classList.remove('show');
+      return;
+    }
+
+    errorBox.classList.remove('show');
+
+    const passed = entry.avg >= 10;
+
+    document.getElementById('idPill').innerHTML = raw + " · <b>" + entry.serie + "</b> · 2026";
+    document.getElementById('candName').textContent = entry.name;
+    document.getElementById('underline').className = "underline " + (passed ? "" : "fail");
+
+    const dv = document.getElementById('decisionValue');
+    dv.className = "decision-value " + (passed ? "pass" : "fail");
+    dv.textContent = passed ? "🎉 Admis 🎉" : "❌ Refusé(e)";
+
+    document.getElementById('congratsLine').textContent = passed ? "Toutes nos félicitations !" : "";
+
+    document.getElementById('moyenneVal').textContent = entry.avg.toString().replace('.', ',');
+    document.getElementById('wilayaVal').textContent = entry.wilaya;
+    document.getElementById('serieVal').textContent = entry.serie;
+
+    landingView.classList.add('hide');
+    resultWrap.classList.remove('show');
+    void resultWrap.offsetWidth;
+    resultWrap.classList.add('show');
+
+    if (passed) {
+      requestAnimationFrame(() => {
+        const canvas = document.getElementById('confettiCanvas');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = document.getElementById('resultCard').offsetHeight;
+        fireConfetti(canvas);
+      });
+    }
+  }
+
+  document.getElementById('numInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkResult();
+  });
+</script>
+
+</body>
+</html>
