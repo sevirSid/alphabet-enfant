@@ -1,0 +1,2410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>QCM — Inspection environnementale</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#2a9d8f; --darkgreen:#1b4332; --leaf:#40916c;
+    --earth:#a5793c; --sand:#e9c46a; --clay:#e76f51;
+    --bg:#f1f7f2; --card-bg:#ffffff; --text:#20302a; --muted:#6b7a73;
+    --shadow:0 8px 32px rgba(27,67,50,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:var(--bg);
+    min-height:100vh;
+    display:flex;justify-content:center;align-items:flex-start;
+    padding:24px 16px 60px;
+    background-image:
+      radial-gradient(circle at 12% 15%, rgba(42,157,143,.12) 0%, transparent 50%),
+      radial-gradient(circle at 88% 80%, rgba(233,196,106,.15) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(64,145,108,.06) 0%, transparent 70%);
+  }
+  .app{
+    width:100%;max-width:680px;
+    background:var(--card-bg);border-radius:32px;
+    padding:32px 28px 28px;
+    box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .app::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:6px;
+    background:linear-gradient(90deg,var(--green),var(--sand),var(--clay),var(--leaf));
+    border-radius:32px 32px 0 0;
+  }
+  h1{font-family:'Baloo 2',cursive;color:var(--darkgreen);font-size:1.9rem;font-weight:800;margin-bottom:4px;text-align:center;}
+  .subtitle{color:var(--muted);font-size:.92rem;margin-bottom:18px;text-align:center;}
+  .back-link{
+    display:inline-block;margin-bottom:14px;color:var(--muted);text-decoration:none;font-weight:700;font-size:.85rem;
+  }
+  .back-link:hover{color:var(--green);}
+
+  .disclaimer{
+    background:#fff8e6;border:2px solid var(--sand);border-radius:16px;
+    padding:12px 16px;font-size:.82rem;color:#7a5c00;margin-bottom:22px;line-height:1.4;
+  }
+
+  .quiz-cards{display:flex;flex-direction:column;gap:14px;}
+  .quiz-card{
+    background:#f6faf7;border:3px solid transparent;border-radius:22px;
+    padding:18px 20px;display:flex;flex-direction:column;gap:10px;
+    transition:transform .15s,box-shadow .15s;
+  }
+  .quiz-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(27,67,50,.10);}
+  .quiz-card .qc-top{display:flex;justify-content:space-between;align-items:center;}
+  .quiz-card .qc-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.25rem;color:var(--darkgreen);}
+  .quiz-card .qc-badge{
+    font-size:.78rem;font-weight:800;padding:5px 12px;border-radius:20px;background:#e6f4ee;color:var(--green);
+  }
+  .quiz-card .qc-desc{font-size:.85rem;color:var(--muted);}
+  .quiz-card .qc-bar-bg{background:#e7ede9;border-radius:10px;height:8px;overflow:hidden;}
+  .quiz-card .qc-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green),var(--leaf));width:0%;transition:width .8s ease;}
+  .start-btn{
+    align-self:flex-start;border:none;border-radius:14px;padding:10px 20px;
+    font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:800;color:white;cursor:pointer;
+    background:linear-gradient(135deg,var(--green),var(--leaf));box-shadow:0 4px 0 #145c44;
+    transition:transform .15s;
+  }
+  .start-btn:hover{transform:translateY(-2px);}
+  .start-btn:active{transform:translateY(1px);}
+
+  /* ── QUIZ SCREEN ── */
+  .top-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .pill{background:#f1f5f2;padding:8px 14px;border-radius:14px;font-weight:800;color:var(--text);font-size:.88rem;}
+  .pill.timer{background:#fdf1ea;color:var(--clay);}
+  .pill.score{background:#e6f4ee;color:var(--green);}
+  .bar-bg{background:#e7ede9;border-radius:10px;height:10px;overflow:hidden;margin-bottom:18px;}
+  .bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green),var(--leaf));width:0%;transition:width .4s ease;}
+
+  .theme-badge{
+    display:inline-block;margin-bottom:10px;padding:4px 12px;border-radius:20px;
+    font-size:.72rem;font-weight:800;background:#f1f5f2;color:var(--muted);
+  }
+  .question-card{
+    background:#f6faf7;border-radius:22px;padding:20px 20px 18px;margin-bottom:18px;border:3px solid #e2ecE5;
+  }
+  .question-text{font-size:1.12rem;color:var(--text);font-weight:700;line-height:1.4;}
+
+  .choices{display:flex;flex-direction:column;gap:12px;}
+  .choice{
+    border:3px solid transparent;border-radius:16px;padding:14px 16px;text-align:left;
+    font-family:'Nunito',sans-serif;font-size:.98rem;font-weight:700;
+    cursor:pointer;background:#fff;color:var(--text);
+    box-shadow:0 3px 0 rgba(0,0,0,.06);
+    transition:transform .15s,background .2s,border-color .2s;
+  }
+  .choice:hover:not(:disabled){transform:translateY(-2px);border-color:var(--green);}
+  .choice:active:not(:disabled){transform:scale(.99);}
+  .choice:disabled{cursor:not-allowed;}
+  .choice.correct{background:#e6f4ee;color:var(--darkgreen);border-color:var(--green);}
+  .choice.wrong{background:#fdecea;color:#9a2f23;border-color:var(--clay);}
+
+  .explanation{
+    margin-top:16px;padding:14px 16px;border-radius:14px;background:#eef6f0;
+    font-size:.88rem;color:var(--text);display:none;line-height:1.4;
+  }
+  .explanation.show{display:block;}
+
+  .next{
+    margin-top:16px;width:100%;border:none;
+    background:linear-gradient(135deg,var(--green),var(--leaf));
+    color:white;padding:16px;border-radius:18px;
+    font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;
+    cursor:pointer;display:none;box-shadow:0 4px 0 #145c44;transition:transform .15s;
+  }
+  .next:hover{transform:translateY(-2px);}
+  .next.show{display:block;}
+
+  /* ── RESULT SCREEN ── */
+  .result-score{
+    text-align:center;font-family:'Baloo 2',cursive;font-size:3rem;font-weight:800;color:var(--darkgreen);margin:10px 0 4px;
+  }
+  .result-pct{text-align:center;color:var(--muted);font-weight:800;margin-bottom:6px;}
+  .result-time{text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:22px;}
+  .result-msg{text-align:center;font-weight:800;font-size:1.1rem;margin-bottom:22px;color:var(--green);}
+  .review-title{font-family:'Baloo 2',cursive;font-size:1.15rem;color:var(--darkgreen);margin-bottom:12px;}
+  .review-item{
+    background:#fdf5f4;border-left:4px solid var(--clay);border-radius:10px;
+    padding:12px 14px;margin-bottom:10px;font-size:.86rem;line-height:1.4;
+  }
+  .review-item .rq{font-weight:800;color:var(--text);margin-bottom:6px;}
+  .review-item .ra-correct{color:var(--green);font-weight:700;}
+  .review-item .ra-given{color:#9a2f23;}
+  .review-item .rexp{color:var(--muted);margin-top:6px;}
+  .no-mistakes{text-align:center;color:var(--green);font-weight:800;padding:20px 0;}
+  .result-actions{display:flex;gap:12px;margin-top:20px;}
+  .result-actions button{
+    flex:1;border:none;border-radius:16px;padding:14px;font-family:'Nunito',sans-serif;
+    font-size:.95rem;font-weight:800;cursor:pointer;transition:transform .15s;
+  }
+  .result-actions .retry{background:linear-gradient(135deg,var(--green),var(--leaf));color:white;box-shadow:0 4px 0 #145c44;}
+  .result-actions .menu{background:#f1f5f2;color:var(--text);box-shadow:0 4px 0 #d4dcd6;}
+  .result-actions button:hover{transform:translateY(-2px);}
+
+  .hidden{display:none !important;}
+
+  @media(max-width:480px){
+    h1{font-size:1.55rem;}
+    .app{padding:24px 18px 20px;border-radius:24px;}
+    .result-score{font-size:2.3rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ══════════════ MENU ══════════════ -->
+  <div id="screenMenu">
+    <h1>🌍 QCM — Inspection environnementale</h1>
+    <p class="subtitle">Préparation au concours · Gestion des déchets · Mauritanie</p>
+
+    <div class="disclaimer">
+      ⚠️ Ces QCM sont un support d'entraînement générique, construit à partir du <a href="./readme">document de préparation</a> de ce dossier. Vérifiez toujours l'arrêté officiel d'ouverture du concours (nombre d'épreuves, coefficients, durée) publié par le ministère, car ces éléments peuvent varier d'une session à l'autre.
+    </div>
+
+    <div class="quiz-cards" id="quizCards"></div>
+  </div>
+
+  <!-- ══════════════ QUIZ ══════════════ -->
+  <div id="screenQuiz" class="hidden">
+    <div class="top-row">
+      <span class="pill" id="quizTitlePill"></span>
+      <span class="pill score" id="scorePill">Score : 0</span>
+      <span class="pill timer" id="timerPill">⏱ 00:00</span>
+    </div>
+    <div class="bar-bg"><div class="bar-fill" id="quizBar"></div></div>
+
+    <div class="theme-badge" id="themeBadge"></div>
+    <div class="question-card">
+      <div class="question-text" id="questionText"></div>
+    </div>
+
+    <div class="choices" id="choicesBox"></div>
+
+    <div class="explanation" id="explanationBox"></div>
+
+    <button class="next" id="nextBtn">Suivant →</button>
+  </div>
+
+  <!-- ══════════════ RESULT ══════════════ -->
+  <div id="screenResult" class="hidden">
+    <h1 id="resultTitle">Résultat</h1>
+    <div class="result-score" id="resultScore">0 / 60</div>
+    <div class="result-pct" id="resultPct"></div>
+    <div class="result-time" id="resultTime"></div>
+    <div class="result-msg" id="resultMsg"></div>
+
+    <div id="reviewSection">
+      <div class="review-title">Questions à revoir</div>
+      <div id="reviewList"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="retry" id="retryBtn">Recommencer ce QCM</button>
+      <button class="menu" id="menuBtn">Retour au menu</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   DATA
+══════════════════════════════════════ */
+const QUESTION_SETS = [
+  [
+    {
+      "q": "Quel pouvoir de l'État mauritanien est chargé de l'exécution des lois et de l'administration du pays ?",
+      "choices": [
+        "Le pouvoir exécutif (Président de la République et gouvernement)",
+        "Le pouvoir législatif",
+        "Le pouvoir judiciaire",
+        "Un conseil consultatif sans pouvoir propre"
+      ],
+      "exp": "L'exécution des lois et l'administration relèvent du pouvoir exécutif.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le premier texte mauritanien encadrant la salubrité et les déchets est :",
+      "choices": [
+        "L'Ordonnance n°84-208 du 20 septembre 1984 (Code de l'hygiène)",
+        "La Loi n°2000-045",
+        "Le Décret n°2004-094",
+        "L'Arrêté n°990/MRNE/SGG/90"
+      ],
+      "exp": "L'ordonnance de 1984 est le texte historique fondateur en la matière.",
+      "theme": "juri"
+    },
+    {
+      "q": "La Convention de Bâle porte sur :",
+      "choices": [
+        "Le contrôle des mouvements transfrontières de déchets dangereux et leur élimination",
+        "La couche d'ozone",
+        "Les polluants organiques persistants",
+        "Le changement climatique"
+      ],
+      "exp": "C'est l'objet central de la Convention de Bâle.",
+      "theme": "conv"
+    },
+    {
+      "q": "Le sigle DSU désigne :",
+      "choices": [
+        "Déchets Solides Urbains",
+        "Déchets Spéciaux Universels",
+        "Direction des Services Urbains",
+        "Déchets Sanitaires Uniformes"
+      ],
+      "exp": "DSU = Déchets Solides Urbains.",
+      "theme": "tech"
+    },
+    {
+      "q": "Vous constatez qu'une entreprise déverse ses déchets dans une zone non autorisée. La première action réglementaire à entreprendre est généralement :",
+      "choices": [
+        "Dresser un procès-verbal de constat et engager la procédure prévue (mise en demeure, etc.)",
+        "Fermer immédiatement l'entreprise sans préavis",
+        "Ignorer si l'entreprise emploie beaucoup de personnes",
+        "Attendre une plainte des riverains avant d'agir"
+      ],
+      "exp": "Le constat officiel puis la procédure réglementaire sont la démarche appropriée.",
+      "theme": "situ"
+    },
+    {
+      "q": "Le sigle DEEE désigne :",
+      "choices": [
+        "Déchets d'Équipements Électriques et Électroniques",
+        "Déchets d'Eaux et d'Effluents Épurés",
+        "Déchets d'Établissements et d'Espaces Écologiques",
+        "Direction de l'Environnement et de l'Écologie"
+      ],
+      "exp": "DEEE = Déchets d'Équipements Électriques et Électroniques.",
+      "theme": "tech"
+    },
+    {
+      "q": "La loi-cadre portant Code de l'environnement en Mauritanie est :",
+      "choices": [
+        "La Loi n°2000-045 du 26 juillet 2000",
+        "L'Ordonnance n°84-208",
+        "Le Décret n°2007-105",
+        "La Loi n°1998-012"
+      ],
+      "exp": "La Loi n°2000-045 est la loi-cadre centrale du droit de l'environnement.",
+      "theme": "juri"
+    },
+    {
+      "q": "Les collectivités territoriales de base en Mauritanie sont appelées :",
+      "choices": [
+        "Les communes",
+        "Les préfectures",
+        "Les wilayas uniquement",
+        "Les districts"
+      ],
+      "exp": "La commune est la collectivité territoriale de base en Mauritanie.",
+      "theme": "civ"
+    },
+    {
+      "q": "La Mauritanie a ratifié la Convention de Bâle en :",
+      "choices": [
+        "1996",
+        "1985",
+        "2005",
+        "2016"
+      ],
+      "exp": "Ratification mentionnée en 1996 dans le support.",
+      "theme": "conv"
+    },
+    {
+      "q": "Le principe « pollueur-payeur » signifie :",
+      "choices": [
+        "Celui qui cause une pollution supporte le coût des mesures de prévention et de réparation",
+        "L'État paie toujours pour la dépollution",
+        "Seules les entreprises étrangères paient les amendes",
+        "Les citoyens paient une taxe pour polluer librement"
+      ],
+      "exp": "C'est la définition classique du principe pollueur-payeur.",
+      "theme": "situ"
+    },
+    {
+      "q": "Parmi les catégories de déchets suivantes, laquelle regroupe gravats, béton et matériaux de construction ?",
+      "choices": [
+        "Les déchets inertes / BTP",
+        "Les déchets biomédicaux",
+        "Les DEEE",
+        "Les déchets industriels dangereux"
+      ],
+      "exp": "Ce sont les déchets inertes issus du bâtiment et des travaux publics.",
+      "theme": "tech"
+    },
+    {
+      "q": "Combien d'articles compte la Loi n°2000-045 portant Code de l'environnement ?",
+      "choices": [
+        "100",
+        "60",
+        "80",
+        "120"
+      ],
+      "exp": "Le Code de l'environnement mauritanien compte 100 articles.",
+      "theme": "juri"
+    },
+    {
+      "q": "Quel ministère est directement responsable de la politique nationale de l'environnement et du développement durable ?",
+      "choices": [
+        "Le Ministère de l'Environnement et du Développement Durable",
+        "Le Ministère de l'Intérieur",
+        "Le Ministère de l'Hydraulique et de l'Assainissement",
+        "Le Ministère du Pétrole"
+      ],
+      "exp": "C'est le ministère de tutelle de la politique environnementale nationale.",
+      "theme": "civ"
+    },
+    {
+      "q": "La Convention de Stockholm concerne :",
+      "choices": [
+        "Les polluants organiques persistants (POP)",
+        "Le mercure",
+        "Les mouvements transfrontières de déchets",
+        "La couche d'ozone"
+      ],
+      "exp": "La Convention de Stockholm vise spécifiquement les POP.",
+      "theme": "conv"
+    },
+    {
+      "q": "La hiérarchie qui classe réduction, réemploi, recyclage, valorisation et élimination est appelée :",
+      "choices": [
+        "La hiérarchie des 3R/5R",
+        "Le cycle de Krebs",
+        "Le principe pollueur-payeur",
+        "L'économie linéaire"
+      ],
+      "exp": "C'est la hiérarchie de gestion des déchets 3R/5R.",
+      "theme": "tech"
+    },
+    {
+      "q": "Des riverains se plaignent d'odeurs persistantes provenant d'un site de traitement de déchets. Que doit faire l'inspecteur en priorité ?",
+      "choices": [
+        "Se rendre sur place, constater les faits et évaluer la conformité du site",
+        "Ignorer la plainte tant qu'elle est anonyme",
+        "Fermer le site immédiatement sans vérification",
+        "Transmettre uniquement à la presse"
+      ],
+      "exp": "La vérification sur place est le premier réflexe professionnel.",
+      "theme": "situ"
+    },
+    {
+      "q": "La Loi n°2000-045 est structurée en combien de titres ?",
+      "choices": [
+        "6",
+        "3",
+        "4",
+        "10"
+      ],
+      "exp": "Le Code de l'environnement est organisé en 6 titres.",
+      "theme": "juri"
+    },
+    {
+      "q": "Dans la fonction publique mauritanienne, les fonctionnaires sont classés en catégories :",
+      "choices": [
+        "A, B, C",
+        "1, 2, 3",
+        "I, II, III",
+        "Junior / senior"
+      ],
+      "exp": "Le statut général organise les corps en catégories A, B, C.",
+      "theme": "civ"
+    },
+    {
+      "q": "Dans la hiérarchie des 5R, l'option à privilégier en priorité est :",
+      "choices": [
+        "La réduction à la source",
+        "L'élimination",
+        "L'incinération sans valorisation",
+        "La mise en décharge sauvage"
+      ],
+      "exp": "La réduction à la source est l'échelon le plus haut de la hiérarchie.",
+      "theme": "tech"
+    },
+    {
+      "q": "La Mauritanie a ratifié la Convention de Stockholm en :",
+      "choices": [
+        "2005",
+        "1996",
+        "1987",
+        "2016"
+      ],
+      "exp": "Ratification en 2005 selon le support.",
+      "theme": "conv"
+    },
+    {
+      "q": "Lors d'un contrôle, un inspecteur découvre des déchets biomédicaux mélangés aux ordures ménagères d'un établissement de santé. Quelle est la réponse appropriée ?",
+      "choices": [
+        "Constater l'infraction et exiger la mise en place d'une filière de tri et traitement spécifique",
+        "Considérer que cela ne pose aucun problème",
+        "Fermer immédiatement l'établissement de santé sans procédure",
+        "Ignorer car cela concerne la santé et non l'environnement"
+      ],
+      "exp": "Le mélange de déchets biomédicaux est une infraction à corriger via une filière adaptée.",
+      "theme": "situ"
+    },
+    {
+      "q": "Le décret relatif à l'Étude d'Impact Environnemental (EIE), initialement adopté, date de :",
+      "choices": [
+        "2004 (Décret n°2004-094)",
+        "2000",
+        "2007",
+        "2012"
+      ],
+      "exp": "Le décret EIE initial est daté du 4 novembre 2004.",
+      "theme": "juri"
+    },
+    {
+      "q": "Le texte qui régit les droits, devoirs et obligations des fonctionnaires mauritaniens est appelé :",
+      "choices": [
+        "Le statut général de la fonction publique",
+        "Le Code du travail",
+        "Le Code de l'environnement",
+        "Le règlement intérieur du ministère"
+      ],
+      "exp": "C'est le statut général de la fonction publique qui fixe ce cadre.",
+      "theme": "civ"
+    },
+    {
+      "q": "Dans une décharge contrôlée, le liquide résultant de la percolation des eaux à travers les déchets s'appelle :",
+      "choices": [
+        "Le lixiviat",
+        "Le biogaz",
+        "Le compost",
+        "Le digestat"
+      ],
+      "exp": "C'est la définition du lixiviat.",
+      "theme": "tech"
+    },
+    {
+      "q": "Le Décret n°2007-105 du 13 avril 2007 a pour objet de :",
+      "choices": [
+        "Modifier et compléter le décret de 2004 sur l'EIE",
+        "Créer le Code de l'environnement",
+        "Ratifier la Convention de Bâle",
+        "Créer le statut de la fonction publique"
+      ],
+      "exp": "Ce décret vient renforcer la procédure d'EIE de 2004.",
+      "theme": "juri"
+    },
+    {
+      "q": "La Convention de Rotterdam établit notamment :",
+      "choices": [
+        "Une procédure de consentement préalable en connaissance de cause (PIC) pour certains produits chimiques et pesticides dangereux",
+        "L'interdiction totale du commerce international de produits chimiques",
+        "Un régime douanier commun africain",
+        "Une taxe carbone mondiale"
+      ],
+      "exp": "La procédure PIC est le mécanisme central de Rotterdam.",
+      "theme": "conv"
+    },
+    {
+      "q": "Le biogaz produit dans une décharge contrôlée provient principalement :",
+      "choices": [
+        "De la dégradation anaérobie des déchets organiques",
+        "De la combustion directe des plastiques",
+        "De l'évaporation des lixiviats",
+        "Du traitement des DEEE"
+      ],
+      "exp": "Le biogaz résulte de la fermentation anaérobie des matières organiques.",
+      "theme": "tech"
+    },
+    {
+      "q": "Une entreprise refuse l'accès de son site à un inspecteur environnemental muni d'un mandat de contrôle. L'inspecteur doit :",
+      "choices": [
+        "Consigner ce refus et engager la procédure prévue en cas d'obstruction au contrôle",
+        "Repartir définitivement sans suite",
+        "Forcer l'entrée physiquement seul sans cadre légal",
+        "Accepter un pot-de-vin pour ne plus revenir"
+      ],
+      "exp": "Le refus d'accès doit être consigné et traité par la procédure prévue.",
+      "theme": "situ"
+    },
+    {
+      "q": "Parmi les obligations d'un fonctionnaire figure notamment :",
+      "choices": [
+        "Le devoir de réserve et d'obéissance hiérarchique",
+        "Le droit de grève illimité et sans encadrement",
+        "L'exemption de toute discipline",
+        "La liberté de cumuler tout emploi privé sans autorisation"
+      ],
+      "exp": "Le devoir de réserve et l'obéissance hiérarchique sont des obligations classiques du statut.",
+      "theme": "civ"
+    },
+    {
+      "q": "L'Arrêté n°990/MRNE/SGG/90 a pour objet de :",
+      "choices": [
+        "Fixer le contenu, la méthodologie et les procédures de l'EIE",
+        "Fixer le statut des fonctionnaires",
+        "Ratifier une convention internationale",
+        "Créer les communes"
+      ],
+      "exp": "L'arrêté précise les modalités pratiques de réalisation de l'EIE.",
+      "theme": "juri"
+    },
+    {
+      "q": "La gestion du biogaz d'une décharge contrôlée peut inclure :",
+      "choices": [
+        "Le captage, le torchage ou la valorisation énergétique",
+        "Son rejet libre sans traitement",
+        "Son stockage indéfini sans usage",
+        "Son interdiction totale de captage"
+      ],
+      "exp": "Ce sont les trois options classiques de gestion du biogaz.",
+      "theme": "tech"
+    },
+    {
+      "q": "L'avancement d'un fonctionnaire dans la fonction publique mauritanienne dépend généralement :",
+      "choices": [
+        "De l'ancienneté et de l'évaluation professionnelle",
+        "Uniquement du tirage au sort",
+        "Uniquement de la cooptation politique",
+        "D'aucun critère formel"
+      ],
+      "exp": "Ancienneté et évaluation sont les critères usuels d'avancement.",
+      "theme": "civ"
+    },
+    {
+      "q": "La Mauritanie a ratifié la Convention de Rotterdam en :",
+      "choices": [
+        "2005",
+        "1996",
+        "2016",
+        "1987"
+      ],
+      "exp": "Ratification en 2005 selon le support.",
+      "theme": "conv"
+    },
+    {
+      "q": "Un projet industriel a démarré son activité sans avoir réalisé d'Étude d'Impact Environnemental. L'inspecteur doit :",
+      "choices": [
+        "Constater l'absence d'EIE et engager la procédure réglementaire (mise en demeure, régularisation ou sanction)",
+        "Laisser continuer le projet sans aucune remarque",
+        "Exiger la démolition immédiate sans procédure contradictoire",
+        "Ignorer car le projet crée des emplois"
+      ],
+      "exp": "L'absence d'EIE requise est une infraction à traiter par la voie réglementaire.",
+      "theme": "situ"
+    },
+    {
+      "q": "Les compartiments aménagés d'une décharge contrôlée pour recevoir les déchets sont appelés :",
+      "choices": [
+        "Des casiers",
+        "Des lixiviats",
+        "Des composts",
+        "Des digestats"
+      ],
+      "exp": "Les casiers sont les alvéoles aménagées de stockage des déchets.",
+      "theme": "tech"
+    },
+    {
+      "q": "Selon l'article 60 de la Loi n°2000-045, les déchets urbains regroupent notamment :",
+      "choices": [
+        "Les détritus liquides, solides ou gazeux provenant des habitations et établissements recevant du public",
+        "Uniquement les déchets industriels dangereux",
+        "Uniquement les déchets agricoles",
+        "Uniquement les déchets biomédicaux"
+      ],
+      "exp": "C'est la définition légale des déchets urbains à l'article 60.",
+      "theme": "juri"
+    },
+    {
+      "q": "La structure interne d'un ministère chargée de contrôler l'application de la réglementation environnementale sur le terrain est :",
+      "choices": [
+        "L'inspection environnementale",
+        "La direction des ressources humaines",
+        "Le service de communication",
+        "La direction du budget"
+      ],
+      "exp": "Le contrôle de terrain relève de l'inspection environnementale.",
+      "theme": "civ"
+    },
+    {
+      "q": "La Convention de Minamata a pour objet :",
+      "choices": [
+        "La gestion et l'élimination progressive du mercure",
+        "Le contrôle des déchets biomédicaux",
+        "La protection de la couche d'ozone",
+        "Le commerce des pesticides"
+      ],
+      "exp": "Minamata cible spécifiquement le mercure.",
+      "theme": "conv"
+    },
+    {
+      "q": "La différence entre une décharge sauvage et une décharge contrôlée réside notamment dans :",
+      "choices": [
+        "L'aménagement (étanchéité, gestion des lixiviats/biogaz) et le suivi environnemental",
+        "La seule couleur des déchets",
+        "La nationalité des exploitants",
+        "L'absence totale de différence"
+      ],
+      "exp": "L'aménagement technique et le suivi environnemental sont déterminants.",
+      "theme": "tech"
+    },
+    {
+      "q": "Un opérateur privé de collecte déverse les déchets qu'il collecte dans un site non autorisé plutôt que dans la décharge contrôlée prévue. Que doit faire l'inspecteur ?",
+      "choices": [
+        "Constater l'infraction et engager une procédure à l'encontre de l'opérateur, y compris via son contrat avec la commune",
+        "Fermer les yeux car il s'agit d'un prestataire privé",
+        "Sanctionner uniquement la commune",
+        "Ne rien faire tant que personne ne se plaint"
+      ],
+      "exp": "Le prestataire privé reste responsable et soumis au contrôle.",
+      "theme": "situ"
+    },
+    {
+      "q": "L'article 62 de la Loi n°2000-045 impose notamment :",
+      "choices": [
+        "À tout producteur/détenteur de déchets urbains d'en assurer l'élimination conforme",
+        "L'interdiction totale de produire des déchets",
+        "La gratuité systématique de la collecte",
+        "La privatisation obligatoire de toute collecte"
+      ],
+      "exp": "L'article 62 pose l'obligation d'élimination conforme des déchets urbains.",
+      "theme": "juri"
+    },
+    {
+      "q": "Le document stratégique national qui fixe les orientations à long terme du pays en matière de développement durable s'appelle généralement :",
+      "choices": [
+        "La Stratégie Nationale de Développement Durable",
+        "Le Code de l'environnement",
+        "Le Plan Marshall",
+        "La Charte de la fonction publique"
+      ],
+      "exp": "Il s'agit d'un document d'orientation stratégique, distinct du Code de l'environnement (texte juridique).",
+      "theme": "civ"
+    },
+    {
+      "q": "Un centre d'enfouissement technique (CET) se distingue d'une simple décharge par :",
+      "choices": [
+        "Des normes techniques strictes d'étanchéité, de suivi et de traitement des effluents",
+        "L'absence de toute réglementation",
+        "Sa localisation obligatoire en zone urbaine dense",
+        "L'interdiction d'y recevoir des déchets ménagers"
+      ],
+      "exp": "Un CET répond à des normes techniques précises.",
+      "theme": "tech"
+    },
+    {
+      "q": "Selon l'article 62, l'élaboration des plans de collecte, stockage, transport, traitement et élimination des déchets urbains revient :",
+      "choices": [
+        "Au Ministre chargé de l'Environnement, avec les autorités locales",
+        "Uniquement aux entreprises privées",
+        "Uniquement aux Nations Unies",
+        "Uniquement aux ONG"
+      ],
+      "exp": "Le texte prévoit une élaboration conjointe ministère / autorités locales.",
+      "theme": "juri"
+    },
+    {
+      "q": "Le Protocole de Montréal (1987), rattaché à la Convention de Vienne (1985), vise :",
+      "choices": [
+        "L'élimination progressive des substances appauvrissant la couche d'ozone (CFC, HCFC)",
+        "La gestion des déchets plastiques marins",
+        "Le contrôle des POP",
+        "La lutte contre la désertification"
+      ],
+      "exp": "Montréal organise l'élimination des substances appauvrissant la couche d'ozone.",
+      "theme": "conv"
+    },
+    {
+      "q": "Une plainte anonyme signale un trafic présumé de déchets électroniques importés illégalement. L'inspecteur doit :",
+      "choices": [
+        "Vérifier l'information et, si elle est fondée, engager les contrôles appropriés en lien avec les autorités compétentes (douanes)",
+        "Ignorer systématiquement toute plainte anonyme",
+        "Agir seul sans coordination avec les douanes",
+        "Publier l'information sans vérification préalable"
+      ],
+      "exp": "La vérification puis la coordination interadministrative sont la démarche adaptée.",
+      "theme": "situ"
+    },
+    {
+      "q": "Les déchets biomédicaux nécessitent généralement :",
+      "choices": [
+        "Un traitement spécifique (autoclavage ou incinération dédiée)",
+        "Un simple enfouissement classique avec les ordures ménagères",
+        "Un recyclage matière direct",
+        "Aucun traitement particulier"
+      ],
+      "exp": "Leur dangerosité sanitaire impose un traitement spécifique.",
+      "theme": "tech"
+    },
+    {
+      "q": "Le plan national qui organise les orientations de collecte, traitement et élimination des déchets au niveau national est :",
+      "choices": [
+        "Le Plan national de gestion des déchets",
+        "Le Plan national de l'eau",
+        "Le Plan national d'urbanisme",
+        "Le Code minier"
+      ],
+      "exp": "C'est le document de planification sectorielle dédié aux déchets.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le Titre IV de la Loi n°2000-045 est consacré à :",
+      "choices": [
+        "La lutte contre les nuisances et dégradations diverses",
+        "L'organisation du pouvoir judiciaire",
+        "La fiscalité de l'environnement",
+        "Le droit du travail"
+      ],
+      "exp": "Le Titre IV traite des nuisances (déchets, bruit, odeurs, etc.).",
+      "theme": "juri"
+    },
+    {
+      "q": "L'amendement de Kigali au Protocole de Montréal concerne :",
+      "choices": [
+        "La réduction des HFC (hydrofluorocarbures)",
+        "L'interdiction du mercure",
+        "Le contrôle des déchets biomédicaux",
+        "L'interdiction des engrais chimiques"
+      ],
+      "exp": "Kigali étend le protocole aux HFC.",
+      "theme": "conv"
+    },
+    {
+      "q": "L'autoclavage des déchets biomédicaux permet notamment :",
+      "choices": [
+        "De les stériliser avant élimination",
+        "De les recycler en plastique alimentaire",
+        "De les valoriser en compost agricole",
+        "De les rendre comestibles pour l'élevage"
+      ],
+      "exp": "L'autoclavage est un procédé de stérilisation par la chaleur/pression.",
+      "theme": "tech"
+    },
+    {
+      "q": "Un site de décharge présente un risque avéré de pollution des eaux souterraines par des lixiviats non traités. L'inspecteur doit en priorité :",
+      "choices": [
+        "Alerter et coordonner avec le secteur de l'hydraulique pour évaluer et limiter le risque",
+        "Attendre la contamination effective avant d'agir",
+        "Ignorer le risque tant qu'il n'est pas confirmé par un tiers",
+        "Transférer l'entière responsabilité à la commune sans suivi"
+      ],
+      "exp": "Un risque avéré appelle une action préventive coordonnée, sans attendre la contamination.",
+      "theme": "situ"
+    },
+    {
+      "q": "Une problématique environnementale récurrente évoquée à Nouakchott concerne notamment :",
+      "choices": [
+        "L'assainissement urbain et la gestion des déchets plastiques",
+        "La gestion des glaciers",
+        "Les inondations de mousson tropicale",
+        "L'érosion volcanique"
+      ],
+      "exp": "Nouakchott fait face à des enjeux d'assainissement et de déchets plastiques.",
+      "theme": "civ"
+    },
+    {
+      "q": "Parmi les nuisances traitées par le Titre IV figurent notamment :",
+      "choices": [
+        "Les déchets, le bruit, les odeurs et les poussières",
+        "Uniquement les impôts",
+        "Uniquement les visas d'entrée",
+        "Uniquement les marchés publics"
+      ],
+      "exp": "Ce titre couvre notamment déchets, bruit/vibrations, odeurs, poussières.",
+      "theme": "juri"
+    },
+    {
+      "q": "Le compostage est une filière de traitement adaptée principalement :",
+      "choices": [
+        "Aux déchets organiques",
+        "Aux déchets dangereux industriels",
+        "Aux déchets biomédicaux",
+        "Aux DEEE"
+      ],
+      "exp": "Le compostage traite la fraction organique des déchets.",
+      "theme": "tech"
+    },
+    {
+      "q": "La Convention de Bamako a pour objet principal :",
+      "choices": [
+        "D'interdire l'importation de déchets dangereux en Afrique et de contrôler leurs mouvements transfrontières sur le continent",
+        "De réguler la pêche en Afrique de l'Ouest",
+        "De gérer les ressources en eau partagées",
+        "De coordonner les politiques monétaires africaines"
+      ],
+      "exp": "Bamako est le pendant africain de la Convention de Bâle.",
+      "theme": "conv"
+    },
+    {
+      "q": "Une commune sollicite le Ministère de l'Environnement pour l'aider à établir son plan de collecte des déchets. L'attitude appropriée de l'administration centrale est de :",
+      "choices": [
+        "Accompagner techniquement la commune dans l'élaboration du plan, conformément à l'article 62",
+        "Refuser toute assistance aux communes",
+        "Imposer un plan sans concertation locale",
+        "Transférer entièrement la responsabilité sans appui technique"
+      ],
+      "exp": "L'article 62 prévoit justement cette collaboration ministère/autorités locales.",
+      "theme": "situ"
+    },
+    {
+      "q": "Le rôle des communes en matière de déchets, en coordination avec le ministère, porte principalement sur :",
+      "choices": [
+        "L'organisation de la collecte au niveau local",
+        "La ratification des conventions internationales",
+        "La définition des normes nationales de rejets",
+        "La nomination des inspecteurs environnementaux"
+      ],
+      "exp": "La collecte locale est une compétence communale, en lien avec le ministère (art. 62).",
+      "theme": "civ"
+    },
+    {
+      "q": "La procédure de référence pour évaluer les impacts d'un projet sur l'environnement en Mauritanie est :",
+      "choices": [
+        "L'Étude d'Impact Environnemental (EIE)",
+        "Le procès-verbal de police",
+        "Le recensement démographique",
+        "L'audit financier"
+      ],
+      "exp": "L'EIE est la procédure d'évaluation environnementale de référence.",
+      "theme": "juri"
+    },
+    {
+      "q": "La méthanisation est un procédé de valorisation qui produit notamment :",
+      "choices": [
+        "Du biogaz à partir de matières organiques",
+        "Du verre recyclé",
+        "Du papier recyclé",
+        "Des métaux recyclés"
+      ],
+      "exp": "La méthanisation produit du biogaz par fermentation de matières organiques.",
+      "theme": "tech"
+    }
+  ],
+  [
+    {
+      "q": "Qui nomme, en général, les hauts responsables de l'administration centrale en Mauritanie (ministres, hauts fonctionnaires) ?",
+      "choices": [
+        "Le pouvoir exécutif (Président / gouvernement)",
+        "Le pouvoir judiciaire",
+        "Les communes",
+        "Un vote populaire direct pour chaque poste"
+      ],
+      "exp": "Les nominations relèvent du pouvoir exécutif.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le rôle de l'inspecteur environnemental vis-à-vis de l'EIE porte notamment sur :",
+      "choices": [
+        "Le suivi de la mise en œuvre des mesures prévues par l'étude",
+        "La rédaction exclusive de la loi",
+        "La nomination du ministre",
+        "La fixation du taux de change"
+      ],
+      "exp": "L'inspecteur assure notamment le suivi des mesures issues de l'EIE.",
+      "theme": "juri"
+    },
+    {
+      "q": "L'Accord de Paris porte sur :",
+      "choices": [
+        "La lutte contre le changement climatique",
+        "Le contrôle des déchets dangereux",
+        "La protection de la couche d'ozone",
+        "La gestion du mercure"
+      ],
+      "exp": "L'Accord de Paris est l'accord climatique de référence.",
+      "theme": "conv"
+    },
+    {
+      "q": "Le sigle RDF (combustible dérivé de déchets) désigne une forme de :",
+      "choices": [
+        "Valorisation énergétique des déchets",
+        "Recyclage matière du verre",
+        "Compostage",
+        "Traitement des eaux usées"
+      ],
+      "exp": "Le RDF est un combustible obtenu à partir de déchets, pour valorisation énergétique.",
+      "theme": "tech"
+    },
+    {
+      "q": "Après une première mise en demeure restée sans effet, l'exploitant continue l'infraction constatée. L'inspecteur doit :",
+      "choices": [
+        "Engager les sanctions prévues (administratives voire pénales) pour non-conformité persistante",
+        "Renouveler indéfiniment de simples avertissements sans jamais sanctionner",
+        "Abandonner le dossier",
+        "Négocier un arrangement financier personnel avec l'exploitant"
+      ],
+      "exp": "La persistance de l'infraction justifie l'escalade vers la sanction prévue.",
+      "theme": "situ"
+    },
+    {
+      "q": "L'incinération avec récupération d'énergie constitue une forme de :",
+      "choices": [
+        "Valorisation énergétique des déchets",
+        "Recyclage matière",
+        "Mise en décharge sauvage",
+        "Compostage"
+      ],
+      "exp": "L'énergie récupérée fait de ce procédé une valorisation énergétique.",
+      "theme": "tech"
+    },
+    {
+      "q": "Lorsqu'un inspecteur constate une infraction environnementale, le document officiel qu'il établit est :",
+      "choices": [
+        "Un procès-verbal de constat",
+        "Une simple note manuscrite sans valeur",
+        "Un communiqué de presse",
+        "Un rapport syndical"
+      ],
+      "exp": "Le procès-verbal est l'acte officiel de constat d'infraction.",
+      "theme": "juri"
+    },
+    {
+      "q": "La discipline des fonctionnaires (avertissement, blâme, révocation) relève :",
+      "choices": [
+        "Du statut général de la fonction publique",
+        "Du Code de l'environnement",
+        "Du droit international",
+        "Du Code civil uniquement"
+      ],
+      "exp": "Le régime disciplinaire est fixé par le statut général de la fonction publique.",
+      "theme": "civ"
+    },
+    {
+      "q": "La Mauritanie a ratifié l'Accord de Paris en :",
+      "choices": [
+        "2016",
+        "1996",
+        "2005",
+        "1987"
+      ],
+      "exp": "Ratification en 2016 selon le support.",
+      "theme": "conv"
+    },
+    {
+      "q": "Un exploitant conteste le procès-verbal dressé à son encontre. La procédure appropriée est de :",
+      "choices": [
+        "Le laisser exercer les voies de recours prévues par la réglementation",
+        "Annuler automatiquement le PV sans examen",
+        "Ignorer la contestation",
+        "Sanctionner l'exploitant pour avoir contesté"
+      ],
+      "exp": "Le droit de recours doit être respecté, sans annulation ni sanction automatique.",
+      "theme": "situ"
+    },
+    {
+      "q": "La collecte « porte-à-porte » désigne :",
+      "choices": [
+        "Un système où les déchets sont collectés directement au domicile des habitants",
+        "Uniquement un point d'apport volontaire centralisé",
+        "Uniquement un tri par les usagers en usine",
+        "Uniquement une collecte par drone"
+      ],
+      "exp": "C'est la définition classique de la collecte porte-à-porte.",
+      "theme": "tech"
+    },
+    {
+      "q": "Avant d'appliquer une sanction plus lourde, l'administration adresse généralement à l'exploitant fautif :",
+      "choices": [
+        "Une mise en demeure",
+        "Une amnistie automatique",
+        "Une promotion",
+        "Aucune notification"
+      ],
+      "exp": "La mise en demeure précède en général les sanctions plus lourdes.",
+      "theme": "juri"
+    },
+    {
+      "q": "Le rôle principal d'une direction technique au sein du Ministère de l'Environnement est :",
+      "choices": [
+        "D'élaborer et suivre la mise en œuvre des politiques sectorielles (ex. gestion des déchets)",
+        "De gérer exclusivement le budget national",
+        "De nommer les préfets",
+        "De contrôler les partis politiques"
+      ],
+      "exp": "Une direction technique pilote une politique sectorielle donnée.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le sigle CCNUCC désigne :",
+      "choices": [
+        "La Convention-cadre des Nations Unies sur les changements climatiques",
+        "Le Conseil des Nations Unies pour le commerce et le climat",
+        "La Commission conjointe sur les catastrophes climatiques",
+        "Le Code des normes unifiées pour le climat"
+      ],
+      "exp": "CCNUCC = Convention-cadre des Nations Unies sur les changements climatiques.",
+      "theme": "conv"
+    },
+    {
+      "q": "Les « points d'apport volontaire » sont :",
+      "choices": [
+        "Des dispositifs où les usagers déposent eux-mêmes leurs déchets triés",
+        "Des dispositifs de collecte exclusivement porte-à-porte",
+        "Des sanctions administratives",
+        "Des indicateurs de suivi"
+      ],
+      "exp": "L'usager se déplace lui-même vers ces points de dépôt.",
+      "theme": "tech"
+    },
+    {
+      "q": "Un inspecteur constate un brûlage à l'air libre de déchets plastiques par un exploitant. Il doit :",
+      "choices": [
+        "Constater l'infraction et exiger l'arrêt de cette pratique, en orientant vers une filière conforme",
+        "Encourager la pratique car elle réduit le volume rapidement",
+        "Ignorer si le site est isolé",
+        "Sanctionner uniquement si un riverain filme la scène"
+      ],
+      "exp": "Le brûlage à l'air libre est une infraction à faire cesser, quelle que soit la localisation du site.",
+      "theme": "situ"
+    },
+    {
+      "q": "Les sanctions prévues en cas d'infraction au Code de l'environnement peuvent être :",
+      "choices": [
+        "Administratives et/ou pénales",
+        "Uniquement symboliques sans effet",
+        "Uniquement civiles entre particuliers",
+        "Inexistantes"
+      ],
+      "exp": "Le Code prévoit des sanctions à la fois administratives et pénales.",
+      "theme": "juri"
+    },
+    {
+      "q": "Une des priorités de la politique nationale de l'environnement en Mauritanie est :",
+      "choices": [
+        "La lutte contre la pollution et la gestion durable des déchets",
+        "La gestion exclusive du secteur minier",
+        "La politique monétaire",
+        "La diplomatie régionale"
+      ],
+      "exp": "La pollution et les déchets figurent parmi les priorités environnementales nationales.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le rôle des communes dans la collecte des déchets à Nouakchott inclut souvent :",
+      "choices": [
+        "La coordination avec des opérateurs privés pour la collecte",
+        "L'interdiction de toute collecte",
+        "Le contrôle exclusif du commerce international",
+        "La ratification des conventions internationales"
+      ],
+      "exp": "Les communes coordonnent fréquemment la collecte avec des opérateurs privés.",
+      "theme": "tech"
+    },
+    {
+      "q": "Pour un inspecteur en gestion des déchets, la convention la plus directement liée à ses contrôles d'import/export de déchets dangereux est :",
+      "choices": [
+        "La Convention de Bâle",
+        "L'Accord de Paris",
+        "La Convention de Minamata",
+        "Le Protocole de Montréal"
+      ],
+      "exp": "Bâle est la convention de référence pour les mouvements transfrontières de déchets dangereux.",
+      "theme": "conv"
+    },
+    {
+      "q": "Une usine dépasse régulièrement les seuils autorisés de rejets atmosphériques. L'inspecteur doit :",
+      "choices": [
+        "Documenter les dépassements et engager la procédure de mise en conformité ou de sanction",
+        "Tolérer les dépassements si l'usine est un employeur important",
+        "Ne rien faire sans plainte des riverains",
+        "Se contenter d'un simple rappel oral sans suite écrite"
+      ],
+      "exp": "Le poids économique de l'exploitant ne dispense pas du respect des seuils réglementaires.",
+      "theme": "situ"
+    },
+    {
+      "q": "Les installations soumises à des normes de rejets et seuils de pollution spécifiques sont appelées :",
+      "choices": [
+        "Installations classées",
+        "Installations libres",
+        "Installations communales",
+        "Installations diplomatiques"
+      ],
+      "exp": "Ce sont les installations classées qui sont soumises à ces normes.",
+      "theme": "juri"
+    },
+    {
+      "q": "Le terme « collectivité territoriale » en Mauritanie désigne notamment :",
+      "choices": [
+        "La commune",
+        "Le ministère",
+        "La wilaya en tant qu'entité sans élus",
+        "Une ONG"
+      ],
+      "exp": "La commune est la collectivité territoriale de référence.",
+      "theme": "civ"
+    },
+    {
+      "q": "Un indicateur pertinent pour suivre la performance d'un système de gestion des déchets est :",
+      "choices": [
+        "Le taux de recyclage",
+        "Le taux de change monétaire",
+        "Le taux de natalité",
+        "Le taux d'inflation"
+      ],
+      "exp": "Le taux de recyclage est un indicateur de performance classique.",
+      "theme": "tech"
+    },
+    {
+      "q": "La différence essentielle entre une « décharge sauvage » et une « décharge contrôlée » au sens réglementaire est :",
+      "choices": [
+        "La décharge contrôlée respecte des normes d'aménagement et de suivi environnemental, contrairement à la décharge sauvage",
+        "Aucune différence réglementaire",
+        "La décharge sauvage est plus réglementée",
+        "Seule la taille les distingue"
+      ],
+      "exp": "L'aménagement et le suivi réglementaire distinguent les deux types de sites.",
+      "theme": "juri"
+    },
+    {
+      "q": "La Convention de Bamako est particulièrement pertinente en Afrique car elle :",
+      "choices": [
+        "Renforce, au niveau continental, l'interdiction d'importer des déchets dangereux déjà posée par Bâle",
+        "Remplace totalement la Convention de Bâle au niveau mondial",
+        "Ne concerne que l'Asie",
+        "Porte uniquement sur les ressources halieutiques"
+      ],
+      "exp": "Bamako complète Bâle à l'échelle du continent africain.",
+      "theme": "conv"
+    },
+    {
+      "q": "Les quantités de déchets collectées constituent :",
+      "choices": [
+        "Un indicateur de suivi de la performance de la collecte",
+        "Un critère juridique de ratification des conventions",
+        "Un critère de recrutement des fonctionnaires",
+        "Un indicateur budgétaire national uniquement"
+      ],
+      "exp": "C'est un indicateur opérationnel de suivi de la collecte.",
+      "theme": "tech"
+    },
+    {
+      "q": "Un déversement accidentel de produits chimiques survient sur un site industriel. La priorité immédiate de l'inspecteur est :",
+      "choices": [
+        "Évaluer le risque, sécuriser la zone et coordonner avec les services compétents (santé, hydraulique, sécurité civile)",
+        "Rédiger uniquement un rapport administratif sans action immédiate",
+        "Attendre le lendemain pour intervenir",
+        "Laisser l'exploitant gérer seul sans aucun contrôle"
+      ],
+      "exp": "Une urgence appelle une réponse immédiate et coordonnée, avant toute formalité administrative différée.",
+      "theme": "situ"
+    },
+    {
+      "q": "Les engagements internationaux de la Mauritanie en matière climatique s'inscrivent notamment dans :",
+      "choices": [
+        "L'Accord de Paris",
+        "Le Traité de Maastricht",
+        "Le Protocole de Kyoto exclusivement, sans autre accord",
+        "La Charte des Nations Unies sur le commerce"
+      ],
+      "exp": "L'Accord de Paris (2016) est l'engagement climatique de référence évoqué dans le support.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le producteur ou détenteur de déchets urbains a, selon la loi, l'obligation :",
+      "choices": [
+        "D'assurer leur élimination conforme à la réglementation",
+        "De les stocker indéfiniment sans traitement",
+        "De les revendre librement sans contrôle",
+        "De les exporter sans autorisation"
+      ],
+      "exp": "L'article 62 impose une élimination conforme des déchets urbains.",
+      "theme": "juri"
+    },
+    {
+      "q": "La méthodologie d'une inspection de site comprend typiquement les étapes :",
+      "choices": [
+        "Préparation, visite, prélèvements, rapport, suivi des recommandations",
+        "Uniquement la visite sans préparation ni suivi",
+        "Uniquement la sanction immédiate sans constat",
+        "Uniquement un entretien téléphonique"
+      ],
+      "exp": "C'est le déroulé classique d'une inspection de site.",
+      "theme": "tech"
+    },
+    {
+      "q": "Un fonctionnaire qui manque à ses obligations professionnelles s'expose à :",
+      "choices": [
+        "Une sanction disciplinaire prévue par le statut général",
+        "Aucune conséquence",
+        "Une sanction pénale automatique sans procédure",
+        "Un simple avertissement oral non prévu par les textes"
+      ],
+      "exp": "Le manquement expose à une sanction disciplinaire encadrée par le statut général.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le Protocole de Montréal est particulièrement pertinent pour l'inspection des déchets contenant :",
+      "choices": [
+        "Des substances réfrigérantes / CFC (climatiseurs, réfrigérateurs en fin de vie)",
+        "Du mercure uniquement",
+        "Des pesticides uniquement",
+        "Des déchets biomédicaux uniquement"
+      ],
+      "exp": "Les équipements réfrigérants relèvent directement du Protocole de Montréal.",
+      "theme": "conv"
+    },
+    {
+      "q": "Lors d'une inspection programmée, l'inspecteur doit d'abord :",
+      "choices": [
+        "Préparer sa visite (dossier du site, réglementation applicable, points de contrôle)",
+        "Se rendre sur place sans aucune préparation",
+        "Informer l'exploitant de sanctions avant toute visite",
+        "Se limiter à un contrôle visuel depuis l'extérieur du site sans jamais entrer"
+      ],
+      "exp": "La préparation méthodologique précède la visite de terrain.",
+      "theme": "situ"
+    },
+    {
+      "q": "Lors d'une inspection de site, les prélèvements réalisés servent notamment à :",
+      "choices": [
+        "Vérifier objectivement la conformité aux normes (eau, air, sol)",
+        "Décorer le rapport",
+        "Remplacer le procès-verbal",
+        "Évaluer uniquement l'esthétique du site"
+      ],
+      "exp": "Les prélèvements objectivent le contrôle de conformité.",
+      "theme": "tech"
+    },
+    {
+      "q": "Le texte qui fixe la méthodologie précise de réalisation d'une EIE (contenu du dossier, étapes) est :",
+      "choices": [
+        "L'Arrêté n°990/MRNE/SGG/90",
+        "La Loi n°2000-045 seule",
+        "L'Ordonnance n°84-208",
+        "Le Décret n°2007-105 seul, sans l'arrêté"
+      ],
+      "exp": "C'est l'arrêté n°990 qui précise la méthodologie de l'EIE.",
+      "theme": "juri"
+    },
+    {
+      "q": "La supervision de la conformité environnementale des installations classées relève principalement :",
+      "choices": [
+        "De l'inspection environnementale du ministère",
+        "De la police municipale uniquement",
+        "Du ministère du Commerce",
+        "D'une ONG internationale"
+      ],
+      "exp": "C'est une mission de l'inspection environnementale.",
+      "theme": "civ"
+    },
+    {
+      "q": "Une entreprise qui importe des équipements électroniques usagés contenant des substances dangereuses relève potentiellement du contrôle prévu par :",
+      "choices": [
+        "Les Conventions de Bâle et de Bamako",
+        "Uniquement l'Accord de Paris",
+        "Uniquement la Convention de Minamata",
+        "Aucune convention internationale"
+      ],
+      "exp": "L'import de DEEE dangereux relève du régime Bâle/Bamako.",
+      "theme": "conv"
+    },
+    {
+      "q": "Une plainte de riverains concernant des odeurs provenant d'un site de traitement de déchets relève typiquement :",
+      "choices": [
+        "De la gestion des nuisances olfactives par l'inspection environnementale",
+        "Uniquement du ministère du Commerce",
+        "Uniquement de la police des frontières",
+        "D'aucune compétence administrative"
+      ],
+      "exp": "Les odeurs sont une nuisance suivie par l'inspection environnementale.",
+      "theme": "tech"
+    },
+    {
+      "q": "Un exploitant propose un avantage personnel à l'inspecteur pour ne pas mentionner une non-conformité constatée. L'inspecteur doit :",
+      "choices": [
+        "Refuser et consigner l'incident conformément à ses obligations déontologiques",
+        "Accepter discrètement l'avantage",
+        "Négocier un montant plus élevé",
+        "Ignorer la non-conformité en échange d'un service futur"
+      ],
+      "exp": "L'intégrité déontologique impose de refuser et de signaler la tentative de corruption.",
+      "theme": "situ"
+    },
+    {
+      "q": "Le Code de l'environnement mauritanien (Loi n°2000-045) contient un titre consacré à :",
+      "choices": [
+        "La protection des ressources et du milieu naturel",
+        "Uniquement la fiscalité douanière",
+        "Uniquement le droit pénal général",
+        "Uniquement le droit de la famille"
+      ],
+      "exp": "Un des six titres porte sur la protection des ressources et du milieu naturel.",
+      "theme": "juri"
+    },
+    {
+      "q": "Le fonctionnaire dispose, en contrepartie de ses obligations, de droits garantis par le statut général, notamment :",
+      "choices": [
+        "Le droit à la rémunération et à la carrière",
+        "Le droit de vendre son poste",
+        "Le droit de refuser toute mutation sans motif",
+        "Le droit de cumuler librement plusieurs emplois publics"
+      ],
+      "exp": "Rémunération et déroulement de carrière sont des droits statutaires classiques.",
+      "theme": "civ"
+    },
+    {
+      "q": "La coordination entre le Ministère de l'Environnement et le secteur de la santé est particulièrement utile en cas de :",
+      "choices": [
+        "Pollution ayant un impact sanitaire (eaux souillées, fumées toxiques)",
+        "Recrutement de nouveaux fonctionnaires",
+        "Ratification d'accords commerciaux",
+        "Gestion du réseau routier"
+      ],
+      "exp": "Un impact sanitaire justifie une coordination avec la santé.",
+      "theme": "tech"
+    },
+    {
+      "q": "Une entreprise qui démarre une activité à fort impact environnemental sans réaliser d'EIE préalable est en principe :",
+      "choices": [
+        "En infraction à la réglementation environnementale",
+        "En parfaite conformité",
+        "Exemptée automatiquement",
+        "Uniquement soumise à un avertissement oral sans suite possible"
+      ],
+      "exp": "L'absence d'EIE requise constitue une infraction à la réglementation.",
+      "theme": "juri"
+    },
+    {
+      "q": "La Convention de Rotterdam s'applique notamment aux produits chimiques et pesticides faisant l'objet :",
+      "choices": [
+        "D'un commerce international",
+        "Uniquement d'une production locale non commercialisée",
+        "Uniquement d'un usage domestique",
+        "Uniquement d'une utilisation militaire"
+      ],
+      "exp": "Rotterdam encadre spécifiquement le commerce international de ces substances.",
+      "theme": "conv"
+    },
+    {
+      "q": "Une association locale demande à consulter le rapport d'inspection d'un site suspecté de pollution. L'inspecteur doit :",
+      "choices": [
+        "Orienter la demande selon les règles applicables de communication des documents administratifs",
+        "Refuser systématiquement toute communication sans base légale",
+        "Transmettre l'intégralité du dossier confidentiel sans vérification",
+        "Ignorer la demande sans réponse"
+      ],
+      "exp": "La communication des documents administratifs suit des règles précises, ni refus ni transmission automatique.",
+      "theme": "situ"
+    },
+    {
+      "q": "La coordination avec le secteur de l'hydraulique est pertinente notamment lors de :",
+      "choices": [
+        "La pollution des eaux par des lixiviats ou rejets industriels",
+        "La nomination des ambassadeurs",
+        "La gestion des visas",
+        "La politique fiscale"
+      ],
+      "exp": "La pollution de l'eau appelle une coordination avec l'hydraulique.",
+      "theme": "tech"
+    },
+    {
+      "q": "En Mauritanie, la coordination entre le Ministère de l'Environnement et d'autres administrations (santé, hydraulique) est nécessaire notamment pour :",
+      "choices": [
+        "Le traitement des nuisances ayant un impact sanitaire (ex. pollution de l'eau)",
+        "La nomination des ambassadeurs",
+        "La gestion du système bancaire",
+        "L'organisation des élections"
+      ],
+      "exp": "Les nuisances à impact sanitaire appellent une coordination interministérielle.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le rôle du Ministre chargé de l'Environnement dans la gestion des déchets urbains, selon l'article 62, est notamment de :",
+      "choices": [
+        "Élaborer les plans de gestion avec les autorités locales",
+        "Fixer seul le prix du pain",
+        "Gérer les douanes",
+        "Nommer les juges"
+      ],
+      "exp": "L'article 62 prévoit une élaboration conjointe des plans de gestion des déchets.",
+      "theme": "juri"
+    },
+    {
+      "q": "Le mercure présent dans certains déchets (piles, lampes, thermomètres) relève du champ de :",
+      "choices": [
+        "La Convention de Minamata",
+        "La Convention de Rotterdam",
+        "L'Accord de Paris",
+        "Le Protocole de Montréal"
+      ],
+      "exp": "Minamata est la convention dédiée au mercure.",
+      "theme": "conv"
+    },
+    {
+      "q": "Le recyclage matière concerne typiquement :",
+      "choices": [
+        "Le papier, le verre, les plastiques et les métaux",
+        "Uniquement les déchets biomédicaux",
+        "Uniquement les gaz à effet de serre",
+        "Uniquement les eaux usées"
+      ],
+      "exp": "Ce sont les matériaux classiques du recyclage matière.",
+      "theme": "tech"
+    },
+    {
+      "q": "Un site de traitement de déchets biomédicaux ne dispose pas d'autoclave ni d'incinérateur dédié fonctionnel. L'inspecteur doit :",
+      "choices": [
+        "Constater la non-conformité et exiger la mise en place d'un traitement adapté",
+        "Considérer que l'enfouissement classique est suffisant",
+        "Ignorer car le site traite de petits volumes",
+        "Attendre un accident avant d'agir"
+      ],
+      "exp": "L'absence de traitement adapté est une non-conformité à corriger, quel que soit le volume.",
+      "theme": "situ"
+    },
+    {
+      "q": "Le suivi de l'actualité environnementale nationale (pollution, décharges, assainissement) permet à un inspecteur de :",
+      "choices": [
+        "Mieux contextualiser ses contrôles et priorités",
+        "Remplacer les textes juridiques en vigueur",
+        "Ignorer la réglementation",
+        "Se substituer au pouvoir judiciaire"
+      ],
+      "exp": "L'actualité éclaire le contexte, sans se substituer au droit applicable.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le champ d'application du Code de l'environnement mauritanien couvre notamment :",
+      "choices": [
+        "La gestion des déchets, la protection des ressources naturelles et la lutte contre les nuisances",
+        "Uniquement le droit commercial",
+        "Uniquement le droit du travail",
+        "Uniquement le droit fiscal"
+      ],
+      "exp": "Ce sont les grands axes structurant la Loi n°2000-045.",
+      "theme": "juri"
+    },
+    {
+      "q": "Le secteur informel de récupération des déchets, souvent présent en Afrique de l'Ouest, joue un rôle notamment dans :",
+      "choices": [
+        "La collecte et le tri de matériaux recyclables (plastiques, métaux)",
+        "La ratification des conventions internationales",
+        "La fixation des normes de rejets",
+        "La rédaction des lois nationales"
+      ],
+      "exp": "Ce secteur contribue de fait à la collecte/tri de matériaux valorisables.",
+      "theme": "tech"
+    },
+    {
+      "q": "Les polluants organiques persistants (POP), comme certains pesticides et substances chimiques rémanentes, relèvent de :",
+      "choices": [
+        "La Convention de Stockholm",
+        "La Convention de Bâle",
+        "La Convention de Bamako",
+        "L'Accord de Paris"
+      ],
+      "exp": "Stockholm est le texte de référence sur les POP.",
+      "theme": "conv"
+    },
+    {
+      "q": "Une décharge contrôlée dépasse sa capacité prévue et reçoit des déchets au-delà des casiers aménagés. L'inspecteur doit :",
+      "choices": [
+        "Signaler le dépassement de capacité et exiger des mesures correctives (extension conforme ou orientation vers un autre site)",
+        "Ignorer tant qu'il n'y a pas de débordement visible",
+        "Autoriser l'exploitant à agrandir sans étude préalable",
+        "Fermer immédiatement sans solution alternative pour les déchets"
+      ],
+      "exp": "Le dépassement de capacité appelle des mesures correctives encadrées, ni laxisme ni fermeture brutale sans alternative.",
+      "theme": "situ"
+    },
+    {
+      "q": "Les catégories A, B, C de la fonction publique mauritanienne correspondent généralement à :",
+      "choices": [
+        "Des niveaux de qualification et de responsabilité différents",
+        "Des zones géographiques d'affectation",
+        "Des partis politiques",
+        "Des tranches d'âge"
+      ],
+      "exp": "Ces catégories reflètent le niveau de qualification et de responsabilité.",
+      "theme": "civ"
+    },
+    {
+      "q": "Un inspecteur qui constate un dépassement des seuils de rejets d'une installation classée doit notamment :",
+      "choices": [
+        "Documenter le constat et engager la procédure réglementaire appropriée",
+        "Ignorer le dépassement s'il est mineur selon son jugement personnel",
+        "Fermer l'usine sans procédure",
+        "Informer uniquement la presse"
+      ],
+      "exp": "Le constat documenté et la procédure réglementaire sont la démarche attendue.",
+      "theme": "juri"
+    },
+    {
+      "q": "L'économie circulaire, appliquée à la gestion des déchets, vise principalement à :",
+      "choices": [
+        "Réduire la production de déchets et maximiser la réutilisation/le recyclage des ressources",
+        "Maximiser l'enfouissement systématique",
+        "Supprimer toute collecte",
+        "Encourager le brûlage à l'air libre"
+      ],
+      "exp": "C'est l'objectif central de l'économie circulaire.",
+      "theme": "tech"
+    }
+  ],
+  [
+    {
+      "q": "Un poste d'« Ingénieur Principal » dans la fonction publique correspond généralement à :",
+      "choices": [
+        "Un cadre supérieur de catégorie A",
+        "Un poste de catégorie C",
+        "Un poste non classé",
+        "Un poste réservé aux stagiaires"
+      ],
+      "exp": "Un ingénieur principal relève typiquement de la catégorie A.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le décret de 2004 sur l'EIE a été modifié en 2007 afin de :",
+      "choices": [
+        "Renforcer la procédure d'évaluation environnementale",
+        "La supprimer totalement",
+        "La remplacer par une simple déclaration sur l'honneur",
+        "L'aligner uniquement sur le droit du travail"
+      ],
+      "exp": "Le décret de 2007 vient renforcer la procédure initiale de 2004.",
+      "theme": "juri"
+    },
+    {
+      "q": "Une convention qui impose un consentement préalable avant l'exportation de certains produits chimiques dangereux vers un autre pays est :",
+      "choices": [
+        "La Convention de Rotterdam",
+        "La Convention de Bâle",
+        "L'Accord de Paris",
+        "Le Protocole de Montréal"
+      ],
+      "exp": "C'est le mécanisme PIC propre à Rotterdam.",
+      "theme": "conv"
+    },
+    {
+      "q": "Le brûlage à l'air libre de déchets plastiques présente notamment le risque :",
+      "choices": [
+        "D'émissions toxiques dans l'air",
+        "D'aucune conséquence environnementale",
+        "D'une valorisation énergétique optimale et sans risque",
+        "D'un recyclage matière efficace"
+      ],
+      "exp": "Le brûlage non contrôlé de plastiques génère des émissions toxiques.",
+      "theme": "tech"
+    },
+    {
+      "q": "Une entreprise informelle de récupération de métaux opère sur un site de décharge sans autorisation ni protection pour les travailleurs. L'inspecteur doit :",
+      "choices": [
+        "Signaler la situation aux autorités compétentes pour encadrer l'activité et protéger les travailleurs",
+        "Chasser violemment les récupérateurs sans alternative",
+        "Ignorer totalement la situation",
+        "Encourager l'activité sans aucun encadrement"
+      ],
+      "exp": "L'enjeu est d'encadrer une pratique existante en protégeant les personnes concernées.",
+      "theme": "situ"
+    },
+    {
+      "q": "Une décharge contrôlée bien conçue doit notamment garantir :",
+      "choices": [
+        "L'étanchéité du fond pour limiter la pollution des sols et des nappes",
+        "L'absence totale d'étanchéité pour favoriser l'infiltration",
+        "L'interdiction de tout suivi environnemental",
+        "L'accès libre sans aucun contrôle"
+      ],
+      "exp": "L'étanchéité protège les sols et les nappes phréatiques.",
+      "theme": "tech"
+    },
+    {
+      "q": "Selon le Code de l'environnement, la définition des déchets urbains inclut les détritus provenant :",
+      "choices": [
+        "Des habitations et des établissements recevant du public",
+        "Uniquement des mines",
+        "Uniquement des ambassades",
+        "Uniquement des aéroports"
+      ],
+      "exp": "C'est le périmètre fixé par l'article 60.",
+      "theme": "juri"
+    },
+    {
+      "q": "La déconcentration de l'administration environnementale au niveau local vise notamment à :",
+      "choices": [
+        "Rapprocher le contrôle et l'accompagnement des acteurs du terrain",
+        "Supprimer tout contrôle local",
+        "Centraliser toutes les décisions à l'étranger",
+        "Remplacer les communes par des entreprises privées"
+      ],
+      "exp": "La déconcentration rapproche l'administration du terrain.",
+      "theme": "civ"
+    },
+    {
+      "q": "Les engagements climatiques de la Mauritanie (réduction des émissions, adaptation) s'inscrivent notamment dans le cadre de :",
+      "choices": [
+        "L'Accord de Paris et la CCNUCC",
+        "La Convention de Bâle uniquement",
+        "La Convention de Bamako uniquement",
+        "La Convention de Minamata uniquement"
+      ],
+      "exp": "Ce sont les textes climatiques de référence.",
+      "theme": "conv"
+    },
+    {
+      "q": "Lors d'un contrôle, l'inspecteur constate que les indicateurs de suivi (taux de recyclage, quantités collectées) ne sont pas renseignés par l'exploitant. Il doit :",
+      "choices": [
+        "Exiger la mise en place d'un suivi conforme aux obligations réglementaires",
+        "Considérer que ces indicateurs sont facultatifs",
+        "Sanctionner uniquement si un tiers s'en plaint",
+        "Remplir lui-même les indicateurs à la place de l'exploitant"
+      ],
+      "exp": "Le suivi des indicateurs incombe à l'exploitant, sous contrôle de l'inspecteur.",
+      "theme": "situ"
+    },
+    {
+      "q": "Les déchets industriels dangereux se distinguent des déchets ménagers notamment par :",
+      "choices": [
+        "Leur toxicité ou dangerosité nécessitant un traitement spécifique",
+        "Leur origine exclusivement agricole",
+        "Leur absence totale de réglementation",
+        "Leur traitement identique aux déchets ménagers"
+      ],
+      "exp": "Leur dangerosité impose un traitement adapté, différent des ordures ménagères.",
+      "theme": "tech"
+    },
+    {
+      "q": "Le respect des seuils de pollution de l'eau, de l'air et du sol par les installations classées relève du contrôle :",
+      "choices": [
+        "De l'inspection environnementale",
+        "Du ministère du Commerce",
+        "Des douanes",
+        "Des services diplomatiques"
+      ],
+      "exp": "C'est une mission centrale de l'inspection environnementale.",
+      "theme": "juri"
+    },
+    {
+      "q": "Parmi les axes de la Stratégie Nationale de Développement Durable figure généralement :",
+      "choices": [
+        "La gestion durable des ressources naturelles et des déchets",
+        "Exclusivement la politique de défense",
+        "Exclusivement la politique monétaire",
+        "Exclusivement la diplomatie"
+      ],
+      "exp": "La gestion durable des ressources et déchets est un axe typique de ces stratégies.",
+      "theme": "civ"
+    },
+    {
+      "q": "La Convention de Vienne de 1985 a précédé et servi de cadre général :",
+      "choices": [
+        "Au Protocole de Montréal (1987)",
+        "À la Convention de Bâle",
+        "À l'Accord de Paris",
+        "À la Convention de Stockholm"
+      ],
+      "exp": "Vienne (1985) précède et encadre le Protocole de Montréal (1987).",
+      "theme": "conv"
+    },
+    {
+      "q": "Le suivi de la conformité des installations de traitement des déchets s'appuie notamment sur :",
+      "choices": [
+        "Des contrôles réguliers et des indicateurs de conformité",
+        "La seule bonne foi déclarée de l'exploitant",
+        "L'absence de tout contrôle",
+        "Un vote citoyen annuel"
+      ],
+      "exp": "Contrôles réguliers et indicateurs objectivent le suivi de conformité.",
+      "theme": "tech"
+    },
+    {
+      "q": "Une entreprise sollicite l'inspecteur pour obtenir des conseils sur la mise en conformité de son site avant un contrôle officiel. L'attitude appropriée est de :",
+      "choices": [
+        "Fournir une information générale sur la réglementation applicable tout en préservant l'impartialité du contrôle à venir",
+        "Refuser toute information par principe",
+        "Garantir à l'avance un résultat favorable au contrôle",
+        "Exiger un paiement pour ces conseils"
+      ],
+      "exp": "L'information générale reste possible sans compromettre l'impartialité du contrôle futur.",
+      "theme": "situ"
+    },
+    {
+      "q": "Une « mise en demeure » adressée à un exploitant a pour objectif de :",
+      "choices": [
+        "Lui demander de se conformer à la réglementation dans un délai donné avant sanction",
+        "Le féliciter pour ses bonnes pratiques",
+        "Annuler définitivement son autorisation sans délai",
+        "Remplacer le procès-verbal par une simple discussion informelle"
+      ],
+      "exp": "La mise en demeure fixe un délai de mise en conformité avant sanction.",
+      "theme": "juri"
+    },
+    {
+      "q": "Le Plan national de gestion des déchets s'articule notamment autour de :",
+      "choices": [
+        "La collecte, le traitement et la valorisation des déchets",
+        "La seule construction de routes",
+        "La gestion des visas",
+        "La politique agricole exclusivement"
+      ],
+      "exp": "Ce plan couvre la chaîne collecte-traitement-valorisation.",
+      "theme": "civ"
+    },
+    {
+      "q": "La valorisation organique des déchets regroupe notamment :",
+      "choices": [
+        "Le compostage et la méthanisation",
+        "L'incinération sans récupération d'énergie",
+        "Le recyclage du verre",
+        "Le stockage en décharge sauvage"
+      ],
+      "exp": "Compostage et méthanisation sont les deux voies principales de valorisation organique.",
+      "theme": "tech"
+    },
+    {
+      "q": "Un inspecteur qui contrôle l'importation de déchets électroniques (DEEE) dangereux doit avoir à l'esprit en priorité :",
+      "choices": [
+        "Les obligations issues de la Convention de Bâle (et de Bamako au niveau africain)",
+        "Uniquement l'Accord de Paris",
+        "Uniquement la Convention de Minamata",
+        "Aucune convention particulière"
+      ],
+      "exp": "Bâle/Bamako encadrent les mouvements transfrontières de ces déchets.",
+      "theme": "conv"
+    },
+    {
+      "q": "Deux administrations (Environnement et Hydraulique) doivent intervenir sur un même site pollué. La bonne pratique est de :",
+      "choices": [
+        "Coordonner les interventions pour éviter les doublons et couvrir l'ensemble des aspects (sol, eau)",
+        "Intervenir chacune séparément sans aucune coordination",
+        "Laisser l'une des deux administrations agir seule sans en informer l'autre",
+        "Ignorer le problème tant que les deux ne sont pas d'accord sur la procédure"
+      ],
+      "exp": "La coordination interadministrative garantit une couverture complète du problème.",
+      "theme": "situ"
+    },
+    {
+      "q": "Le cadre juridique national de l'environnement en Mauritanie repose principalement sur :",
+      "choices": [
+        "La Loi n°2000-045 et ses décrets d'application",
+        "Uniquement des circulaires internes non publiées",
+        "Uniquement le droit coutumier sans texte écrit",
+        "Uniquement des conventions internationales sans texte national"
+      ],
+      "exp": "La loi-cadre et ses textes d'application forment le socle national.",
+      "theme": "juri"
+    },
+    {
+      "q": "Un fonctionnaire affecté à l'inspection environnementale doit notamment respecter :",
+      "choices": [
+        "Le devoir d'impartialité et de probité dans ses contrôles",
+        "Aucune règle déontologique particulière",
+        "Uniquement les instructions orales de tiers",
+        "Les intérêts de l'entreprise contrôlée"
+      ],
+      "exp": "Impartialité et probité sont essentielles à la fonction d'inspection.",
+      "theme": "civ"
+    },
+    {
+      "q": "Un exploitant qui ne respecte pas les normes de rejets d'une installation classée peut faire l'objet, après constat, :",
+      "choices": [
+        "D'une mise en demeure puis de sanctions en cas de non-conformité persistante",
+        "D'aucune conséquence",
+        "D'une simple félicitation",
+        "D'une exonération fiscale automatique"
+      ],
+      "exp": "C'est le mécanisme classique mise en demeure puis sanction.",
+      "theme": "tech"
+    },
+    {
+      "q": "L'obligation de disposer d'une étude d'impact avant réalisation d'un projet vise notamment à :",
+      "choices": [
+        "Prévenir les atteintes à l'environnement en amont du projet",
+        "Retarder systématiquement tous les projets sans justification",
+        "Remplacer le permis de construire",
+        "Financer uniquement des ONG"
+      ],
+      "exp": "L'EIE a une vocation préventive, en amont du projet.",
+      "theme": "juri"
+    },
+    {
+      "q": "Parmi les conventions suivantes, laquelle ne concerne pas directement les déchets ou produits chimiques dangereux ?",
+      "choices": [
+        "L'Accord de Paris (climat)",
+        "La Convention de Bâle",
+        "La Convention de Stockholm",
+        "La Convention de Rotterdam"
+      ],
+      "exp": "L'Accord de Paris porte sur le climat, non sur les déchets/produits chimiques dangereux.",
+      "theme": "conv"
+    },
+    {
+      "q": "Le « torchage » du biogaz consiste à :",
+      "choices": [
+        "Le brûler de manière contrôlée pour limiter son impact climatique lorsqu'il n'est pas valorisé",
+        "Le stocker indéfiniment sans traitement",
+        "Le rejeter directement dans l'atmosphère sans combustion",
+        "Le transformer directement en eau potable"
+      ],
+      "exp": "Le torchage est une combustion contrôlée limitant l'impact climatique du biogaz non valorisé.",
+      "theme": "tech"
+    },
+    {
+      "q": "Un exploitant met en avant le nombre d'emplois créés par son site pour justifier une non-conformité environnementale grave. L'inspecteur doit :",
+      "choices": [
+        "Maintenir une évaluation objective fondée sur la réglementation, indépendamment de cet argument",
+        "Renoncer systématiquement à toute sanction dans ce cas",
+        "Exiger la fermeture immédiate sans procédure",
+        "Transmettre le dossier aux médias sans suite administrative"
+      ],
+      "exp": "L'évaluation reste fondée sur la réglementation, indépendamment des enjeux économiques invoqués.",
+      "theme": "situ"
+    },
+    {
+      "q": "Le contrôle hiérarchique d'un inspecteur environnemental est exercé par :",
+      "choices": [
+        "Sa direction / son ministère de rattachement",
+        "L'entreprise inspectée elle-même",
+        "Une ONG étrangère",
+        "Aucun contrôle hiérarchique"
+      ],
+      "exp": "L'inspecteur reste soumis à la voie hiérarchique de son administration.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le texte encadrant historiquement l'hygiène et la salubrité avant le Code de l'environnement de 2000 est :",
+      "choices": [
+        "L'Ordonnance n°84-208 de 1984",
+        "La Loi n°2000-045",
+        "Le Décret n°2007-105",
+        "L'Arrêté n°990"
+      ],
+      "exp": "L'ordonnance de 1984 précède le Code de l'environnement de 2000.",
+      "theme": "juri"
+    },
+    {
+      "q": "Les fréquences et circuits de collecte des déchets relèvent :",
+      "choices": [
+        "De l'organisation logistique de la collecte",
+        "Du droit pénal international",
+        "Des conventions sur la couche d'ozone",
+        "Du statut de la fonction publique"
+      ],
+      "exp": "C'est un aspect d'organisation logistique locale.",
+      "theme": "tech"
+    },
+    {
+      "q": "La notion de « service public de l'environnement » recouvre notamment :",
+      "choices": [
+        "Les missions d'intérêt général assurées par l'administration en matière environnementale",
+        "Uniquement les activités commerciales privées",
+        "Uniquement les ONG",
+        "Aucune mission précise"
+      ],
+      "exp": "Il s'agit des missions d'intérêt général confiées à l'administration.",
+      "theme": "civ"
+    },
+    {
+      "q": "La gestion des mouvements transfrontières de déchets dangereux fait l'objet d'une double couverture pour la Mauritanie via :",
+      "choices": [
+        "La Convention de Bâle (mondiale) et la Convention de Bamako (africaine)",
+        "Uniquement l'Accord de Paris",
+        "Uniquement le Protocole de Montréal",
+        "Aucune convention ne couvre ce sujet"
+      ],
+      "exp": "Les deux textes se complètent, l'un mondial, l'autre continental.",
+      "theme": "conv"
+    },
+    {
+      "q": "Un inspecteur reçoit une pression hiérarchique pour ne pas donner suite à un constat d'infraction concernant une entreprise influente. Il doit :",
+      "choices": [
+        "Maintenir son constat conformément aux règles et signaler toute pression indue selon les voies appropriées",
+        "Obéir sans réserve à la pression en effaçant le constat",
+        "Démissionner immédiatement sans alerter personne",
+        "Publier directement l'affaire dans la presse sans passer par la voie hiérarchique"
+      ],
+      "exp": "L'intégrité professionnelle impose de maintenir le constat et de signaler la pression par les voies appropriées.",
+      "theme": "situ"
+    },
+    {
+      "q": "Un rapport d'inspection environnementale doit notamment comporter :",
+      "choices": [
+        "Les constats, les éventuelles non-conformités et les recommandations de suivi",
+        "Uniquement une photo sans texte",
+        "Uniquement une opinion personnelle sans constat",
+        "Aucune conclusion"
+      ],
+      "exp": "Le rapport structure constats, non-conformités et recommandations.",
+      "theme": "tech"
+    },
+    {
+      "q": "Les « dégradations esthétiques des sites », mentionnées dans le Titre IV du Code de l'environnement, relèvent :",
+      "choices": [
+        "De la lutte contre les nuisances et dégradations diverses",
+        "Du droit des successions",
+        "De la fiscalité douanière",
+        "Du droit du travail"
+      ],
+      "exp": "Elles sont expressément visées par le Titre IV.",
+      "theme": "juri"
+    },
+    {
+      "q": "Un des enjeux de l'assainissement urbain à Nouakchott concerne :",
+      "choices": [
+        "La gestion des eaux usées et des déchets solides urbains",
+        "La gestion exclusive du trafic aérien",
+        "La politique monétaire",
+        "La gestion des ports uniquement"
+      ],
+      "exp": "Eaux usées et déchets solides urbains sont au cœur des enjeux d'assainissement.",
+      "theme": "civ"
+    },
+    {
+      "q": "La lutte contre les substances appauvrissant la couche d'ozone concerne notamment le secteur :",
+      "choices": [
+        "De la réfrigération et de la climatisation",
+        "De la pêche uniquement",
+        "Du textile uniquement",
+        "De l'agriculture uniquement"
+      ],
+      "exp": "CFC et HCFC sont surtout présents dans les équipements froid/climatisation.",
+      "theme": "conv"
+    },
+    {
+      "q": "La gestion des eaux souillées issues d'un site de déchets non conforme relève typiquement :",
+      "choices": [
+        "Du contrôle environnemental en coordination avec le secteur de l'hydraulique",
+        "Du ministère du Commerce",
+        "D'aucune compétence administrative",
+        "Du droit des successions"
+      ],
+      "exp": "Une coordination environnement/hydraulique s'impose ici.",
+      "theme": "tech"
+    },
+    {
+      "q": "Lors d'une visite, l'inspecteur constate un léger écart mineur sans risque environnemental significatif. L'attitude proportionnée est de :",
+      "choices": [
+        "Le signaler et recommander une correction, sans nécessairement engager une procédure de sanction lourde",
+        "Engager systématiquement la sanction maximale pour tout écart quelle que soit sa gravité",
+        "Ignorer totalement l'écart",
+        "Fermer le site pour un écart mineur sans proportionnalité"
+      ],
+      "exp": "La réponse doit rester proportionnée à la gravité réelle du constat.",
+      "theme": "situ"
+    },
+    {
+      "q": "Un inspecteur environnemental qui découvre une décharge non autorisée doit d'abord :",
+      "choices": [
+        "Constater les faits et engager la procédure réglementaire (PV, mise en demeure)",
+        "Fermer le site par la force sans procédure",
+        "Ne rien faire tant qu'il n'y a pas de plainte",
+        "Publier directement une sanction pénale sans enquête"
+      ],
+      "exp": "Le constat et la procédure réglementaire précèdent toute sanction.",
+      "theme": "juri"
+    },
+    {
+      "q": "En cas de manquement grave d'un fonctionnaire, la sanction la plus lourde prévue par le statut général peut aller jusqu'à :",
+      "choices": [
+        "La révocation",
+        "Une simple mutation automatique",
+        "Aucune sanction possible",
+        "Une augmentation de salaire"
+      ],
+      "exp": "La révocation est la sanction disciplinaire la plus sévère.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le dimensionnement des équipements de collecte (bacs, camions) dépend notamment :",
+      "choices": [
+        "Du volume de déchets généré et de la fréquence de collecte prévue",
+        "Uniquement de la couleur préférée des habitants",
+        "Uniquement du taux de change",
+        "Uniquement de la météo du jour même"
+      ],
+      "exp": "Le dimensionnement est fonction du volume et de la fréquence de collecte.",
+      "theme": "tech"
+    },
+    {
+      "q": "Le Code de l'environnement mauritanien prévoit un régime spécifique pour :",
+      "choices": [
+        "Le bruit, les vibrations, les odeurs et les poussières",
+        "Uniquement les contrats commerciaux",
+        "Uniquement le droit successoral",
+        "Uniquement les visas"
+      ],
+      "exp": "Ces nuisances relèvent du Titre IV de la loi.",
+      "theme": "juri"
+    },
+    {
+      "q": "Un pesticide interdit au niveau international car classé polluant organique persistant relèverait typiquement de :",
+      "choices": [
+        "La Convention de Stockholm",
+        "La Convention de Minamata",
+        "Le Protocole de Montréal",
+        "L'Accord de Paris"
+      ],
+      "exp": "Stockholm régule spécifiquement les POP, dont certains pesticides.",
+      "theme": "conv"
+    },
+    {
+      "q": "Un exploitant a corrigé une non-conformité suite à une première mise en demeure. Lors du contrôle de suivi, l'inspecteur doit :",
+      "choices": [
+        "Vérifier concrètement la mise en conformité et clore ou ajuster la procédure selon les faits constatés",
+        "Sanctionner quand même par principe",
+        "Ignorer le suivi une fois la mise en demeure envoyée",
+        "Considérer que la parole de l'exploitant suffit sans vérification"
+      ],
+      "exp": "Le contrôle de suivi doit vérifier concrètement la correction annoncée.",
+      "theme": "situ"
+    },
+    {
+      "q": "Le traitement des déchets dangereux, comparé aux déchets ménagers, nécessite généralement :",
+      "choices": [
+        "Des filières et des précautions spécifiques (confinement, traitement adapté)",
+        "Aucune précaution supplémentaire",
+        "Un traitement identique et non différencié",
+        "Une interdiction totale de tout traitement"
+      ],
+      "exp": "Leur dangerosité impose des filières et précautions dédiées.",
+      "theme": "tech"
+    },
+    {
+      "q": "La coordination entre communes et Ministère de l'Environnement pour les plans de collecte des déchets illustre :",
+      "choices": [
+        "Le principe de collaboration entre échelons central et local",
+        "La suppression du rôle des communes",
+        "L'absence de toute coordination prévue par les textes",
+        "Un conflit permanent entre les deux niveaux"
+      ],
+      "exp": "L'article 62 organise justement cette collaboration.",
+      "theme": "civ"
+    },
+    {
+      "q": "Le rôle des autorités locales, aux côtés du Ministre chargé de l'Environnement, dans les plans de gestion des déchets urbains est prévu par :",
+      "choices": [
+        "L'article 62 de la Loi n°2000-045",
+        "L'article 60 uniquement",
+        "L'Ordonnance de 1984 uniquement",
+        "L'Arrêté n°990 seul"
+      ],
+      "exp": "C'est bien l'article 62 qui organise cette collaboration.",
+      "theme": "juri"
+    },
+    {
+      "q": "La ratification d'une convention internationale par la Mauritanie implique notamment :",
+      "choices": [
+        "L'engagement de l'État à en respecter et transposer les obligations dans son droit interne",
+        "Aucune obligation concrète",
+        "L'annulation automatique des lois nationales existantes",
+        "L'application exclusive par les Nations Unies sans rôle national"
+      ],
+      "exp": "La ratification engage l'État à respecter et transposer la convention.",
+      "theme": "conv"
+    },
+    {
+      "q": "La valorisation énergétique des déchets contribue notamment à :",
+      "choices": [
+        "Réduire le volume à enfouir tout en produisant de l'énergie",
+        "Augmenter systématiquement la pollution sans aucun bénéfice",
+        "Remplacer entièrement le recyclage matière partout",
+        "Supprimer la nécessité de toute collecte"
+      ],
+      "exp": "Elle réduit le volume enfoui tout en valorisant l'énergie contenue dans les déchets.",
+      "theme": "tech"
+    },
+    {
+      "q": "Une catastrophe naturelle endommage une décharge contrôlée, provoquant un risque de dispersion de déchets. L'inspecteur doit :",
+      "choices": [
+        "Évaluer rapidement les risques et coordonner une réponse avec les autorités compétentes",
+        "Attendre les instructions sans initiative pendant plusieurs semaines",
+        "Considérer que ce n'est pas de sa compétence",
+        "Ignorer tant qu'aucun accident n'est encore survenu"
+      ],
+      "exp": "Une situation d'urgence appelle une évaluation rapide et une coordination immédiate.",
+      "theme": "situ"
+    },
+    {
+      "q": "L'un des rôles du Ministère de l'Environnement et du Développement Durable est :",
+      "choices": [
+        "D'élaborer et de faire appliquer la réglementation environnementale nationale",
+        "De gérer exclusivement le système judiciaire",
+        "De battre monnaie",
+        "De gérer les relations diplomatiques bilatérales"
+      ],
+      "exp": "L'élaboration et l'application de la réglementation environnementale sont son cœur de mission.",
+      "theme": "civ"
+    },
+    {
+      "q": "Une procédure d'EIE non respectée par un promoteur peut entraîner :",
+      "choices": [
+        "Des sanctions administratives voire pénales",
+        "Aucune conséquence légale",
+        "Uniquement une recommandation orale",
+        "Une récompense fiscale"
+      ],
+      "exp": "Le non-respect de l'EIE est sanctionnable comme toute infraction environnementale.",
+      "theme": "juri"
+    },
+    {
+      "q": "Le rôle d'un inspecteur face à une décharge non conforme découverte lors d'une tournée est de :",
+      "choices": [
+        "Documenter la situation et engager la procédure réglementaire de mise en conformité",
+        "Fermer les yeux si le site est ancien",
+        "Laisser faire sans aucune action",
+        "Informer uniquement les médias sans démarche administrative"
+      ],
+      "exp": "Documentation et procédure réglementaire sont la réponse attendue.",
+      "theme": "tech"
+    },
+    {
+      "q": "Pour un inspecteur environnemental, connaître les conventions internationales ratifiées permet notamment de :",
+      "choices": [
+        "Situer le contrôle national dans un cadre d'engagements internationaux (import/export de déchets, substances dangereuses)",
+        "Remplacer entièrement le droit national",
+        "Ignorer la réglementation nationale",
+        "Se substituer au pouvoir judiciaire international"
+      ],
+      "exp": "Les conventions complètent, sans remplacer, le droit national applicable.",
+      "theme": "conv"
+    },
+    {
+      "q": "Un inspecteur découvre, en dehors de ses heures de service, une pollution grave par hasard. L'attitude professionnelle attendue est de :",
+      "choices": [
+        "Signaler l'observation à l'autorité compétente pour qu'une action soit engagée",
+        "Ignorer car il n'était pas en mission officielle",
+        "Intervenir seul sans en référer à personne",
+        "Attendre sa prochaine mission programmée sans rien signaler entre-temps"
+      ],
+      "exp": "Le signalement à l'autorité compétente reste la conduite professionnelle attendue, même hors service.",
+      "theme": "situ"
+    },
+    {
+      "q": "Une bonne préparation à un concours de la fonction publique mauritanienne recommande notamment de réviser :",
+      "choices": [
+        "Le statut général de la fonction publique et l'organisation administrative de l'État",
+        "Uniquement des romans de culture générale sans lien avec le poste",
+        "Uniquement des mathématiques avancées",
+        "Uniquement l'histoire d'autres pays sans rapport"
+      ],
+      "exp": "Statut de la fonction publique et organisation administrative sont des bases du concours.",
+      "theme": "civ"
+    },
+    {
+      "q": "La hiérarchie des textes applicables en droit de l'environnement mauritanien place la loi-cadre (Loi n°2000-045) :",
+      "choices": [
+        "Au sommet, précisée ensuite par des décrets et arrêtés d'application",
+        "En dessous des simples circulaires internes",
+        "Sans lien avec les décrets d'application",
+        "En concurrence directe avec le droit international sans articulation"
+      ],
+      "exp": "La loi-cadre est précisée par des décrets (EIE) et arrêtés d'application.",
+      "theme": "juri"
+    },
+    {
+      "q": "Un indicateur de conformité utile pour une installation de traitement des déchets est :",
+      "choices": [
+        "Le respect des seuils de rejets autorisés (eau, air, sol)",
+        "Le nombre d'employés de l'entreprise",
+        "La couleur des bâtiments",
+        "Le chiffre d'affaires de l'entreprise"
+      ],
+      "exp": "Le respect des seuils réglementaires est l'indicateur de conformité pertinent.",
+      "theme": "tech"
+    }
+  ]
+];
+
+const THEME_LABELS = {
+  civ:"Culture générale / administration",
+  juri:"Cadre juridique national",
+  conv:"Conventions internationales",
+  tech:"Technique — gestion des déchets",
+  situ:"Mise en situation"
+};
+
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+let state = null; // {setIndex, order[], current, score, answers[], startTime, timerId}
+
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-.5); }
+
+function bestScore(setIndex){
+  return parseInt(localStorage.getItem(`qcmEnvBest_${setIndex+1}`)||"0");
+}
+function saveBestScore(setIndex, score){
+  const best = bestScore(setIndex);
+  if(score > best) localStorage.setItem(`qcmEnvBest_${setIndex+1}`, String(score));
+}
+function formatTime(sec){
+  const m = Math.floor(sec/60).toString().padStart(2,"0");
+  const s = Math.floor(sec%60).toString().padStart(2,"0");
+  return `${m}:${s}`;
+}
+
+/* ══════════════════════════════════════
+   MENU
+══════════════════════════════════════ */
+function renderMenu(){
+  const box = document.getElementById("quizCards");
+  box.innerHTML = "";
+  QUESTION_SETS.forEach((set, i)=>{
+    const best = bestScore(i);
+    const pct = Math.round(best/60*100);
+    const card = document.createElement("div");
+    card.className = "quiz-card";
+    card.innerHTML = `
+      <div class="qc-top">
+        <span class="qc-title">QCM ${i+1}</span>
+        <span class="qc-badge">${best>0 ? `Meilleur score : ${best}/60` : "Pas encore fait"}</span>
+      </div>
+      <div class="qc-desc">60 questions · culture générale, droit, conventions, technique &amp; mise en situation</div>
+      <div class="qc-bar-bg"><div class="qc-bar-fill" style="width:${pct}%"></div></div>
+      <button class="start-btn" data-set="${i}">Commencer ▶</button>
+    `;
+    box.appendChild(card);
+  });
+  box.querySelectorAll(".start-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=> startQuiz(parseInt(btn.dataset.set)));
+  });
+}
+
+/* ══════════════════════════════════════
+   QUIZ FLOW
+══════════════════════════════════════ */
+function startQuiz(setIndex){
+  state = {
+    setIndex,
+    questions: QUESTION_SETS[setIndex],
+    current: 0,
+    score: 0,
+    answers: [],
+    startTime: Date.now(),
+    timerId: null
+  };
+  document.getElementById("screenMenu").classList.add("hidden");
+  document.getElementById("screenResult").classList.add("hidden");
+  document.getElementById("screenQuiz").classList.remove("hidden");
+  document.getElementById("quizTitlePill").textContent = `QCM ${setIndex+1}`;
+
+  clearInterval(state.timerId);
+  state.timerId = setInterval(()=>{
+    const elapsed = Math.floor((Date.now()-state.startTime)/1000);
+    document.getElementById("timerPill").textContent = `⏱ ${formatTime(elapsed)}`;
+  }, 1000);
+
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = state.questions[state.current];
+  document.getElementById("quizBar").style.width = `${Math.round(state.current/60*100)}%`;
+  document.getElementById("scorePill").textContent = `Score : ${state.score}`;
+  document.getElementById("themeBadge").textContent = `${state.current+1}/60 · ${THEME_LABELS[q.theme]}`;
+  document.getElementById("questionText").textContent = q.q;
+
+  const options = q.choices.map((text, idx)=>({text, correct: idx===0}));
+  const shuffled = shuffle(options);
+
+  const box = document.getElementById("choicesBox");
+  box.innerHTML = "";
+  shuffled.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.textContent = opt.text;
+    btn.addEventListener("click", ()=> answerQuestion(btn, opt, shuffled, q));
+    box.appendChild(btn);
+  });
+
+  document.getElementById("explanationBox").classList.remove("show");
+  document.getElementById("explanationBox").textContent = "";
+  document.getElementById("nextBtn").classList.remove("show");
+}
+
+function answerQuestion(btn, opt, shuffled, q){
+  const allBtns = document.querySelectorAll("#choicesBox .choice");
+  allBtns.forEach(b=> b.disabled = true);
+
+  const correctText = q.choices[0];
+  allBtns.forEach(b=>{
+    if(b.textContent === correctText) b.classList.add("correct");
+  });
+  if(!opt.correct) btn.classList.add("wrong");
+
+  if(opt.correct) state.score++;
+  state.answers.push({
+    question: q.q,
+    correctAnswer: correctText,
+    givenAnswer: opt.text,
+    wasCorrect: opt.correct,
+    explanation: q.exp
+  });
+
+  const expBox = document.getElementById("explanationBox");
+  expBox.textContent = q.exp;
+  expBox.classList.add("show");
+
+  document.getElementById("scorePill").textContent = `Score : ${state.score}`;
+  document.getElementById("nextBtn").classList.add("show");
+}
+
+document.getElementById("nextBtn").addEventListener("click", ()=>{
+  state.current++;
+  if(state.current >= state.questions.length){
+    finishQuiz();
+  } else {
+    renderQuestion();
+  }
+});
+
+function finishQuiz(){
+  clearInterval(state.timerId);
+  const elapsed = Math.floor((Date.now()-state.startTime)/1000);
+  saveBestScore(state.setIndex, state.score);
+
+  document.getElementById("screenQuiz").classList.add("hidden");
+  document.getElementById("screenResult").classList.remove("hidden");
+
+  document.getElementById("resultTitle").textContent = `QCM ${state.setIndex+1} terminé`;
+  document.getElementById("resultScore").textContent = `${state.score} / 60`;
+  const pct = Math.round(state.score/60*100);
+  document.getElementById("resultPct").textContent = `${pct}%`;
+  document.getElementById("resultTime").textContent = `Temps : ${formatTime(elapsed)}`;
+
+  let msg;
+  if(pct >= 80) msg = "🏆 Excellent niveau, continuez ainsi !";
+  else if(pct >= 60) msg = "👍 Bon niveau, quelques révisions à consolider.";
+  else msg = "📚 Encore un peu de révision, revoyez les questions ratées ci-dessous.";
+  document.getElementById("resultMsg").textContent = msg;
+
+  const mistakes = state.answers.filter(a=>!a.wasCorrect);
+  const reviewList = document.getElementById("reviewList");
+  reviewList.innerHTML = "";
+  if(mistakes.length === 0){
+    document.getElementById("reviewSection").innerHTML = `<div class="no-mistakes">🎉 Aucune erreur, sans faute !</div>`;
+  } else {
+    mistakes.forEach(m=>{
+      const div = document.createElement("div");
+      div.className = "review-item";
+      div.innerHTML = `
+        <div class="rq">${m.question}</div>
+        <div class="ra-given">Votre réponse : ${m.givenAnswer}</div>
+        <div class="ra-correct">Bonne réponse : ${m.correctAnswer}</div>
+        <div class="rexp">${m.explanation}</div>
+      `;
+      reviewList.appendChild(div);
+    });
+  }
+}
+
+document.getElementById("retryBtn").addEventListener("click", ()=>{
+  startQuiz(state.setIndex);
+});
+document.getElementById("menuBtn").addEventListener("click", ()=>{
+  document.getElementById("screenResult").classList.add("hidden");
+  document.getElementById("screenMenu").classList.remove("hidden");
+  renderMenu();
+});
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+renderMenu();
+</script>
+
+</body>
+</html>
