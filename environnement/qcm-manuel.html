@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>QCM — Manuel de préparation (Inspection environnementale)</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#2a9d8f; --darkgreen:#1b4332; --leaf:#40916c;
+    --earth:#a5793c; --sand:#e9c46a; --clay:#e76f51;
+    --bg:#f1f7f2; --card-bg:#ffffff; --text:#20302a; --muted:#6b7a73;
+    --shadow:0 8px 32px rgba(27,67,50,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:var(--bg);
+    min-height:100vh;
+    display:flex;justify-content:center;align-items:flex-start;
+    padding:24px 16px 60px;
+    background-image:
+      radial-gradient(circle at 12% 15%, rgba(42,157,143,.12) 0%, transparent 50%),
+      radial-gradient(circle at 88% 80%, rgba(233,196,106,.15) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(64,145,108,.06) 0%, transparent 70%);
+  }
+  .app{
+    width:100%;max-width:700px;
+    background:var(--card-bg);border-radius:32px;
+    padding:32px 28px 28px;
+    box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .app::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:6px;
+    background:linear-gradient(90deg,var(--green),var(--sand),var(--clay),var(--leaf));
+    border-radius:32px 32px 0 0;
+  }
+  h1{font-family:'Baloo 2',cursive;color:var(--darkgreen);font-size:1.7rem;font-weight:800;margin-bottom:4px;text-align:center;}
+  .subtitle{color:var(--muted);font-size:.9rem;margin-bottom:18px;text-align:center;}
+
+  .disclaimer{
+    background:#fff8e6;border:2px solid var(--sand);border-radius:16px;
+    padding:12px 16px;font-size:.8rem;color:#7a5c00;margin-bottom:22px;line-height:1.4;
+  }
+
+  .section-label{
+    font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.03em;margin:18px 0 10px;
+  }
+
+  .quiz-cards{display:flex;flex-direction:column;gap:12px;}
+  .quiz-card{
+    background:#f6faf7;border:3px solid transparent;border-radius:20px;
+    padding:16px 18px;display:flex;flex-direction:column;gap:8px;
+    transition:transform .15s,box-shadow .15s;
+  }
+  .quiz-card.full{background:linear-gradient(135deg,#eafaf3,#fdf7e8);border-color:var(--sand);}
+  .quiz-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(27,67,50,.10);}
+  .quiz-card .qc-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+  .quiz-card .qc-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.05rem;color:var(--darkgreen);}
+  .quiz-card .qc-badge{
+    font-size:.74rem;font-weight:800;padding:4px 10px;border-radius:20px;background:#e6f4ee;color:var(--green);white-space:nowrap;
+  }
+  .quiz-card .qc-desc{font-size:.82rem;color:var(--muted);}
+  .quiz-card .qc-bar-bg{background:#e7ede9;border-radius:10px;height:7px;overflow:hidden;}
+  .quiz-card .qc-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green),var(--leaf));width:0%;transition:width .8s ease;}
+  .start-btn{
+    align-self:flex-start;border:none;border-radius:14px;padding:9px 18px;
+    font-family:'Nunito',sans-serif;font-size:.86rem;font-weight:800;color:white;cursor:pointer;
+    background:linear-gradient(135deg,var(--green),var(--leaf));box-shadow:0 4px 0 #145c44;
+    transition:transform .15s;
+  }
+  .start-btn.full{background:linear-gradient(135deg,var(--clay),#c9502f);box-shadow:0 4px 0 #963a20;}
+  .start-btn:hover{transform:translateY(-2px);}
+  .start-btn:active{transform:translateY(1px);}
+
+  /* ── QUIZ SCREEN ── */
+  .top-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .pill{background:#f1f5f2;padding:8px 14px;border-radius:14px;font-weight:800;color:var(--text);font-size:.86rem;}
+  .pill.timer{background:#fdf1ea;color:var(--clay);}
+  .pill.score{background:#e6f4ee;color:var(--green);}
+  .bar-bg{background:#e7ede9;border-radius:10px;height:10px;overflow:hidden;margin-bottom:18px;}
+  .bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green),var(--leaf));width:0%;transition:width .4s ease;}
+
+  .theme-badge{
+    display:inline-block;margin-bottom:10px;padding:4px 12px;border-radius:20px;
+    font-size:.72rem;font-weight:800;background:#f1f5f2;color:var(--muted);
+  }
+  .question-card{
+    background:#f6faf7;border-radius:22px;padding:20px 20px 18px;margin-bottom:18px;border:3px solid #e2ecE5;
+  }
+  .question-text{font-size:1.08rem;color:var(--text);font-weight:700;line-height:1.4;}
+
+  .choices{display:flex;flex-direction:column;gap:12px;}
+  .choice{
+    border:3px solid transparent;border-radius:16px;padding:14px 16px;text-align:left;
+    font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;
+    cursor:pointer;background:#fff;color:var(--text);
+    box-shadow:0 3px 0 rgba(0,0,0,.06);
+    transition:transform .15s,background .2s,border-color .2s;
+  }
+  .choice:hover:not(:disabled){transform:translateY(-2px);border-color:var(--green);}
+  .choice:active:not(:disabled){transform:scale(.99);}
+  .choice:disabled{cursor:not-allowed;}
+  .choice.correct{background:#e6f4ee;color:var(--darkgreen);border-color:var(--green);}
+  .choice.wrong{background:#fdecea;color:#9a2f23;border-color:var(--clay);}
+
+  .explanation{
+    margin-top:16px;padding:14px 16px;border-radius:14px;background:#eef6f0;
+    font-size:.86rem;color:var(--text);display:none;line-height:1.4;
+  }
+  .explanation.show{display:block;}
+
+  .next{
+    margin-top:16px;width:100%;border:none;
+    background:linear-gradient(135deg,var(--green),var(--leaf));
+    color:white;padding:16px;border-radius:18px;
+    font-family:'Nunito',sans-serif;font-size:1.02rem;font-weight:800;
+    cursor:pointer;display:none;box-shadow:0 4px 0 #145c44;transition:transform .15s;
+  }
+  .next:hover{transform:translateY(-2px);}
+  .next.show{display:block;}
+
+  /* ── RESULT SCREEN ── */
+  .result-score{
+    text-align:center;font-family:'Baloo 2',cursive;font-size:2.8rem;font-weight:800;color:var(--darkgreen);margin:10px 0 4px;
+  }
+  .result-pct{text-align:center;color:var(--muted);font-weight:800;margin-bottom:6px;}
+  .result-time{text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:22px;}
+  .result-msg{text-align:center;font-weight:800;font-size:1.05rem;margin-bottom:22px;color:var(--green);}
+  .review-title{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--darkgreen);margin-bottom:12px;}
+  .review-item{
+    background:#fdf5f4;border-left:4px solid var(--clay);border-radius:10px;
+    padding:12px 14px;margin-bottom:10px;font-size:.84rem;line-height:1.4;
+  }
+  .review-item .rq{font-weight:800;color:var(--text);margin-bottom:6px;}
+  .review-item .ra-correct{color:var(--green);font-weight:700;}
+  .review-item .ra-given{color:#9a2f23;}
+  .review-item .rexp{color:var(--muted);margin-top:6px;}
+  .no-mistakes{text-align:center;color:var(--green);font-weight:800;padding:20px 0;}
+  .result-actions{display:flex;gap:12px;margin-top:20px;}
+  .result-actions button{
+    flex:1;border:none;border-radius:16px;padding:14px;font-family:'Nunito',sans-serif;
+    font-size:.92rem;font-weight:800;cursor:pointer;transition:transform .15s;
+  }
+  .result-actions .retry{background:linear-gradient(135deg,var(--green),var(--leaf));color:white;box-shadow:0 4px 0 #145c44;}
+  .result-actions .menu{background:#f1f5f2;color:var(--text);box-shadow:0 4px 0 #d4dcd6;}
+  .result-actions button:hover{transform:translateY(-2px);}
+
+  .hidden{display:none !important;}
+
+  @media(max-width:480px){
+    h1{font-size:1.35rem;}
+    .app{padding:24px 18px 20px;border-radius:24px;}
+    .result-score{font-size:2.2rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ══════════════ MENU ══════════════ -->
+  <div id="screenMenu">
+    <h1>📘 QCM — Manuel de préparation</h1>
+    <p class="subtitle">Inspection environnementale &amp; gestion des déchets · Mauritanie</p>
+
+    <div class="disclaimer">
+      ⚠️ Questions originales rédigées à partir du cours de référence du <a href="./readme">manuel de préparation</a> (cadre juridique, conventions internationales, ODD, méthodologie d'inspection). Support d'entraînement générique — à vérifier avec le programme officiel exact de la session.
+    </div>
+
+    <div class="section-label">S'entraîner par série (20 questions, ~30 min)</div>
+    <div class="quiz-cards" id="quizCardsSeries"></div>
+
+    <div class="section-label">Conditions réelles d'examen</div>
+    <div class="quiz-cards" id="quizCardsFull"></div>
+  </div>
+
+  <!-- ══════════════ QUIZ ══════════════ -->
+  <div id="screenQuiz" class="hidden">
+    <div class="top-row">
+      <span class="pill" id="quizTitlePill"></span>
+      <span class="pill score" id="scorePill">Score : 0</span>
+      <span class="pill timer" id="timerPill">⏱ 00:00</span>
+    </div>
+    <div class="bar-bg"><div class="bar-fill" id="quizBar"></div></div>
+
+    <div class="theme-badge" id="themeBadge"></div>
+    <div class="question-card">
+      <div class="question-text" id="questionText"></div>
+    </div>
+
+    <div class="choices" id="choicesBox"></div>
+
+    <div class="explanation" id="explanationBox"></div>
+
+    <button class="next" id="nextBtn">Suivant →</button>
+  </div>
+
+  <!-- ══════════════ RESULT ══════════════ -->
+  <div id="screenResult" class="hidden">
+    <h1 id="resultTitle">Résultat</h1>
+    <div class="result-score" id="resultScore">0 / 20</div>
+    <div class="result-pct" id="resultPct"></div>
+    <div class="result-time" id="resultTime"></div>
+    <div class="result-msg" id="resultMsg"></div>
+
+    <div id="reviewSection">
+      <div class="review-title">Questions à revoir</div>
+      <div id="reviewList"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="retry" id="retryBtn">Recommencer</button>
+      <button class="menu" id="menuBtn">Retour au menu</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   DATA
+══════════════════════════════════════ */
+const SERIES = {
+  "A": [
+    {
+      "q": "Le texte-cadre qui régit l'ensemble du droit de l'environnement en Mauritanie est :",
+      "choices": [
+        "La Loi n°2000-045 du 26 juillet 2000 portant Code de l'environnement",
+        "Un code des déchets autonome",
+        "L'Ordonnance n°84-208 de 1984",
+        "Le Décret n°2004-094"
+      ],
+      "exp": "La Mauritanie n'a pas de code des déchets autonome : tout repose sur la loi-cadre 2000-045.",
+      "theme": "A"
+    },
+    {
+      "q": "La Loi n°2000-045 a été publiée au Journal Officiel n°985 le :",
+      "choices": [
+        "30 octobre 2000",
+        "26 juillet 2000",
+        "4 novembre 2004",
+        "13 avril 2007"
+      ],
+      "exp": "La loi est datée du 26 juillet 2000 mais publiée au JO n°985 le 30 octobre 2000.",
+      "theme": "A"
+    },
+    {
+      "q": "La Loi n°2000-045 compte 100 articles répartis en combien de titres ?",
+      "choices": [
+        "Six",
+        "Quatre",
+        "Huit",
+        "Dix"
+      ],
+      "exp": "Six titres : dispositions générales, gestion de la politique nationale, protection des ressources, nuisances, dispositions pénales, dispositions finales.",
+      "theme": "A"
+    },
+    {
+      "q": "L'article qui consacre le principe de précaution en droit mauritanien de l'environnement est :",
+      "choices": [
+        "L'article 6",
+        "L'article 4",
+        "L'article 7",
+        "L'article 14"
+      ],
+      "exp": "L'article 6 dispose que l'absence de certitude scientifique absolue ne justifie pas de retarder des mesures face à un risque de dommage grave et irréversible.",
+      "theme": "A"
+    },
+    {
+      "q": "L'article 4 de la Loi n°2000-045 qualifie l'environnement de :",
+      "choices": [
+        "Patrimoine national, dont la gestion concilie les droits des générations actuelles et futures",
+        "Bien privé de l'État uniquement",
+        "Ressource exclusivement communale",
+        "Domaine réservé au ministère des Finances"
+      ],
+      "exp": "C'est l'inscription du développement durable dans le droit interne mauritanien.",
+      "theme": "A"
+    },
+    {
+      "q": "La responsabilité réparatrice posée par l'article 7 de la Loi n°2000-045 s'applique :",
+      "choices": [
+        "À toute personne physique ou morale, publique ou privée, responsable d'un dommage environnemental",
+        "Uniquement aux entreprises privées",
+        "Uniquement à l'État",
+        "Uniquement aux personnes physiques"
+      ],
+      "exp": "L'article 7 vise indistinctement personnes publiques et privées, physiques et morales.",
+      "theme": "A"
+    },
+    {
+      "q": "Le Conseil National Environnement et Développement (CNED) est institué par :",
+      "choices": [
+        "L'article 11",
+        "L'article 21",
+        "L'article 52",
+        "L'article 60"
+      ],
+      "exp": "L'article 11 charge le CNED de proposer les orientations nationales et d'assurer la coordination.",
+      "theme": "A"
+    },
+    {
+      "q": "Le Plan National d'Action pour l'Environnement (PNAE), prévu aux articles 12 et 13, est élaboré :",
+      "choices": [
+        "Avec l'ensemble des intervenants, notamment les collectivités locales et les associations",
+        "Par le seul ministère de l'Environnement, sans consultation",
+        "Par un organisme international",
+        "Par décret présidentiel sans concertation"
+      ],
+      "exp": "Le PNAE intègre notamment le programme national de lutte contre la désertification, élaboré avec tous les intervenants.",
+      "theme": "A"
+    },
+    {
+      "q": "Selon l'article 14 de la Loi n°2000-045, les activités susceptibles d'avoir des effets sensibles sur l'environnement sont soumises à :",
+      "choices": [
+        "Une autorisation préalable du ministre chargé de l'environnement, sur la base d'une étude d'impact",
+        "Une simple déclaration sans étude préalable",
+        "Un accord tacite après trois mois de silence",
+        "Aucune autorisation particulière"
+      ],
+      "exp": "L'article 14 pose le principe de l'autorisation préalable fondée sur une EIE.",
+      "theme": "A"
+    },
+    {
+      "q": "Le contenu minimal d'une étude d'impact environnemental (article 17) comprend notamment :",
+      "choices": [
+        "L'analyse de l'état initial du site, la description des solutions alternatives et l'évaluation des effets probables",
+        "Uniquement un plan de financement du projet",
+        "Uniquement une liste du personnel employé",
+        "Uniquement les statuts juridiques du promoteur"
+      ],
+      "exp": "L'article 17 énumère neuf rubriques, dont l'état initial, les alternatives et l'évaluation des effets.",
+      "theme": "A"
+    },
+    {
+      "q": "Après l'enquête publique prévue à l'article 18, le délai maximal d'examen des observations avant toute décision est de :",
+      "choices": [
+        "Trois mois",
+        "Un mois",
+        "Six mois",
+        "Quinze jours"
+      ],
+      "exp": "L'article 18 fixe ce délai maximal de trois mois.",
+      "theme": "A"
+    },
+    {
+      "q": "Le Comité Technique Environnement et Développement (CTED), mentionné à l'article 20, intervient pour :",
+      "choices": [
+        "Donner son avis avant que le ministre ne récuse une étude d'impact",
+        "Remplacer le promoteur dans le choix du consultant",
+        "Financer les études d'impact",
+        "Statuer en dernier ressort sur les recours pénaux"
+      ],
+      "exp": "Le ministre peut récuser une EIE par décision motivée, après avis du CTED.",
+      "theme": "A"
+    },
+    {
+      "q": "Les textes d'application relatifs à l'étude d'impact environnemental sont :",
+      "choices": [
+        "Le décret n°2004-094, modifié et complété par le décret n°2007-105",
+        "Le seul décret n°2010-048",
+        "L'ordonnance n°84-208 uniquement",
+        "L'arrêté n°990/MRNE/SGG/90 uniquement"
+      ],
+      "exp": "Le décret n°2004-094 (2004) a été modifié et complété par le décret n°2007-105 (2007).",
+      "theme": "A"
+    },
+    {
+      "q": "Le Fonds d'Intervention pour l'Environnement (FIE), prévu aux articles 21 à 23, est financé notamment par :",
+      "choices": [
+        "Le produit des amendes et confiscations prononcées pour infraction au code",
+        "Exclusivement le budget de fonctionnement du ministère",
+        "Des dons privés uniquement, sans fonds publics",
+        "La vente de licences de pêche"
+      ],
+      "exp": "Les amendes environnementales alimentent le FIE, ce qui relie la sanction à la réparation.",
+      "theme": "A"
+    },
+    {
+      "q": "Selon l'article 56 de la Loi n°2000-045, les exploitants d'installations classées sont tenus de :",
+      "choices": [
+        "Se soumettre aux contrôles et fournir les renseignements statistiques et techniques demandés",
+        "Refuser tout contrôle non annoncé par écrit",
+        "Ne transmettre leurs données qu'à leur propre auditeur privé",
+        "Suspendre leur activité à chaque demande de contrôle"
+      ],
+      "exp": "L'article 56 est le fondement direct de l'obligation de transmettre l'autosurveillance.",
+      "theme": "A"
+    },
+    {
+      "q": "La distinction entre l'article 58 et l'article 59 de la Loi n°2000-045 porte sur :",
+      "choices": [
+        "L'article 58 exige une mise en demeure préalable ; l'article 59 permet une suspension immédiate sans mise en demeure en cas de menace grave",
+        "Les deux articles sont strictement identiques",
+        "L'article 58 concerne uniquement les installations non classées",
+        "L'article 59 s'applique uniquement après une décision de justice"
+      ],
+      "exp": "L'article 59, pouvoir d'urgence, s'applique même à une installation non classée en cas de danger grave.",
+      "theme": "A"
+    },
+    {
+      "q": "Selon l'article 60 de la Loi n°2000-045, la catégorie « déchets urbains » inclut notamment :",
+      "choices": [
+        "Les eaux usées domestiques et les excrétas",
+        "Uniquement les déchets solides ménagers",
+        "Uniquement les déchets des établissements publics",
+        "Uniquement les déchets de voirie"
+      ],
+      "exp": "L'article 60 vise des détritus liquides, solides ou gazeux : les eaux usées domestiques et excrétas sont explicitement inclus.",
+      "theme": "A"
+    },
+    {
+      "q": "L'article 65 de la Loi n°2000-045 pose une présomption de dangerosité pour tout déchet industriel dès lors que :",
+      "choices": [
+        "Il présente ou pourrait présenter un danger, y compris lorsqu'il entre en contact avec d'autres composés",
+        "Il dépasse un poids de dix tonnes",
+        "Il provient d'une entreprise étrangère uniquement",
+        "Il n'a pas été déclaré à la douane"
+      ],
+      "exp": "La dangerosité peut naître du contact avec d'autres composés, ce qui fonde le refus de mélanger des déchets sans évaluation.",
+      "theme": "A"
+    },
+    {
+      "q": "Tout déchet en provenance de l'étranger est, selon l'article 67 :",
+      "choices": [
+        "Présumé dangereux au sens de la loi, quelle que soit sa nature ou sa destination annoncée",
+        "Présumé inerte sauf preuve contraire",
+        "Exempté de contrôle s'il est destiné au recyclage",
+        "Soumis uniquement à une taxe douanière"
+      ],
+      "exp": "La présomption de l'article 67 est générale et non réfragable pour un déchet valorisable.",
+      "theme": "A"
+    },
+    {
+      "q": "La peine la plus lourde prévue par le Code de l'environnement mauritanien (article 92-93) concerne :",
+      "choices": [
+        "L'importation, l'achat, la vente, le transport ou le stockage de déchets toxiques ou radioactifs en provenance de l'étranger",
+        "Le dépôt d'ordures ménagères hors des lieux prévus",
+        "Le défaut d'affichage d'un règlement intérieur",
+        "La construction sans permis"
+      ],
+      "exp": "Réclusion perpétuelle (art. 92), voire peine capitale en cas de mort d'homme (art. 93) : c'est le seul domaine où le code va jusque-là.",
+      "theme": "A"
+    }
+  ],
+  "B": [
+    {
+      "q": "La Convention de Bâle a pour objet :",
+      "choices": [
+        "Le contrôle des mouvements transfrontières de déchets dangereux et de leur élimination",
+        "La protection de la couche d'ozone",
+        "Les polluants organiques persistants",
+        "Le mercure sur l'ensemble de son cycle de vie"
+      ],
+      "exp": "C'est l'objet central de la Convention de Bâle, adoptée en 1989.",
+      "theme": "B"
+    },
+    {
+      "q": "La Convention de Bâle est entrée en vigueur le 5 mai 1992 et compte aujourd'hui :",
+      "choices": [
+        "191 Parties",
+        "54 Parties",
+        "12 Parties",
+        "320 Parties"
+      ],
+      "exp": "Le manuel cite précisément 191 Parties à la Convention de Bâle.",
+      "theme": "B"
+    },
+    {
+      "q": "L'amendement d'interdiction de Bâle (Ban Amendment), entré en vigueur le 5 décembre 2019, interdit :",
+      "choices": [
+        "Les exportations de déchets dangereux des pays développés vers les pays en développement, y compris pour valorisation",
+        "Toute exportation de déchets non dangereux",
+        "Les mouvements de déchets à l'intérieur d'un même pays",
+        "L'importation de déchets par les pays développés"
+      ],
+      "exp": "Le Ban Amendment vise spécifiquement le sens pays développés → pays en développement.",
+      "theme": "B"
+    },
+    {
+      "q": "La Convention de Rotterdam se distingue de la Convention de Bâle car elle régule :",
+      "choices": [
+        "Le commerce de produits chimiques et pesticides encore utilisables, via un consentement préalable",
+        "Le mouvement transfrontière des déchets déjà produits",
+        "Uniquement les substances appauvrissant la couche d'ozone",
+        "Uniquement le mercure"
+      ],
+      "exp": "Rotterdam régule des produits encore utilisables (PIC) ; Bâle régule des déchets.",
+      "theme": "B"
+    },
+    {
+      "q": "Les polluants organiques persistants (POP) visés par la Convention de Stockholm se définissent par quatre propriétés, dont :",
+      "choices": [
+        "La persistance, la bioaccumulation, le transport atmosphérique à longue distance et la toxicité",
+        "Uniquement leur origine industrielle",
+        "Uniquement leur odeur caractéristique",
+        "Uniquement leur coût de production élevé"
+      ],
+      "exp": "Ce sont les quatre critères définitoires des POP selon la Convention de Stockholm.",
+      "theme": "B"
+    },
+    {
+      "q": "La Mauritanie a ratifié la Convention de Stockholm le :",
+      "choices": [
+        "22 juillet 2005",
+        "5 mai 1992",
+        "30 janvier 1991",
+        "20 janvier 1994"
+      ],
+      "exp": "Signature le 8 août 2001, ratification le 22 juillet 2005 selon le manuel.",
+      "theme": "B"
+    },
+    {
+      "q": "Dans les annexes de la Convention de Stockholm, les dioxines et furanes relèvent de :",
+      "choices": [
+        "L'annexe C, réduction des rejets non intentionnels",
+        "L'annexe A, élimination totale immédiate",
+        "L'annexe B uniquement pour le DDT",
+        "Aucune annexe, elles ne sont pas couvertes"
+      ],
+      "exp": "L'annexe C concerne la réduction des rejets non intentionnels, dont dioxines et furanes issus du brûlage/incinération mal conduite.",
+      "theme": "B"
+    },
+    {
+      "q": "La Convention de Minamata, adoptée en 2013 à Kumamoto, porte sur :",
+      "choices": [
+        "Le mercure, sur l'ensemble de son cycle de vie",
+        "Les déchets plastiques marins",
+        "Les substances appauvrissant la couche d'ozone",
+        "Les pesticides obsolètes uniquement"
+      ],
+      "exp": "Minamata couvre extraction, commerce, produits, émissions, déchets et sites contaminés au mercure.",
+      "theme": "B"
+    },
+    {
+      "q": "Le volet le plus directement pertinent de la Convention de Minamata pour un contrôle de terrain en Mauritanie est :",
+      "choices": [
+        "L'orpaillage artisanal et l'amalgamation du minerai brut",
+        "Le commerce de piles électriques neuves",
+        "La fabrication de thermomètres industriels",
+        "Les emballages alimentaires"
+      ],
+      "exp": "L'orpaillage artisanal (amalgamation, brûlage en zone résidentielle, lixiviation au cyanure) est explicitement visé.",
+      "theme": "B"
+    },
+    {
+      "q": "Concernant la Convention de Bamako, la situation exacte de la Mauritanie est :",
+      "choices": [
+        "La Mauritanie n'a ni signé ni ratifié la Convention de Bamako",
+        "La Mauritanie l'a ratifiée en 1991, l'année de son adoption",
+        "La Mauritanie l'a signée mais pas ratifiée",
+        "La Mauritanie l'a ratifiée en 2005 avec Stockholm"
+      ],
+      "exp": "C'est un piège de concours classique : contrairement à l'intuition, la Mauritanie n'est pas partie à Bamako.",
+      "theme": "B"
+    },
+    {
+      "q": "La Convention de Bamako va plus loin que la Convention de Bâle en Afrique car elle :",
+      "choices": [
+        "Interdit purement et simplement l'importation de déchets dangereux, y compris pour valorisation",
+        "Autorise l'importation sous conditions plus souples que Bâle",
+        "Ne couvre pas les déchets radioactifs",
+        "Ne s'applique qu'aux États non membres de l'ONU"
+      ],
+      "exp": "Bamako interdit totalement l'importation (même pour valorisation) et couvre aussi les déchets radioactifs.",
+      "theme": "B"
+    },
+    {
+      "q": "Le Protocole de Montréal (1987) organise :",
+      "choices": [
+        "L'élimination programmée des substances appauvrissant la couche d'ozone (CFC, halons, HCFC)",
+        "La gestion des déchets biomédicaux",
+        "Le contrôle des mouvements transfrontières de déchets",
+        "La lutte contre la désertification"
+      ],
+      "exp": "C'est l'objet du Protocole de Montréal, rattaché à la Convention de Vienne de 1985.",
+      "theme": "B"
+    },
+    {
+      "q": "Pour un inspecteur, l'enjeu « déchets » du Protocole de Montréal porte principalement sur :",
+      "choices": [
+        "La récupération des fluides frigorigènes avant destruction des équipements",
+        "Le recyclage du papier",
+        "La collecte des huiles usagées",
+        "Le tri des textiles"
+      ],
+      "exp": "Les CFC/HCFC des systèmes de réfrigération/climatisation doivent être récupérés avant destruction de l'équipement.",
+      "theme": "B"
+    },
+    {
+      "q": "L'amendement de Kigali (2016, en vigueur 2019) ajoute au Protocole de Montréal :",
+      "choices": [
+        "Les hydrofluorocarbures (HFC), gaz à fort pouvoir de réchauffement",
+        "Le mercure",
+        "Les polluants organiques persistants",
+        "Les déchets radioactifs"
+      ],
+      "exp": "Kigali étend le protocole aux HFC, sans lien direct avec la couche d'ozone mais avec le climat.",
+      "theme": "B"
+    },
+    {
+      "q": "La convention MARPOL 73/78 encadre la pollution par les navires ; sa clé de raisonnement pour un inspecteur est :",
+      "choices": [
+        "L'existence d'installations de réception portuaires adéquates pour les déchets des navires",
+        "L'interdiction totale de toute navigation commerciale",
+        "La seule responsabilité de l'armateur, sans obligation portuaire",
+        "L'incinération obligatoire à bord de tous les déchets"
+      ],
+      "exp": "Interdire les rejets en mer sans offrir un exutoire à quai revient à organiser l'infraction.",
+      "theme": "B"
+    },
+    {
+      "q": "La Mauritanie a ratifié la Convention d'Abidjan (protection du milieu marin ouest-africain) le :",
+      "choices": [
+        "18 novembre 2010",
+        "22 juin 1981",
+        "20 janvier 1994",
+        "7 août 1996"
+      ],
+      "exp": "Signature le 22 juin 1981, ratification le 18 novembre 2010 selon le manuel.",
+      "theme": "B"
+    },
+    {
+      "q": "La cible 12.4 de l'ODD 12 est particulièrement importante car elle :",
+      "choices": [
+        "Renvoie explicitement aux cadres internationaux convenus, reliant ainsi Bâle, Rotterdam, Stockholm et Minamata à l'Agenda 2030",
+        "Concerne exclusivement les déchets alimentaires",
+        "Ne s'applique qu'aux pays développés",
+        "Porte sur la biodiversité marine uniquement"
+      ],
+      "exp": "La cible 12.4 mentionne « conformément aux cadres internationaux convenus », le pont vers les conventions.",
+      "theme": "B"
+    },
+    {
+      "q": "L'indicateur 11.6.1 (ODD 11), le plus important pour un inspecteur selon le manuel, mesure :",
+      "choices": [
+        "La proportion de déchets urbains solides régulièrement collectés ET éliminés de façon adéquate",
+        "Uniquement le taux de collecte, sans référence à la qualité de l'exutoire",
+        "Le nombre de camions de collecte en service",
+        "Le budget municipal alloué à la propreté"
+      ],
+      "exp": "Cet indicateur combine couverture de collecte ET qualité de l'exutoire — un bon taux de collecte ne suffit pas si les déchets finissent en décharge non contrôlée.",
+      "theme": "B"
+    },
+    {
+      "q": "La cible 6.3 de l'ODD 6, pertinente pour l'inspection des lixiviats de décharge et des effluents industriels, vise à :",
+      "choices": [
+        "Réduire la pollution de l'eau et augmenter le recyclage et la réutilisation sans danger des eaux usées",
+        "Garantir l'accès universel à l'eau potable uniquement",
+        "Interdire toute construction près d'un cours d'eau",
+        "Financer exclusivement les stations de dessalement"
+      ],
+      "exp": "La cible 6.3 vise la réduction de la pollution de l'eau, dont les rejets non traités.",
+      "theme": "B"
+    },
+    {
+      "q": "Le lien entre gestion des déchets et ODD 13 (climat) passe principalement par :",
+      "choices": [
+        "Le méthane émis par la décomposition anaérobie en décharge, environ 28 fois plus réchauffant que le CO2 sur 100 ans",
+        "Le transport routier des camions de collecte uniquement",
+        "La fabrication du plastique",
+        "Le coût énergétique du tri sélectif"
+      ],
+      "exp": "Le captage du biogaz et la valorisation organique sont des mesures d'atténuation climatique directement quantifiables.",
+      "theme": "B"
+    }
+  ],
+  "C": [
+    {
+      "q": "Juridiquement, un objet cesse d'être un déchet uniquement lorsque :",
+      "choices": [
+        "Il a fait l'objet d'une opération de valorisation complète et satisfait à des critères de sortie du statut de déchet",
+        "Son détenteur déclare oralement qu'il n'en veut plus",
+        "Il est stocké depuis plus d'un an",
+        "Il change simplement de propriétaire"
+      ],
+      "exp": "La nature du bien importe moins que l'intention du détenteur, mais la sortie du statut de déchet exige une valorisation complète et des critères précis.",
+      "theme": "C"
+    },
+    {
+      "q": "La responsabilité du producteur d'un déchet, selon les principes du cours :",
+      "choices": [
+        "Ne s'éteint pas à la remise du déchet à un tiers ; elle demeure jusqu'à l'élimination ou la valorisation finale effective",
+        "S'éteint dès la signature du contrat de collecte",
+        "Est transférée intégralement au transporteur",
+        "Ne concerne que les déchets dangereux"
+      ],
+      "exp": "C'est le fondement du contrôle des filières et des bordereaux de suivi.",
+      "theme": "C"
+    },
+    {
+      "q": "Un déchet est qualifié de « dangereux » lorsqu'il présente une ou plusieurs propriétés parmi lesquelles :",
+      "choices": [
+        "Explosivité, inflammabilité, corrosivité, toxicité, écotoxicité, infectiosité",
+        "Uniquement une couleur vive",
+        "Uniquement un poids supérieur à 50 kg",
+        "Uniquement une origine industrielle"
+      ],
+      "exp": "Ce sont les propriétés de danger énumérées dans le cours, et la dangerosité peut aussi naître d'un mélange ou d'un contact.",
+      "theme": "C"
+    },
+    {
+      "q": "Le statut de « déchet inerte » (gravats, terres non polluées, bétons) :",
+      "choices": [
+        "Doit être démontré, et ne peut jamais être simplement supposé",
+        "Est automatiquement acquis pour tout déchet de chantier",
+        "Dispense systématiquement de toute traçabilité",
+        "S'applique à tous les déchets industriels banals"
+      ],
+      "exp": "Le cours souligne que ce statut est souvent invoqué à tort pour échapper aux obligations.",
+      "theme": "C"
+    },
+    {
+      "q": "Dans la hiérarchie des modes de traitement des déchets, le niveau prioritaire (le plus haut) est :",
+      "choices": [
+        "La prévention (réduction à la source, écoconception)",
+        "Le recyclage",
+        "La valorisation énergétique",
+        "L'élimination en décharge contrôlée"
+      ],
+      "exp": "La prévention est le seul niveau qui agisse directement sur le gisement lui-même.",
+      "theme": "C"
+    },
+    {
+      "q": "Une proposition qui, face à un flux de déchets, saute directement à l'incinération ou à l'enfouissement est :",
+      "choices": [
+        "Presque toujours fausse, car ces opérations ne peuvent être choisies qu'après avoir écarté les niveaux supérieurs de la hiérarchie",
+        "Toujours juste si le déchet est organique",
+        "Toujours juste si le coût est faible",
+        "Sans rapport avec la hiérarchie des déchets"
+      ],
+      "exp": "Le réflexe n°2 du cours : appliquer la hiérarchie avant de parler d'élimination.",
+      "theme": "C"
+    },
+    {
+      "q": "La hiérarchie des modes de traitement peut être écartée pour un flux donné si :",
+      "choices": [
+        "Une analyse du cycle de vie ou technico-économique démontre qu'un autre choix est globalement préférable, et que cette dérogation est justifiée et documentée",
+        "Un exploitant le demande verbalement",
+        "Le volume de déchets est faible",
+        "Aucune justification n'est jamais nécessaire, la hiérarchie est indicative"
+      ],
+      "exp": "La dérogation existe mais doit impérativement être justifiée et documentée — ce n'est pas un dogme absolu, ni une liberté totale.",
+      "theme": "C"
+    },
+    {
+      "q": "Dans un contexte sahélien comme la Mauritanie, la fraction organique fermentescible des ordures ménagères représente couramment :",
+      "choices": [
+        "50 à 70 % de la masse",
+        "5 à 10 % de la masse",
+        "90 à 100 % de la masse",
+        "Moins de 1 % de la masse"
+      ],
+      "exp": "Avec une humidité de 50-65 % et un PCI souvent de 3-7 MJ/kg, ce qui explique pourquoi l'incinération sans traitement préalable est inadaptée.",
+      "theme": "C"
+    },
+    {
+      "q": "Compte tenu du pouvoir calorifique inférieur typique des ordures ménagères sahéliennes (3 à 7 MJ/kg), l'incinération directe sans traitement préalable est :",
+      "choices": [
+        "Techniquement inadaptée, la valorisation organique étant prioritaire",
+        "La solution la plus rentable et recommandée",
+        "Sans incidence sur le bilan énergétique",
+        "Obligatoire selon le Code de l'environnement"
+      ],
+      "exp": "L'incinération n'est soutenable qu'au-dessus d'un seuil PCI d'environ 6-7 MJ/kg, faute de quoi un combustible d'appoint permanent est nécessaire.",
+      "theme": "C"
+    },
+    {
+      "q": "Le compostage, dégradation aérobie de la matière organique, exige notamment :",
+      "choices": [
+        "Une montée en température en phase thermophile entre 55 et 65°C pendant plusieurs jours, pour l'hygiénisation",
+        "Une température constante de 20°C tout au long du processus",
+        "L'absence totale d'aération",
+        "Un rapport carbone/azote inférieur à 5"
+      ],
+      "exp": "Le rapport C/N cible est de 25 à 35, avec une phase thermophile 55-65°C essentielle à l'hygiénisation.",
+      "theme": "C"
+    },
+    {
+      "q": "Le principal risque d'échec d'un compostage, selon le cours, est :",
+      "choices": [
+        "L'excès d'humidité, qui provoque l'anaérobiose et les odeurs",
+        "Un excès d'aération par retournement trop fréquent",
+        "Une température trop basse en permanence",
+        "Une teneur en carbone trop faible"
+      ],
+      "exp": "L'excès d'humidité et la contamination par métaux lourds/plastiques sont les deux risques d'échec les plus fréquents cités.",
+      "theme": "C"
+    },
+    {
+      "q": "Pour limiter la formation de dioxines et furanes lors d'une incinération, les gaz doivent être maintenus :",
+      "choices": [
+        "À au moins 850°C pendant deux secondes minimum, avec une teneur en oxygène suffisante",
+        "À 300°C pendant dix minutes",
+        "À température ambiante avec un excès de combustible",
+        "Sans aucune contrainte de température si le débit est faible"
+      ],
+      "exp": "Ce seuil (850°C / 2s) est la condition technique de référence citée dans le cours, suivie d'une trempe rapide évitant la fenêtre de resynthèse 250-450°C.",
+      "theme": "C"
+    },
+    {
+      "q": "Le brûlage à l'air libre de déchets, comparé à une incinération régulée, se caractérise par :",
+      "choices": [
+        "Une température basse, une oxygénation incontrôlée et un temps de séjour nul, produisant dioxines, furanes, CO et particules fines",
+        "Des conditions équivalentes à une installation régulée",
+        "Une valorisation énergétique acceptable en dernier recours",
+        "L'absence de tout risque sanitaire si le volume est faible"
+      ],
+      "exp": "Le cours est explicite : le brûlage à l'air libre est l'inverse exact des conditions requises et ne constitue jamais une valorisation.",
+      "theme": "C"
+    },
+    {
+      "q": "La co-incinération en cimenterie constitue une voie sérieuse de valorisation énergétique, à condition notamment de :",
+      "choices": [
+        "Contrôler la teneur en chlore, métaux lourds et soufre du combustible de substitution, avec surveillance des émissions et autorisation spécifique",
+        "Ne fournir aucune information sur la composition du déchet incinéré",
+        "Se dispenser de toute autorisation administrative",
+        "Réserver cette voie aux seuls déchets ménagers non triés"
+      ],
+      "exp": "Le milieu alcalin des fours neutralise les gaz acides, mais des garde-fous précis restent nécessaires.",
+      "theme": "C"
+    },
+    {
+      "q": "Une installation de stockage de déchets non dangereux repose notamment sur :",
+      "choices": [
+        "Une barrière de sécurité passive et une barrière active (géomembrane), avec collecte et traitement des lixiviats et dégazage du biogaz",
+        "Un simple grillage périphérique, sans dispositif technique particulier",
+        "Le seul contrôle visuel journalier de l'exploitant",
+        "L'absence de toute couverture, pour faciliter le compactage"
+      ],
+      "exp": "Barrières passive/active, gestion des lixiviats et du biogaz, casiers et couverture progressive : c'est la conception attendue.",
+      "theme": "C"
+    },
+    {
+      "q": "Un climat aride, comparé à un climat humide, a pour effet sur la production de lixiviats de :",
+      "choices": [
+        "Réduire leur volume sans l'annuler, tout en concentrant la charge polluante",
+        "Annuler totalement leur production",
+        "Les rendre systématiquement non polluants",
+        "Accélérer leur biodégradation naturelle jusqu'à disparition"
+      ],
+      "exp": "Le cours est explicite : l'aridité réduit le volume mais ne l'annule pas, et concentre la charge polluante.",
+      "theme": "C"
+    },
+    {
+      "q": "Face à une hausse progressive des nitrates sur les piézomètres en aval d'une décharge, comparée à un amont stable, la démarche attendue est :",
+      "choices": [
+        "Contrôler le fonctionnement du système de collecte des lixiviats et rechercher l'origine par comparaison amont/aval et traceurs complémentaires",
+        "Conclure immédiatement à une fuite de lixiviats certaine",
+        "Conclure qu'aucune investigation n'est nécessaire, l'origine étant forcément agricole",
+        "Fermer le piézomètre pour arrêter la mesure"
+      ],
+      "exp": "Une hausse de nitrates seule ne prouve pas l'origine décharge : assainissement autonome, élevage et fertilisation produisent la même signature.",
+      "theme": "C"
+    },
+    {
+      "q": "La séquence attendue pour réhabiliter une décharge non contrôlée est :",
+      "choices": [
+        "Diagnostic, mise en sécurité immédiate, puis réhabilitation sur place ou excavation, puis suivi post-réhabilitation",
+        "Recouvrir immédiatement de sable et considérer le dossier clos",
+        "Attendre une plainte des riverains avant toute action",
+        "Transférer directement les déchets sur un autre site non aménagé"
+      ],
+      "exp": "Recouvrir de sable et abandonner le site est le distracteur type : cela masque le passif sans traiter biogaz, lixiviats ni risque sanitaire.",
+      "theme": "C"
+    },
+    {
+      "q": "L'économie circulaire, appliquée à une collectivité mauritanienne, se traduit concrètement par :",
+      "choices": [
+        "La professionnalisation des récupérateurs informels et la création de débouchés locaux (compost, granulats recyclés, plastiques régénérés)",
+        "L'exclusion pure et simple des récupérateurs informels",
+        "Le seul développement de l'incinération à grande échelle",
+        "L'importation de matières premières recyclées depuis l'étranger uniquement"
+      ],
+      "exp": "Le cours insiste sur la professionnalisation des récupérateurs informels plutôt que leur exclusion, et sur les débouchés locaux.",
+      "theme": "C"
+    },
+    {
+      "q": "Dimensionner un centre de tri sans caractérisation préalable du gisement (composition, saisonnalité, humidité, taux de refus) conduit systématiquement à :",
+      "choices": [
+        "Un surdimensionnement et un arrêt d'exploitation",
+        "Une économie garantie sur les coûts de construction",
+        "Une performance de tri optimale dès la mise en service",
+        "Une réduction automatique du volume de déchets à traiter"
+      ],
+      "exp": "Un centre de tri ne fait que trier ce qu'on lui apporte : sans caractérisation préalable, le dimensionnement échoue.",
+      "theme": "C"
+    }
+  ],
+  "D": [
+    {
+      "q": "Les huiles usagées doivent être collectées par un opérateur agréé, avec une priorité donnée à :",
+      "choices": [
+        "La régénération, prioritaire sur la valorisation énergétique",
+        "Le mélange avec les solvants pour faciliter le transport",
+        "L'incinération immédiate sans tri",
+        "Le rejet contrôlé dans le réseau d'eaux pluviales"
+      ],
+      "exp": "Le cours précise l'interdiction de mélange avec l'eau, les solvants ou les PCB, et la priorité à la régénération.",
+      "theme": "D"
+    },
+    {
+      "q": "Face à la découverte d'un transformateur électrique ancien sur un site inspecté, le réflexe attendu est :",
+      "choices": [
+        "Analyser le diélectrique avant toute manipulation, en suspectant la présence de PCB",
+        "Le débrancher immédiatement et le stocker sans précaution particulière",
+        "Le vendre comme ferraille sans vérification",
+        "Le considérer comme un déchet inerte non dangereux"
+      ],
+      "exp": "Les PCB des transformateurs anciens relèvent de la Convention de Stockholm ; une analyse préalable est impérative.",
+      "theme": "D"
+    },
+    {
+      "q": "En l'absence d'installation nationale de destruction à haute température, les PCB confirmés doivent être :",
+      "choices": [
+        "Confinés sur rétention, étiquetés, puis éliminés par une filière agréée à l'étranger",
+        "Enfouis sur place dans une décharge ordinaire",
+        "Brûlés à l'air libre sur le site",
+        "Revendus à un ferrailleur local"
+      ],
+      "exp": "Le cours indique explicitement l'élimination par filière agréée à l'étranger, faute de capacité nationale.",
+      "theme": "D"
+    },
+    {
+      "q": "La gestion réglementaire des déchets d'amiante impose notamment :",
+      "choices": [
+        "Un repérage avant travaux, un double emballage étanche et un étiquetage spécifique",
+        "Un simple compactage avec les gravats de chantier",
+        "Un arrosage à l'eau puis un dépôt en décharge ordinaire",
+        "Aucune mesure particulière si la quantité est faible"
+      ],
+      "exp": "Repérage avant travaux, confinement, double emballage étanche, élimination en alvéole dédiée ou vitrification.",
+      "theme": "D"
+    },
+    {
+      "q": "Concernant les DEEE (déchets d'équipements électriques et électroniques), le cours souligne que :",
+      "choices": [
+        "Le démontage informel avec brûlage des câbles est une source majeure de dioxines et de plomb",
+        "Ils ne présentent aucun risque une fois mis au rebut",
+        "Leur traitement est identique à celui du papier",
+        "Ils sont exclus de tout enjeu de gaz frigorigènes"
+      ],
+      "exp": "Piles, batteries, écrans, cartes électroniques et gaz frigorigènes constituent des enjeux spécifiques, aggravés par le démontage informel.",
+      "theme": "D"
+    },
+    {
+      "q": "Les pesticides obsolètes, souvent hérités des campagnes antiacridiennes, doivent être :",
+      "choices": [
+        "Inventoriés, reconditionnés en fûts homologués, sécurisés et exportés pour destruction",
+        "Dilués dans l'eau avant rejet dans le réseau d'assainissement",
+        "Enterrés sur place sans traitement préalable",
+        "Redistribués aux agriculteurs locaux après contrôle visuel"
+      ],
+      "exp": "Ces stocks périmés exigent un traitement spécifique, sans capacité nationale de destruction.",
+      "theme": "D"
+    },
+    {
+      "q": "Pour des déchets miniers issus de l'extraction de l'or, les enjeux principaux identifiés par le cours sont :",
+      "choices": [
+        "La stabilité géotechnique des digues à résidus, le drainage minier acide et la présence de cyanure ou de mercure",
+        "Uniquement l'esthétique du paysage minier",
+        "Uniquement le bruit des installations de traitement",
+        "Le seul coût de transport des stériles"
+      ],
+      "exp": "Stabilité des digues à résidus (tailings), drainage acide en présence de sulfures, cyanure/mercure selon le procédé.",
+      "theme": "D"
+    },
+    {
+      "q": "Concernant les déchets pétroliers en mer, le cadre réglementaire mobilisé est :",
+      "choices": [
+        "La Convention MARPOL et le plan national d'urgence",
+        "Uniquement la Convention de Bâle",
+        "Uniquement la Convention de Ramsar",
+        "Aucun cadre spécifique, le droit commun suffit"
+      ],
+      "exp": "MARPOL encadre rejets et déversements accidentels ; le plan national d'urgence complète ce dispositif.",
+      "theme": "D"
+    },
+    {
+      "q": "Les déchets d'activités de soins à risques infectieux (objets piquants, coupants, tranchants) doivent être conditionnés dans des emballages :",
+      "choices": [
+        "Normalisés à usage unique, remplis au plus aux deux tiers ou jusqu'à la limite indiquée",
+        "Réutilisables après simple rinçage à l'eau",
+        "En carton ordinaire non normalisé",
+        "Sans limite de remplissage particulière"
+      ],
+      "exp": "Le conteneur rempli au-delà de sa limite est la non-conformité la plus fréquemment testée : risque d'accident d'exposition au sang.",
+      "theme": "D"
+    },
+    {
+      "q": "Selon le droit mauritanien, les déchets hospitaliers, toxiques ou pathogènes sont :",
+      "choices": [
+        "Assimilés à des déchets industriels",
+        "Assimilés à de simples déchets ménagers",
+        "Exclus de toute réglementation spécifique",
+        "Réservés exclusivement à l'incinération domestique"
+      ],
+      "exp": "Le cours souligne que l'article 64 le dit deux fois : ces déchets sont assimilés à des déchets industriels.",
+      "theme": "D"
+    },
+    {
+      "q": "Le traitement des déchets d'activités de soins se fait par :",
+      "choices": [
+        "Banalisation (désinfection avec broyage) ou incinération dédiée",
+        "Compostage classique avec les déchets verts",
+        "Enfouissement direct sans traitement",
+        "Recyclage matière avec les plastiques ménagers"
+      ],
+      "exp": "Ce sont les deux filières de traitement mentionnées pour ces déchets à risque infectieux.",
+      "theme": "D"
+    },
+    {
+      "q": "Un registre de suivi des déchets parfaitement tenu, associé à des conteneurs d'objets piquants surremplis, doit être interprété comme :",
+      "choices": [
+        "Une non-conformité réelle : le constat physique prime sur la conformité documentaire",
+        "Une situation globalement conforme, le registre suffisant à couvrir l'écart",
+        "Un problème mineur ne nécessitant aucune suite",
+        "La preuve que l'exploitant est de bonne foi et doit être exempté de sanction"
+      ],
+      "exp": "Un registre irréprochable ne compense jamais un constat physique de non-conformité.",
+      "theme": "D"
+    },
+    {
+      "q": "Une entreprise qui souhaite mélanger deux déchets dangereux de nature différente sans évaluation préalable :",
+      "choices": [
+        "Prend le risque de créer un déchet dangereux nouveau par réaction chimique, ce qui est prohibé sans évaluation (art. 65)",
+        "Peut le faire librement si le volume total reste inférieur à une tonne",
+        "Peut le faire si les deux déchets sont mineurs pris séparément",
+        "N'a besoin d'aucune autorisation, l'inspecteur n'ayant pas compétence sur ce point"
+      ],
+      "exp": "L'article 65 fonde le refus de tout mélange non évalué, la dangerosité pouvant naître du contact entre composés.",
+      "theme": "D"
+    },
+    {
+      "q": "Parmi les incompatibilités chimiques classiques à connaître pour le stockage, acides et cyanures entraînent :",
+      "choices": [
+        "Un dégagement d'acide cyanhydrique, hautement toxique",
+        "Une réaction totalement neutre sans risque",
+        "Une simple décoloration du produit",
+        "Une solidification immédiate sans danger"
+      ],
+      "exp": "C'est une incompatibilité majeure listée dans le cours, à séparer impérativement lors du stockage.",
+      "theme": "D"
+    },
+    {
+      "q": "Le stockage de produits chimiques dangereux doit respecter le principe de :",
+      "choices": [
+        "Familles séparées, sur rétention distincte, avec étiquetage conforme et fiches de données de sécurité accessibles",
+        "Stockage groupé par ordre alphabétique du nom commercial",
+        "Stockage unique sans distinction de nature chimique",
+        "Absence de rétention si le volume est faible"
+      ],
+      "exp": "Le cours détaille explicitement cette règle de séparation par familles chimiques incompatibles.",
+      "theme": "D"
+    },
+    {
+      "q": "Le démontage informel de DEEE avec brûlage des câbles pour en récupérer le cuivre expose principalement à :",
+      "choices": [
+        "Des émissions de dioxines et de plomb",
+        "Aucun risque sanitaire documenté",
+        "Un risque uniquement esthétique pour le site",
+        "Une simple nuisance sonore"
+      ],
+      "exp": "Le cours identifie explicitement cette pratique comme une source majeure de dioxines et de plomb.",
+      "theme": "D"
+    },
+    {
+      "q": "Un déchet phytosanitaire obsolète découvert lors d'une inspection agricole doit être traité selon la même logique que :",
+      "choices": [
+        "Les pesticides obsolètes : inventaire, reconditionnement homologué, sécurisation et export pour destruction",
+        "Un simple déchet vert compostable sur place",
+        "Un déchet inerte de chantier",
+        "Un déchet ménager collecté en porte-à-porte"
+      ],
+      "exp": "Les produits phytosanitaires obsolètes sont explicitement cités à l'article 64 parmi les déchets industriels visés.",
+      "theme": "D"
+    },
+    {
+      "q": "La présence de mercure dans les déchets issus de l'orpaillage artisanal relève, sur le plan international, de :",
+      "choices": [
+        "La Convention de Minamata",
+        "La Convention de Rotterdam",
+        "Le Protocole de Montréal",
+        "La Convention de Ramsar"
+      ],
+      "exp": "Minamata couvre spécifiquement l'extraction minière artisanale et à petite échelle de l'or.",
+      "theme": "D"
+    },
+    {
+      "q": "Concernant les matières radioactives naturellement présentes dans les déchets pétroliers (dépôts de bacs, boues de forage), le cours indique qu'elles sont :",
+      "choices": [
+        "Concentrées dans les dépôts, ce qui constitue un enjeu spécifique de gestion",
+        "Systématiquement absentes des activités pétrolières",
+        "Sans rapport avec le cadre MARPOL",
+        "Éliminées automatiquement par simple dilution dans l'eau de mer"
+      ],
+      "exp": "Le cours mentionne explicitement les matières radioactives naturellement présentes concentrées dans les dépôts.",
+      "theme": "D"
+    },
+    {
+      "q": "Le mélange d'huiles usagées avec de l'eau, des solvants ou des PCB est :",
+      "choices": [
+        "Interdit, car il compromet la régénération et augmente le risque de contamination croisée",
+        "Autorisé si le volume total reste faible",
+        "Recommandé pour faciliter le transport",
+        "Sans incidence sur la filière de traitement choisie"
+      ],
+      "exp": "Le cours pose explicitement cette interdiction de mélange pour préserver la priorité donnée à la régénération.",
+      "theme": "D"
+    }
+  ],
+  "E": [
+    {
+      "q": "Un exploitant présente un registre parfaitement tenu et une certification ISO 14001 pour justifier l'absence de tout contrôle complémentaire. L'inspecteur doit considérer que :",
+      "choices": [
+        "Ces éléments sont une présomption favorable, jamais une preuve de conformité, et ne dispensent pas du contrôle du site entier",
+        "Ces éléments suffisent à clore l'inspection sans autre vérification",
+        "Seule la certification ISO 14001 compte, le registre étant secondaire",
+        "Ces éléments doivent être ignorés car sans valeur juridique"
+      ],
+      "exp": "Réflexe n°1 du cours : ne jamais conclure sur une preuve unique, quelle que soit sa qualité apparente.",
+      "theme": "E"
+    },
+    {
+      "q": "Face à un flux de déchets nouveau constaté sur site, la question à se poser en priorité est :",
+      "choices": [
+        "Quel est le niveau le plus haut de la hiérarchie des déchets applicable, avant d'envisager l'élimination",
+        "Quelle filière d'élimination est la moins chère",
+        "Quelle filière est la plus rapide à mettre en œuvre",
+        "Quelle filière a la meilleure image auprès du public"
+      ],
+      "exp": "Réflexe n°2 : appliquer la hiérarchie des déchets avant de parler d'élimination.",
+      "theme": "E"
+    },
+    {
+      "q": "Un accident de transport de matières dangereuses vient de se produire, avec des riverains déjà présents sur les lieux. La toute première action de l'inspecteur est :",
+      "choices": [
+        "Établir un périmètre de sécurité et éloigner le public, avant toute documentation ou analyse",
+        "Prendre des photographies détaillées de la scène pour le dossier",
+        "Rétablir la circulation pour limiter les nuisances",
+        "Interroger longuement le chauffeur du véhicule accidenté"
+      ],
+      "exp": "Réflexe n°3 : sécuriser avant d'analyser. La protection des personnes prime sur toute documentation.",
+      "theme": "E"
+    },
+    {
+      "q": "Une proposition de réponse à un QCM contient les mots « toujours », « uniquement » ou « suffit ». Le réflexe méthodologique recommandé est de :",
+      "choices": [
+        "L'éliminer par principe, sauf cas d'interdiction absolue explicite",
+        "La retenir automatiquement car elle est catégorique donc rassurante",
+        "L'ignorer, ce vocabulaire n'ayant aucune incidence",
+        "La choisir si elle est la plus courte des quatre propositions"
+      ],
+      "exp": "Réflexe n°4 : traquer les absolus. Ce vocabulaire trahit très régulièrement le distracteur.",
+      "theme": "E"
+    },
+    {
+      "q": "Un exploitant justifie une pratique non conforme par « la réduction des coûts » et « le gain de temps ». Cet argument :",
+      "choices": [
+        "Ne fonde jamais seul une décision d'inspection ; il ne peut être qu'un élément d'arbitrage après conformité établie",
+        "Suffit à lui seul à justifier une dérogation immédiate",
+        "Doit systématiquement être accepté s'il est chiffré précisément",
+        "Rend toute vérification technique inutile"
+      ],
+      "exp": "Réflexe n°5 : refuser l'argument économique isolé.",
+      "theme": "E"
+    },
+    {
+      "q": "Une entreprise annonce un taux de recyclage de 95 % sans disposer d'aucune zone de tri visible sur site. La réponse la plus complète est :",
+      "choices": [
+        "Procéder au bouclage du bilan matière (flux, contrats, bordereaux, capacités des exutoires), l'absence de zone de tri étant un indice d'invraisemblance à approfondir",
+        "Se contenter de vérifier les quantités produites, ce qui est suffisant",
+        "Accepter l'allégation telle quelle, aucune preuve n'étant exigée par la loi",
+        "Conclure immédiatement à une fraude et dresser un procès-verbal sans vérification"
+      ],
+      "exp": "Le distracteur le plus dangereux est vrai mais incomplet : « vérifier les quantités produites » ne suffit pas, il faut le bouclage complet.",
+      "theme": "E"
+    },
+    {
+      "q": "Une décharge affiche des registres solides et une plateforme bétonnée pour ses effluents, mais aucun contrôle n'a jamais porté sur les émissions atmosphériques du site. L'inspecteur doit considérer que :",
+      "choices": [
+        "Le périmètre du contrôle est le site entier ; la conformité d'un compartiment ne vaut pas quitus pour les autres",
+        "Le site peut être déclaré globalement conforme sur la base des éléments déjà vérifiés",
+        "Seul le compartiment air doit désormais être contrôlé, le reste étant définitivement acquis",
+        "Aucune action n'est nécessaire tant qu'aucune plainte n'est déposée"
+      ],
+      "exp": "Famille « conformité apparente » : un élément positif ne couvre pas les autres compartiments du site.",
+      "theme": "E"
+    },
+    {
+      "q": "Une usine possède une rétention pour ses produits chimiques mais aucune procédure d'urgence écrite ni personnel désigné en cas de fuite. Cette situation doit être qualifiée de :",
+      "choices": [
+        "Barrière technique sans barrière organisationnelle : une non-conformité de l'organisation, même si l'équipement existe",
+        "Une conformité totale, l'équipement physique suffisant",
+        "Un problème mineur ne nécessitant aucune remarque",
+        "Une non-conformité uniquement si un incident survient effectivement"
+      ],
+      "exp": "Un équipement sans procédure est une barrière technique orpheline : personne ne sait quand ni comment l'utiliser.",
+      "theme": "E"
+    },
+    {
+      "q": "Lors d'un prélèvement destiné à une analyse réglementaire, l'inspecteur doit privilégier :",
+      "choices": [
+        "Le strict respect du protocole (traçabilité, échantillon contradictoire, laboratoire accrédité) plutôt que la rapidité",
+        "La rapidité de l'analyse, quitte à alléger la traçabilité",
+        "Un prélèvement informel sans échantillon contradictoire pour gagner du temps",
+        "L'absence de laboratoire accrédité si le résultat semble évident"
+      ],
+      "exp": "Un résultat hors norme obtenu sur un prélèvement à la traçabilité incomplète ne vaut rien juridiquement : le protocole gagne toujours.",
+      "theme": "E"
+    },
+    {
+      "q": "Un écart est constaté entre les quantités de déchets produites déclarées et les quantités effectivement éliminées. L'hypothèse à instruire en priorité est :",
+      "choices": [
+        "La rupture de traçabilité (flux détourné, filière parallèle, exutoire non déclaré)",
+        "Une simple erreur de saisie informatique, à corriger sans investigation",
+        "Une variation saisonnière normale, sans suite à donner",
+        "Un problème purement comptable relevant du seul service financier"
+      ],
+      "exp": "Erreur de saisie et variation saisonnière sont des explications possibles, mais à vérifier après avoir sécurisé la question de la traçabilité, car ce sont aussi les explications avancées pour masquer un détournement.",
+      "theme": "E"
+    },
+    {
+      "q": "Un site certifié ISO 14001 présente, lors du contrôle, un étiquetage de produits chimiques absent et une rétention insuffisante. L'inspecteur doit :",
+      "choices": [
+        "Constater ces non-conformités réglementaires, la certification ne s'y substituant en aucun cas",
+        "Considérer que la certification prime sur le constat de terrain",
+        "Renoncer à tout constat, la certification faisant foi",
+        "Exiger le retrait immédiat de la certification, hors de sa compétence"
+      ],
+      "exp": "La certification ISO 14001 est un indice favorable de maturité organisationnelle, mais n'atteste jamais la conformité réglementaire.",
+      "theme": "E"
+    },
+    {
+      "q": "Face à un exploitant qui refuse de communiquer ses données d'autosurveillance, la réponse appropriée est :",
+      "choices": [
+        "Rappeler l'obligation légale (art. 56) et poursuivre la procédure : l'obstacle au contrôle est une infraction autonome (art. 91)",
+        "Clore l'inspection faute d'éléments disponibles",
+        "Considérer que le refus équivaut à une conformité tacite",
+        "Attendre que l'exploitant change d'avis avant toute suite"
+      ],
+      "exp": "Le refus de communiquer n'arrête pas l'inspection, il l'aggrave : c'est une infraction autonome sanctionnée par l'article 91.",
+      "theme": "E"
+    },
+    {
+      "q": "Une inspection multi-administrations (environnement, santé, hydraulique) sur un même site doit respecter le principe de :",
+      "choices": [
+        "Coordination, avec un pilote désigné et une restitution unique à l'exploitant, chaque administration restant dans son champ de compétence",
+        "Priorité systématique de l'administration de l'environnement sur toutes les autres",
+        "Absence de coordination, chaque administration agissant en totale autonomie",
+        "Fusion des rapports en un seul document rédigé par l'exploitant lui-même"
+      ],
+      "exp": "Compétence, coordination et traçabilité de la décision : les injonctions contradictoires détruisent la crédibilité du contrôle.",
+      "theme": "E"
+    },
+    {
+      "q": "Une inspection se termine sans qu'aucune contre-visite ne soit prévue pour vérifier la levée des écarts constatés. Cette pratique est :",
+      "choices": [
+        "Insuffisante : une inspection sans contre-visite ne produit aucun effet durable",
+        "Suffisante dès lors qu'un procès-verbal a été dressé",
+        "Recommandée pour alléger la charge de travail de l'inspection",
+        "Sans incidence, la levée des écarts relevant de la seule responsabilité de l'exploitant"
+      ],
+      "exp": "Le cours identifie explicitement l'absence de contre-visite comme l'oubli le plus fréquent des candidats.",
+      "theme": "E"
+    },
+    {
+      "q": "Un inspecteur, agent public chargé de la protection de l'environnement, commet lui-même une infraction environnementale. Selon l'article 95 :",
+      "choices": [
+        "La peine encourue est doublée, la loi traitant plus sévèrement la défaillance de l'inspecteur que celle d'un administré",
+        "Il bénéficie d'une immunité totale de par sa fonction",
+        "La peine est réduite de moitié en raison de sa qualité d'agent public",
+        "Seule une sanction disciplinaire interne est possible, sans poursuite pénale"
+      ],
+      "exp": "L'article 95 double la peine lorsque l'auteur appartient aux corps de fonctionnaires chargés de la protection de l'environnement.",
+      "theme": "E"
+    },
+    {
+      "q": "Une entreprise sollicite un inspecteur pour obtenir, avant un contrôle officiel, la garantie d'un résultat favorable. L'attitude déontologiquement correcte est de :",
+      "choices": [
+        "Fournir une information générale sur la réglementation applicable, sans jamais garantir de résultat, afin de préserver l'impartialité du contrôle",
+        "Garantir un résultat favorable en échange d'une meilleure coopération future",
+        "Refuser tout contact avec l'entreprise avant le contrôle",
+        "Accepter une contrepartie financière pour ce service de conseil"
+      ],
+      "exp": "Impartialité, indépendance et absence de conflit d'intérêts sont au cœur de la déontologie de l'inspecteur.",
+      "theme": "E"
+    },
+    {
+      "q": "Une décharge non contrôlée doit être fermée. La séquence correcte est :",
+      "choices": [
+        "Évaluer les impacts, sécuriser le site, puis planifier la réhabilitation et le suivi",
+        "Recouvrir immédiatement le site de sable sans autre mesure",
+        "Rouvrir le site au public dès l'arrêt des apports",
+        "Transférer l'ensemble des déchets sans diagnostic préalable"
+      ],
+      "exp": "Le diagnostic précède toujours le choix technique (réhabilitation sur place ou excavation), suivi d'un suivi post-réhabilitation.",
+      "theme": "E"
+    },
+    {
+      "q": "Sur le littoral mauritanien, une accumulation de déchets plastiques issus de la pêche est constatée. La réponse la plus complète articule :",
+      "choices": [
+        "Prévention, capacité de réception portuaire, recyclage, sensibilisation et contrôle",
+        "Uniquement une interdiction de la pêche dans la zone concernée",
+        "Uniquement une collecte ponctuelle sans mesure structurelle",
+        "Uniquement une sensibilisation du public, sans volet réglementaire"
+      ],
+      "exp": "Le cours appelle une gestion intégrée combinant plusieurs leviers, dont l'installation de réception portuaire (logique MARPOL).",
+      "theme": "E"
+    },
+    {
+      "q": "Une entreprise a corrigé une non-conformité après une première mise en demeure. Lors du contrôle de suivi, l'inspecteur doit :",
+      "choices": [
+        "Vérifier concrètement la mise en conformité sur site avant de clore ou d'ajuster la procédure",
+        "Se contenter de la déclaration écrite de l'exploitant, sans vérification physique",
+        "Sanctionner quand même par principe, indépendamment de la correction",
+        "Considérer le dossier clos dès réception de la mise en demeure initiale"
+      ],
+      "exp": "Le constat physique prime toujours ; la parole de l'exploitant ne suffit pas à elle seule.",
+      "theme": "E"
+    },
+    {
+      "q": "Parmi deux réponses toutes deux acceptables à une question de concours, la méthode recommandée par le cours est de choisir :",
+      "choices": [
+        "Systématiquement la plus englobante, articulant constat technique, exigence réglementaire et suite procédurale",
+        "Systématiquement la plus courte à rédiger",
+        "Systématiquement celle mentionnant un chiffre précis",
+        "Systématiquement la première proposée dans l'énoncé"
+      ],
+      "exp": "Grille de tri : parmi les réponses restantes après élimination des absolus et du raccourci économique, garder la plus englobante.",
+      "theme": "E"
+    }
+  ]
+};
+const SERIES_LABELS = {
+  "A": "Série A — Le cadre juridique mauritanien",
+  "B": "Série B — Conventions internationales et ODD",
+  "C": "Série C — Filières, techniques et valorisation",
+  "D": "Série D — Flux dangereux et secteurs à risque",
+  "E": "Série E — Conduite de l'inspection et situations complexes"
+};
+
+const MODE_DESCRIPTIONS = {
+  A: "20 questions · Loi n°2000-045, articles clés, sanctions",
+  B: "20 questions · Bâle, Rotterdam, Stockholm, Minamata, Bamako, ODD",
+  C: "20 questions · Définitions, hiérarchie des déchets, filières techniques",
+  D: "20 questions · PCB, amiante, DEEE, pesticides, déchets de soins",
+  E: "20 questions · Mises en situation et raisonnement professionnel",
+};
+
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+let state = null; // {mode, questions[], current, score, answers[], startTime, timerId}
+
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-.5); }
+
+function bestScore(mode){
+  return parseInt(localStorage.getItem(`qcmManuelBest_${mode}`)||"0");
+}
+function saveBestScore(mode, score){
+  const best = bestScore(mode);
+  if(score > best) localStorage.setItem(`qcmManuelBest_${mode}`, String(score));
+}
+function formatTime(sec){
+  const m = Math.floor(sec/60).toString().padStart(2,"0");
+  const s = Math.floor(sec%60).toString().padStart(2,"0");
+  return `${m}:${s}`;
+}
+function questionsForMode(mode){
+  if(mode === "full"){
+    return ["A","B","C","D","E"].flatMap(k => SERIES[k]);
+  }
+  return SERIES[mode];
+}
+
+/* ══════════════════════════════════════
+   MENU
+══════════════════════════════════════ */
+function renderMenu(){
+  const seriesBox = document.getElementById("quizCardsSeries");
+  seriesBox.innerHTML = "";
+  ["A","B","C","D","E"].forEach(k => {
+    const total = SERIES[k].length;
+    const best = bestScore(k);
+    const pct = Math.round(best/total*100);
+    const card = document.createElement("div");
+    card.className = "quiz-card";
+    card.innerHTML = `
+      <div class="qc-top">
+        <span class="qc-title">${SERIES_LABELS[k]}</span>
+        <span class="qc-badge">${best>0 ? `Meilleur : ${best}/${total}` : "Pas encore fait"}</span>
+      </div>
+      <div class="qc-desc">${MODE_DESCRIPTIONS[k]}</div>
+      <div class="qc-bar-bg"><div class="qc-bar-fill" style="width:${pct}%"></div></div>
+      <button class="start-btn" data-mode="${k}">Commencer ▶</button>
+    `;
+    seriesBox.appendChild(card);
+  });
+
+  const fullBox = document.getElementById("quizCardsFull");
+  fullBox.innerHTML = "";
+  const fullTotal = 100;
+  const fullBest = bestScore("full");
+  const fullPct = Math.round(fullBest/fullTotal*100);
+  const fullCard = document.createElement("div");
+  fullCard.className = "quiz-card full";
+  fullCard.innerHTML = `
+    <div class="qc-top">
+      <span class="qc-title">📝 Épreuve complète</span>
+      <span class="qc-badge">${fullBest>0 ? `Meilleur : ${fullBest}/${fullTotal}` : "Pas encore fait"}</span>
+    </div>
+    <div class="qc-desc">100 questions (séries A à E enchaînées) · rythme cible : 70 secondes/question</div>
+    <div class="qc-bar-bg"><div class="qc-bar-fill" style="width:${fullPct}%"></div></div>
+    <button class="start-btn full" data-mode="full">Démarrer l'épreuve ▶</button>
+  `;
+  fullBox.appendChild(fullCard);
+
+  document.querySelectorAll(".start-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=> startQuiz(btn.dataset.mode));
+  });
+}
+
+/* ══════════════════════════════════════
+   QUIZ FLOW
+══════════════════════════════════════ */
+function startQuiz(mode){
+  const questions = questionsForMode(mode);
+  state = {
+    mode,
+    questions,
+    current: 0,
+    score: 0,
+    answers: [],
+    startTime: Date.now(),
+    timerId: null
+  };
+  document.getElementById("screenMenu").classList.add("hidden");
+  document.getElementById("screenResult").classList.add("hidden");
+  document.getElementById("screenQuiz").classList.remove("hidden");
+  document.getElementById("quizTitlePill").textContent = mode === "full" ? "Épreuve complète" : SERIES_LABELS[mode];
+
+  clearInterval(state.timerId);
+  state.timerId = setInterval(()=>{
+    const elapsed = Math.floor((Date.now()-state.startTime)/1000);
+    document.getElementById("timerPill").textContent = `⏱ ${formatTime(elapsed)}`;
+  }, 1000);
+
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = state.questions[state.current];
+  const total = state.questions.length;
+  document.getElementById("quizBar").style.width = `${Math.round(state.current/total*100)}%`;
+  document.getElementById("scorePill").textContent = `Score : ${state.score}`;
+  document.getElementById("themeBadge").textContent = `${state.current+1}/${total} · ${SERIES_LABELS[q.theme]}`;
+  document.getElementById("questionText").textContent = q.q;
+
+  const options = q.choices.map((text, idx)=>({text, correct: idx===0}));
+  const shuffled = shuffle(options);
+
+  const box = document.getElementById("choicesBox");
+  box.innerHTML = "";
+  shuffled.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.textContent = opt.text;
+    btn.addEventListener("click", ()=> answerQuestion(btn, opt, q));
+    box.appendChild(btn);
+  });
+
+  document.getElementById("explanationBox").classList.remove("show");
+  document.getElementById("explanationBox").textContent = "";
+  document.getElementById("nextBtn").classList.remove("show");
+}
+
+function answerQuestion(btn, opt, q){
+  const allBtns = document.querySelectorAll("#choicesBox .choice");
+  allBtns.forEach(b=> b.disabled = true);
+
+  const correctText = q.choices[0];
+  allBtns.forEach(b=>{
+    if(b.textContent === correctText) b.classList.add("correct");
+  });
+  if(!opt.correct) btn.classList.add("wrong");
+
+  if(opt.correct) state.score++;
+  state.answers.push({
+    question: q.q,
+    correctAnswer: correctText,
+    givenAnswer: opt.text,
+    wasCorrect: opt.correct,
+    explanation: q.exp
+  });
+
+  const expBox = document.getElementById("explanationBox");
+  expBox.textContent = q.exp;
+  expBox.classList.add("show");
+
+  document.getElementById("scorePill").textContent = `Score : ${state.score}`;
+  document.getElementById("nextBtn").classList.add("show");
+}
+
+document.getElementById("nextBtn").addEventListener("click", ()=>{
+  state.current++;
+  if(state.current >= state.questions.length){
+    finishQuiz();
+  } else {
+    renderQuestion();
+  }
+});
+
+function finishQuiz(){
+  clearInterval(state.timerId);
+  const elapsed = Math.floor((Date.now()-state.startTime)/1000);
+  const total = state.questions.length;
+  saveBestScore(state.mode, state.score);
+
+  document.getElementById("screenQuiz").classList.add("hidden");
+  document.getElementById("screenResult").classList.remove("hidden");
+
+  document.getElementById("resultTitle").textContent = state.mode === "full" ? "Épreuve complète terminée" : `${SERIES_LABELS[state.mode]} terminée`;
+  document.getElementById("resultScore").textContent = `${state.score} / ${total}`;
+  const pct = Math.round(state.score/total*100);
+  document.getElementById("resultPct").textContent = `${pct}%`;
+  document.getElementById("resultTime").textContent = `Temps : ${formatTime(elapsed)}`;
+
+  let msg;
+  if(pct >= 80) msg = "🏆 Excellent niveau, continuez ainsi !";
+  else if(pct >= 60) msg = "👍 Bon niveau, quelques révisions à consolider.";
+  else msg = "📚 Encore un peu de révision, revoyez les questions ratées ci-dessous.";
+  document.getElementById("resultMsg").textContent = msg;
+
+  const mistakes = state.answers.filter(a=>!a.wasCorrect);
+  const reviewList = document.getElementById("reviewList");
+  reviewList.innerHTML = "";
+  if(mistakes.length === 0){
+    document.getElementById("reviewSection").innerHTML = `<div class="no-mistakes">🎉 Aucune erreur, sans faute !</div>`;
+  } else {
+    mistakes.forEach(m=>{
+      const div = document.createElement("div");
+      div.className = "review-item";
+      div.innerHTML = `
+        <div class="rq">${m.question}</div>
+        <div class="ra-given">Votre réponse : ${m.givenAnswer}</div>
+        <div class="ra-correct">Bonne réponse : ${m.correctAnswer}</div>
+        <div class="rexp">${m.explanation}</div>
+      `;
+      reviewList.appendChild(div);
+    });
+  }
+}
+
+document.getElementById("retryBtn").addEventListener("click", ()=>{
+  startQuiz(state.mode);
+});
+document.getElementById("menuBtn").addEventListener("click", ()=>{
+  document.getElementById("screenResult").classList.add("hidden");
+  document.getElementById("screenMenu").classList.remove("hidden");
+  renderMenu();
+});
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+renderMenu();
+</script>
+
+</body>
+</html>
