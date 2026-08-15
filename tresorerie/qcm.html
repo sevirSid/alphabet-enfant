@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>QCM — Loi de Finances 2026 (Trésor public)</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#1d4e89; --darkblue:#0d2b4e; --midblue:#2f6690;
+    --gold:#c9a227; --clay:#c1440e;
+    --bg:#f2f5f9; --card-bg:#ffffff; --text:#1c2733; --muted:#5c6b7a;
+    --shadow:0 8px 32px rgba(13,43,78,.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:var(--bg);
+    min-height:100vh;
+    display:flex;justify-content:center;align-items:flex-start;
+    padding:24px 16px 60px;
+    background-image:
+      radial-gradient(circle at 12% 15%, rgba(29,78,137,.12) 0%, transparent 50%),
+      radial-gradient(circle at 88% 80%, rgba(201,162,39,.16) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(47,102,144,.06) 0%, transparent 70%);
+  }
+  .app{
+    width:100%;max-width:700px;
+    background:var(--card-bg);border-radius:32px;
+    padding:32px 28px 28px;
+    box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .app::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:6px;
+    background:linear-gradient(90deg,var(--blue),var(--gold),var(--clay),var(--midblue));
+    border-radius:32px 32px 0 0;
+  }
+  h1{font-family:'Baloo 2',cursive;color:var(--darkblue);font-size:1.7rem;font-weight:800;margin-bottom:4px;text-align:center;}
+  .subtitle{color:var(--muted);font-size:.9rem;margin-bottom:18px;text-align:center;}
+
+  .disclaimer{
+    background:#fff8e6;border:2px solid var(--gold);border-radius:16px;
+    padding:12px 16px;font-size:.8rem;color:#6b4f00;margin-bottom:22px;line-height:1.4;
+  }
+
+  .section-label{
+    font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.03em;margin:18px 0 10px;
+  }
+
+  .quiz-cards{display:flex;flex-direction:column;gap:12px;}
+  .quiz-card{
+    background:#f2f6fa;border:3px solid transparent;border-radius:20px;
+    padding:16px 18px;display:flex;flex-direction:column;gap:8px;
+    transition:transform .15s,box-shadow .15s;
+  }
+  .quiz-card.full{background:linear-gradient(135deg,#eaf1fa,#fdf7e8);border-color:var(--gold);}
+  .quiz-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(13,43,78,.12);}
+  .quiz-card .qc-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+  .quiz-card .qc-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.05rem;color:var(--darkblue);}
+  .quiz-card .qc-badge{
+    font-size:.74rem;font-weight:800;padding:4px 10px;border-radius:20px;background:#e6edf7;color:var(--blue);white-space:nowrap;
+  }
+  .quiz-card .qc-desc{font-size:.82rem;color:var(--muted);}
+  .quiz-card .qc-bar-bg{background:#e3e9f0;border-radius:10px;height:7px;overflow:hidden;}
+  .quiz-card .qc-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--blue),var(--midblue));width:0%;transition:width .8s ease;}
+  .start-btn{
+    align-self:flex-start;border:none;border-radius:14px;padding:9px 18px;
+    font-family:'Nunito',sans-serif;font-size:.86rem;font-weight:800;color:white;cursor:pointer;
+    background:linear-gradient(135deg,var(--blue),var(--midblue));box-shadow:0 4px 0 #082038;
+    transition:transform .15s;
+  }
+  .start-btn.full{background:linear-gradient(135deg,var(--clay),#963a20);box-shadow:0 4px 0 #6f2a18;}
+  .start-btn:hover{transform:translateY(-2px);}
+  .start-btn:active{transform:translateY(1px);}
+
+  /* ── QUIZ SCREEN ── */
+  .top-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .pill{background:#eef1f5;padding:8px 14px;border-radius:14px;font-weight:800;color:var(--text);font-size:.86rem;}
+  .pill.timer{background:#fdf1ea;color:var(--clay);}
+  .pill.score{background:#e6edf7;color:var(--blue);}
+  .bar-bg{background:#e3e9f0;border-radius:10px;height:10px;overflow:hidden;margin-bottom:18px;}
+  .bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--blue),var(--midblue));width:0%;transition:width .4s ease;}
+
+  .theme-badge{
+    display:inline-block;margin-bottom:10px;padding:4px 12px;border-radius:20px;
+    font-size:.72rem;font-weight:800;background:#eef1f5;color:var(--muted);
+  }
+  .question-card{
+    background:#f2f6fa;border-radius:22px;padding:20px 20px 18px;margin-bottom:18px;border:3px solid #e0e8f0;
+  }
+  .question-text{font-size:1.08rem;color:var(--text);font-weight:700;line-height:1.4;}
+
+  .choices{display:flex;flex-direction:column;gap:12px;}
+  .choice{
+    border:3px solid transparent;border-radius:16px;padding:14px 16px;text-align:left;
+    font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;
+    cursor:pointer;background:#fff;color:var(--text);
+    box-shadow:0 3px 0 rgba(0,0,0,.06);
+    transition:transform .15s,background .2s,border-color .2s;
+  }
+  .choice:hover:not(:disabled){transform:translateY(-2px);border-color:var(--blue);}
+  .choice:active:not(:disabled){transform:scale(.99);}
+  .choice:disabled{cursor:not-allowed;}
+  .choice.correct{background:#e6edf7;color:var(--darkblue);border-color:var(--blue);}
+  .choice.wrong{background:#fdecea;color:#9a2f23;border-color:var(--clay);}
+
+  .explanation{
+    margin-top:16px;padding:14px 16px;border-radius:14px;background:#eef2f8;
+    font-size:.86rem;color:var(--text);display:none;line-height:1.4;
+  }
+  .explanation.show{display:block;}
+
+  .next{
+    margin-top:16px;width:100%;border:none;
+    background:linear-gradient(135deg,var(--blue),var(--midblue));
+    color:white;padding:16px;border-radius:18px;
+    font-family:'Nunito',sans-serif;font-size:1.02rem;font-weight:800;
+    cursor:pointer;display:none;box-shadow:0 4px 0 #082038;transition:transform .15s;
+  }
+  .next:hover{transform:translateY(-2px);}
+  .next.show{display:block;}
+
+  /* ── RESULT SCREEN ── */
+  .result-score{
+    text-align:center;font-family:'Baloo 2',cursive;font-size:2.8rem;font-weight:800;color:var(--darkblue);margin:10px 0 4px;
+  }
+  .result-pct{text-align:center;color:var(--muted);font-weight:800;margin-bottom:6px;}
+  .result-time{text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:22px;}
+  .result-msg{text-align:center;font-weight:800;font-size:1.05rem;margin-bottom:22px;color:var(--blue);}
+  .review-title{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--darkblue);margin-bottom:12px;}
+  .review-item{
+    background:#fdf5f4;border-left:4px solid var(--clay);border-radius:10px;
+    padding:12px 14px;margin-bottom:10px;font-size:.84rem;line-height:1.4;
+  }
+  .review-item .rq{font-weight:800;color:var(--text);margin-bottom:6px;}
+  .review-item .ra-correct{color:var(--blue);font-weight:700;}
+  .review-item .ra-given{color:#9a2f23;}
+  .review-item .rexp{color:var(--muted);margin-top:6px;}
+  .no-mistakes{text-align:center;color:var(--blue);font-weight:800;padding:20px 0;}
+  .result-actions{display:flex;gap:12px;margin-top:20px;}
+  .result-actions button{
+    flex:1;border:none;border-radius:16px;padding:14px;font-family:'Nunito',sans-serif;
+    font-size:.92rem;font-weight:800;cursor:pointer;transition:transform .15s;
+  }
+  .result-actions .retry{background:linear-gradient(135deg,var(--blue),var(--midblue));color:white;box-shadow:0 4px 0 #082038;}
+  .result-actions .menu{background:#eef1f5;color:var(--text);box-shadow:0 4px 0 #d2dae2;}
+  .result-actions button:hover{transform:translateY(-2px);}
+
+  .hidden{display:none !important;}
+
+  @media(max-width:480px){
+    h1{font-size:1.35rem;}
+    .app{padding:24px 18px 20px;border-radius:24px;}
+    .result-score{font-size:2.2rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ══════════════ MENU ══════════════ -->
+  <div id="screenMenu">
+    <h1>💰 QCM — Loi de Finances 2026</h1>
+    <p class="subtitle">Finances publiques &amp; Trésor · République Islamique de Mauritanie</p>
+
+    <div class="disclaimer">
+      ⚠️ Questions rédigées à partir du texte extrait du <a href="./readme">document de référence</a> de ce dossier (Loi de Finances pour l'année 2026). Ce PDF est le budget de l'État mauritanien, pas un manuel de trésorerie associative — voir le readme pour le détail. Support d'entraînement générique, à recouper avec le texte officiel publié au Journal Officiel.
+    </div>
+
+    <div class="section-label">S'entraîner par série</div>
+    <div class="quiz-cards" id="quizCardsSeries"></div>
+
+    <div class="section-label">Épreuve complète</div>
+    <div class="quiz-cards" id="quizCardsFull"></div>
+  </div>
+
+  <!-- ══════════════ QUIZ ══════════════ -->
+  <div id="screenQuiz" class="hidden">
+    <div class="top-row">
+      <span class="pill" id="quizTitlePill"></span>
+      <span class="pill score" id="scorePill">Score : 0</span>
+      <span class="pill timer" id="timerPill">⏱ 00:00</span>
+    </div>
+    <div class="bar-bg"><div class="bar-fill" id="quizBar"></div></div>
+
+    <div class="theme-badge" id="themeBadge"></div>
+    <div class="question-card">
+      <div class="question-text" id="questionText"></div>
+    </div>
+
+    <div class="choices" id="choicesBox"></div>
+
+    <div class="explanation" id="explanationBox"></div>
+
+    <button class="next" id="nextBtn">Suivant →</button>
+  </div>
+
+  <!-- ══════════════ RESULT ══════════════ -->
+  <div id="screenResult" class="hidden">
+    <h1 id="resultTitle">Résultat</h1>
+    <div class="result-score" id="resultScore">0 / 15</div>
+    <div class="result-pct" id="resultPct"></div>
+    <div class="result-time" id="resultTime"></div>
+    <div class="result-msg" id="resultMsg"></div>
+
+    <div id="reviewSection">
+      <div class="review-title">Questions à revoir</div>
+      <div id="reviewList"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="retry" id="retryBtn">Recommencer</button>
+      <button class="menu" id="menuBtn">Retour au menu</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   DATA
+══════════════════════════════════════ */
+const SERIES = {
+  "A": [
+    {q:"Quel est le titre exact du document source de ce dossier ?", choices:["Loi de Finances pour l'année 2026","Code Général des Impôts 2026","Loi de Règlement 2025","Rapport de la Cour des Comptes 2026"], exp:"Le document est intitulé « Loi de Finances pour l'année 2026 », émis par le Ministère des Finances de la République Islamique de Mauritanie.", theme:"A"},
+    {q:"Quelle est la devise nationale mentionnée sur la page de garde ?", choices:["Honneur — Fraternité — Justice","Liberté — Égalité — Fraternité","Unité — Travail — Justice","Paix — Justice — Progrès"], exp:"C'est la devise de la République Islamique de Mauritanie figurant sur le document.", theme:"A"},
+    {q:"Qui promulgue la Loi de Finances 2026 ?", choices:["Le Président de la République, Mohamed OULD CHEIKH EL GHAZOUANI","Le Premier Ministre seul","L'Assemblée Nationale seule","Le Ministre des Finances seul"], exp:"Le Président de la République promulgue la loi après adoption par l'Assemblée Nationale.", theme:"A"},
+    {q:"Qui a signé la loi en tant que Premier Ministre ?", choices:["El Moctar OULD DJAY","Mohamed OULD CHEIKH EL GHAZOUANI","Abdallah Souleymane CHEIKH-SIDIA","Aucun, seul le Président signe"], exp:"El Moctar OULD DJAY a signé en tant que Premier Ministre.", theme:"A"},
+    {q:"Qui a signé la loi en tant que Ministre des Finances par intérim ?", choices:["Abdallah Souleymane CHEIKH-SIDIA","El Moctar OULD DJAY","Mohamed OULD CHEIKH EL GHAZOUANI","Le Gouverneur de la BCM"], exp:"Abdallah Souleymane CHEIKH-SIDIA, également Ministre des Affaires Économiques et du Développement, a signé en tant que Ministre des Finances par intérim.", theme:"A"},
+    {q:"La Partie I de la loi (le texte normatif) est organisée en combien de grands blocs de dispositions ?", choices:["4 (générales, ressources, diverses, équilibre)","2","6","10"], exp:"Dispositions de nature générale, dispositions relatives aux ressources, dispositions diverses, dispositions relatives à l'équilibre des ressources et des charges.", theme:"A"},
+    {q:"Que contiennent principalement les annexes qui suivent la Partie I ?", choices:["Les crédits budgétaires détaillés par institution/ministère","Le texte intégral du Code Civil","La liste des fonctionnaires de l'État","Les statuts de la Banque Centrale"], exp:"Les annexes détaillent, institution par institution, les crédits selon la hiérarchie Titre > Section > Article > Paragraphe > Sous-paragraphe.", theme:"A"},
+    {q:"Quel article fixe le caractère exécutoire du budget de l'État pour 2026 ?", choices:["Article Premier","Article 2","Article 6","Article 9"], exp:"L'Article Premier dispose que le budget de l'État 2026 sera exécuté conformément à la présente Loi de Finances.", theme:"A"},
+    {q:"Que dispose l'Article 2 de la loi ?", choices:["L'autorisation de percevoir les impôts existants et ceux dont la création est proposée","La création de la TTE","La clôture des comptes spéciaux","Le montant du déficit budgétaire"], exp:"L'Article 2 autorise la perception des impôts, taxes et redevances au profit de l'État pendant l'année 2026.", theme:"A"},
+    {q:"Quel article de la loi porte sur l'exécution et la publication de la loi au Journal Officiel ?", choices:["Article 9","Article 1","Article 4","Article 6"], exp:"L'Article 9 dispose que la loi sera exécutée comme loi de l'État et publiée au Journal Officiel.", theme:"A"},
+    {q:"Combien de pages compte approximativement le document PDF de la Loi de Finances 2026 ?", choices:["Environ 291 pages","Environ 50 pages","Environ 1000 pages","Environ 10 pages"], exp:"Le PDF officiel comporte environ 291 pages (texte de loi + annexes détaillées par institution + tableaux de synthèse).", theme:"A"},
+    {q:"Le document a-t-il été extrait d'un PDF scanné (image) ou d'un PDF texte natif ?", choices:["Un PDF texte natif (non scanné)","Un PDF scanné nécessitant l'OCR","Une photocopie","Un fichier Word converti"], exp:"Le PDF est un document texte natif, ce qui permet une extraction fiable du texte.", theme:"A"},
+    {q:"Quelle partie du document ce résumé privilégie-t-il ?", choices:["La Partie I (texte de loi) et les grands équilibres chiffrés","Le détail exhaustif de chaque ligne budgétaire par ministère","Uniquement les annexes institutionnelles","Uniquement la préface"], exp:"Le résumé se concentre sur les dispositions normatives et les grandes masses budgétaires, plus stables et plus testables qu'un détail ligne par ligne.", theme:"A"},
+    {q:"En quel mois la Loi de Finances 2026 a-t-elle été signée ?", choices:["Janvier 2026","Décembre 2025","Juillet 2026","Mars 2026"], exp:"Le document est daté de janvier 2026 (signature le 2 janvier 2026).", theme:"A"},
+    {q:"Quel ministère est l'émetteur officiel du document ?", choices:["Le Ministère des Finances","Le Ministère du Pétrole et de l'Énergie","Le Ministère de la Justice","La Présidence de la République"], exp:"Le document est émis par le Ministère des Finances de la République Islamique de Mauritanie.", theme:"A"}
+  ],
+  "B": [
+    {q:"L'article 3 de la LF 2026 modifie deux textes principaux. Lesquels ?", choices:["Le Code Général des Impôts et le Code des Douanes","Le Code Civil et le Code Pénal","Le Code du Travail et le Code de la Route","La Constitution et le Code Électoral"], exp:"L'article 3.1 modifie le Code Général des Impôts (loi 2019-018), l'article 3.2 modifie le Code des Douanes (loi 2017-035).", theme:"B"},
+    {q:"Le Code Général des Impôts modifié par la LF 2026 est issu de quelle loi ?", choices:["La loi n° 2019-018 du 29 avril 2019","La loi n° 2017-035 du 21 décembre 2017","La loi n° 2025-001 du 16 janvier 2025","La loi n° 2000-045 du 26 juillet 2000"], exp:"C'est la loi n° 2019-018 du 29 avril 2019 qui porte Code Général des Impôts.", theme:"B"},
+    {q:"Le Code des Douanes modifié par la LF 2026 est issu de quelle loi ?", choices:["La loi n° 2017-035 du 21 décembre 2017","La loi n° 2019-018","La loi n° 2025-040","La loi n° 1998-012"], exp:"C'est la loi n° 2017-035 du 21 décembre 2017 qui institue le Code des Douanes.", theme:"B"},
+    {q:"Quel est le taux normal de la taxe sur les opérations financières (Article 278 CGI) ?", choices:["16 %","20 %","10 %","0,1 %"], exp:"Le taux normal est fixé à 16 %.", theme:"B"},
+    {q:"Quel taux s'applique aux commissions perçues sur les transferts, retraits d'espèces et paiements via wallets (Article 278 CGI) ?", choices:["20 %","16 %","0,1 %","10 %"], exp:"Un taux majoré de 20 % s'applique spécifiquement à ces commissions.", theme:"B"},
+    {q:"Quel est le droit d'accise sur le Super Carburant et l'Essence auto ordinaire ?", choices:["9,45 MRU par litre","5,89 MRU par litre","2,16 MRU par litre","0,71 MRU par litre"], exp:"Le Super Carburant et l'Essence auto ordinaire sont taxés à 9,45 MRU/litre.", theme:"B"},
+    {q:"Quel est le droit d'accise sur le Gasoil ?", choices:["5,89 MRU par litre","9,45 MRU par litre","0,71 MRU par litre","2,16 MRU par litre"], exp:"Le Gasoil est taxé à 5,89 MRU/litre.", theme:"B"},
+    {q:"Le Super Carburant, l'Essence et le Gasoil sont en plus soumis à un droit de douane de :", choices:["12 %","16 %","20 %","5 %"], exp:"Un droit de douane de 12 % s'applique à ces trois produits, en sus des droits d'accises.", theme:"B"},
+    {q:"À combien la Contribution Climat est-elle portée par la LF 2026 ?", choices:["800 MRU par tonne de CO2 émis","500 MRU par tonne de CO2","1 200 MRU par tonne de CO2","50 MRU par tonne de CO2"], exp:"L'article 3.2.2 porte la Contribution Climat à 800 MRU par tonne de CO2 émis.", theme:"B"},
+    {q:"La Contribution Climat était initialement instituée par quelle loi (que la LF 2026 majore) ?", choices:["La Loi de Finances Rectificative n° 2025-040 du 21 août 2025","La Loi de Finances Rectificative n° 2019-018","La Loi n° 2000-045","La Loi n° 2017-035"], exp:"L'article 3.2.2 fait référence à la majoration prévue par la LFR n° 2025-040 du 21 août 2025.", theme:"B"},
+    {q:"Quel droit d'accise spécifique s'applique au Gasoil destiné à l'avitaillement des navires de pêche ?", choices:["0,12 MRU par litre","5,89 MRU par litre","0,71 MRU par litre","9,45 MRU par litre"], exp:"Un droit d'accise spécifique réduit de 0,12 MRU/litre s'applique au Gasoil destiné à la pêche.", theme:"B"},
+    {q:"La fiscalité saisonnière sur les produits agricoles importés (pomme de terre, tomate, oignon…) prévoit un taux de 39,23 % appliqué :", choices:["En période de production locale (haute saison)","Toute l'année sans distinction","Uniquement à l'exportation","Uniquement pour les produits transformés"], exp:"Le taux le plus élevé (39,23 %) s'applique pendant la période où la production locale est disponible, pour la protéger ; le taux réduit (13,73 %) s'applique en dehors.", theme:"B"},
+    {q:"La modification de la taxation des smartphones (position 85.17.13) fixe la TVA à :", choices:["16 %","0 %","10 %","20 %"], exp:"Les smartphones sont taxés à une TVA de 16 %, contrairement aux téléphones utilitaires (position 85.17.14) taxés à 0 % de TVA.", theme:"B"},
+    {q:"Quelle loi de finances initiale est modifiée concernant la taxation des téléphones (article 3.2.5) ?", choices:["La loi n° 2025-001 du 16 janvier 2025 (LFI 2025)","La loi n° 2019-018","La loi n° 2017-035","La loi n° 2025-040"], exp:"L'article 3.2.5 modifie le tarif des douanes inscrit dans la loi n° 2025-001 du 16 janvier 2025 portant loi de finances initiale de 2025.", theme:"B"},
+    {q:"Quel est le point commun entre les articles 3.2.1 à 3.2.5 ?", choices:["Ce sont tous des modifications du Code des Douanes / de la fiscalité indirecte","Ce sont tous des créations de comptes spéciaux","Ce sont tous relatifs à la fonction publique","Ce sont tous relatifs aux retraites"], exp:"L'article 3.2 (et ses sous-articles) modifie le Code des Douanes : accises pétroliers, contribution climat, hydrocarbures de pêche, fiscalité agricole saisonnière, taxation des téléphones.", theme:"B"}
+  ],
+  "C": [
+    {q:"Quel chapitre du Code Général des Impôts institue la Taxe sur les Transactions Électroniques ?", choices:["Le Chapitre 8 (nouveau)","Le Chapitre 3","Le Chapitre 1","Le Chapitre 12"], exp:"Le « CHAPITRE 8 (NOUVEAU) » est intitulé « Taxe sur les Transactions Électroniques ».", theme:"C"},
+    {q:"Quel article institue le champ d'application de la TTE ?", choices:["Article 293 octies","Article 293 nonies","Article 293 decies","Article 278"], exp:"L'article 293 octies institue la taxe et définit son champ d'application.", theme:"C"},
+    {q:"La TTE s'applique notamment aux opérations effectuées via :", choices:["Mobile Money, portefeuilles électroniques et plateformes de transfert de fonds agréées","Uniquement les virements bancaires internationaux","Uniquement les chèques","Uniquement les espèces en agence"], exp:"L'article 293 octies vise les services de Mobile Money, les wallets/applications de paiement électronique, et les plateformes électroniques agréées de transfert de fonds.", theme:"C"},
+    {q:"Quel article de la TTE liste les exonérations ?", choices:["Article 293 nonies","Article 293 octies","Article 293 decies","Article 293 duodecies"], exp:"L'article 293 nonies énumère les opérations exonérées de la TTE.", theme:"C"},
+    {q:"Laquelle de ces opérations est exonérée de la TTE ?", choices:["Une transaction au profit du Trésor public ou de la CNSS","Un paiement de 1 000 000 MRU entre particuliers","Un transfert commercial de 10 000 MRU","Un paiement d'abonnement télécom de 6 000 MRU"], exp:"Les opérations au profit ou au débit du Trésor public, de la CNSS ou d'autres organismes publics sont explicitement exonérées.", theme:"C"},
+    {q:"Les transactions dont le montant unitaire est inférieur à quel seuil sont exonérées de la TTE ?", choices:["5 000 MRU","1 000 MRU","10 000 MRU","500 MRU"], exp:"L'article 293 nonies exonère les opérations de paiement/transfert dont le montant unitaire est inférieur à 5 000 MRU.", theme:"C"},
+    {q:"Quel article fixe le taux de la TTE ?", choices:["Article 293 decies","Article 293 octies","Article 293 nonies","Article 293 terdecies"], exp:"L'article 293 decies fixe la base d'imposition et les taux de la taxe.", theme:"C"},
+    {q:"Quel est le taux de la TTE sur le montant brut des transactions de paiement/transfert ?", choices:["0,1 %","1 %","10 %","16 %"], exp:"Un taux de 0,1 % s'applique sur le montant brut des transactions électroniques.", theme:"C"},
+    {q:"Quel est le taux de la TTE sur les commissions perçues par les agents agréés ?", choices:["10 %","0,1 %","16 %","20 %"], exp:"Un taux de 10 % s'applique sur les commissions et autres rémunérations perçues par les agents agréés.", theme:"C"},
+    {q:"Quel article définit le fait générateur de la TTE ?", choices:["Article 293 undecies","Article 293 duodecies","Article 293 terdecies","Article 293 octies"], exp:"L'article 293 undecies dispose que le fait générateur est la réalisation effective de l'opération taxable.", theme:"C"},
+    {q:"Qui collecte la TTE à la source ?", choices:["L'opérateur de service électronique, pour le compte du Trésor public","Le client final directement","La Banque Centrale de Mauritanie","La CNSS"], exp:"L'article 293 duodecies prévoit que la taxe est prélevée à la source par l'opérateur, en qualité de collecteur pour le Trésor public.", theme:"C"},
+    {q:"À quelle échéance la TTE collectée doit-elle être reversée au Receveur des impôts ?", choices:["Au plus tard le 15 du mois suivant","Le jour même de la transaction","Une fois par an","Au plus tard le 30 du mois suivant"], exp:"L'article 293 duodecies impose un reversement mensuel, au plus tard le 15 du mois suivant celui des opérations.", theme:"C"},
+    {q:"Auprès de quelle administration les opérateurs collecteurs doivent-ils déposer une déclaration mensuelle ?", choices:["La Direction Générale des Impôts (DGI)","La Direction Générale des Douanes","La Banque Centrale de Mauritanie","La Cour des Comptes"], exp:"L'article 293 terdecies impose une déclaration mensuelle auprès de la DGI.", theme:"C"},
+    {q:"Qui est le redevable réel de la TTE pour une transaction électronique standard ?", choices:["L'utilisateur à l'origine du paiement ou du transfert (émetteur, payeur ou acheteur)","L'État systématiquement","La banque uniquement","Le fournisseur de télécommunications"], exp:"L'article 293 duodecies précise que, pour les transactions, le redevable réel est l'utilisateur à l'origine de l'opération.", theme:"C"},
+    {q:"La TTE doit être déclarée et payée selon les mêmes conditions et sanctions que :", choices:["La taxe sur la valeur ajoutée (TVA)","L'impôt sur les sociétés","Les droits de douane","La taxe d'apprentissage"], exp:"Le texte précise que la TTE suit les mêmes conditions, garanties et sanctions que celles prévues pour la TVA.", theme:"C"}
+  ],
+  "D": [
+    {q:"L'article 4 de la LF 2026 crée :", choices:["Le Budget d'Affectation Spécial « Fonds d'appui au logement des enseignants »","La Taxe sur les Transactions Électroniques","Le Compte d'appui aux infrastructures pétrolières","La Contribution Climat"], exp:"L'article 4 crée ce Budget d'Affectation Spécial (BAS), rattaché au ministère chargé de l'Enseignement Fondamental et Secondaire.", theme:"D"},
+    {q:"À quel ministère est rattaché le Fonds d'appui au logement des enseignants ?", choices:["Le ministère chargé de l'Enseignement Fondamental et Secondaire","Le ministère des Finances","Le ministère de l'Habitat","Le ministère de la Fonction Publique"], exp:"L'article 4 rattache ce fonds au ministère en charge de l'Enseignement Fondamental et Secondaire.", theme:"D"},
+    {q:"Parmi les ressources du Fonds d'appui au logement des enseignants figure notamment :", choices:["Le produit de la vente de logements construits par TAAZOUR (programme Dari)","Les recettes douanières générales","Les dividendes de la SNIM","La Contribution Climat"], exp:"Le texte cite explicitement le produit de la vente des logements construits par la délégation de TAAZOUR dans le cadre du programme Dari.", theme:"D"},
+    {q:"L'article 4 bis crée :", choices:["Le Compte d'appui aux infrastructures pétrolières","Le Fonds d'appui au logement des enseignants","La TTE","Le Fonds de secours à l'éducation"], exp:"L'article 4 bis crée ce compte d'affectation spéciale dédié au développement des infrastructures pétrolières.", theme:"D"},
+    {q:"Les ressources du Compte d'appui aux infrastructures pétrolières proviennent de :", choices:["Le contrat d'approvisionnement en produits pétroliers liquides","Les impôts sur les sociétés pétrolières","Les amendes douanières","Le budget de la Défense"], exp:"Le texte précise que les ressources proviennent du contrat d'approvisionnement en produits pétroliers liquides.", theme:"D"},
+    {q:"Que fait l'article 5 de la LF 2026 ?", choices:["Il clôture plusieurs comptes d'affectation spéciale et reverse leur solde au budget général","Il crée de nouveaux comptes d'affectation spéciale","Il augmente les salaires des enseignants","Il institue la TTE"], exp:"L'article 5 énumère une liste de comptes d'affectation spéciale clôturés dont le solde est affecté aux recettes du budget général.", theme:"D"},
+    {q:"Combien de comptes d'affectation spéciale sont clôturés par l'article 5 ?", choices:["13","2","50","1"], exp:"L'article 5 liste 13 comptes d'affectation spéciale clôturés.", theme:"D"},
+    {q:"Lequel de ces comptes est explicitement cité comme clôturé par l'article 5 ?", choices:["Fonds de secours à l'éducation","Fonds d'appui au logement des enseignants","Compte d'appui aux infrastructures pétrolières","Comptes Spéciaux du Trésor (catégorie 5 des ressources)"], exp:"« Fonds de secours à l'éducation » figure dans la liste des comptes clôturés à l'article 5 (à distinguer du Fonds créé par l'article 4).", theme:"D"},
+    {q:"Un « Budget d'Affectation Spécial » (BAS) et un « compte d'affectation spéciale » créés par la loi ont pour point commun de :", choices:["Mutualiser des ressources dédiées à un objectif précis","Être automatiquement supprimés après un an","Financer exclusivement la Défense nationale","Être gérés par une institution étrangère"], exp:"Ces dispositifs regroupent des ressources affectées (dotations, contributions, recettes spécifiques) au service d'un objectif défini par la loi.", theme:"D"},
+    {q:"Quelle catégorie de ressources budgétaires regroupe les Comptes Spéciaux du Trésor dans l'article 6 ?", choices:["Catégorie 5 : Produits divers","Catégorie 1 : Recettes fiscales","Catégorie 2 : Revenus du patrimoine","Catégorie 4 : Dons et legs"], exp:"L'article 6 classe les ressources des Comptes Spéciaux du Trésor dans la Catégorie 5 (Produits divers).", theme:"D"},
+    {q:"Le montant des ressources des Comptes Spéciaux du Trésor pour 2026 est de :", choices:["4 000 000 000 MRU","128 792 575 100,74 MRU","800 MRU","21 060 000 000 MRU"], exp:"L'article 6 chiffre les ressources des Comptes Spéciaux du Trésor (Catégorie 5) à 4 milliards MRU pour 2026, en baisse de 26,06 % par rapport à la LFR 2025.", theme:"D"},
+    {q:"Les dispositions diverses (articles 4, 4 bis, 5) relèvent de quel bloc de la Partie I ?", choices:["Dispositions diverses","Dispositions de nature générale","Dispositions relatives aux ressources","Dispositions relatives à l'équilibre"], exp:"Ces articles figurent dans le bloc « Dispositions diverses » de la Partie I.", theme:"D"}
+  ],
+  "E": [
+    {q:"Le montant total des ressources du budget de l'État pour 2026 (Article 6) est de :", choices:["128 792 575 100,74 MRU","132 180 121 714 MRU","85 142 524 058,36 MRU","3 387 546 612,98 MRU"], exp:"L'article 6 fixe le total des ressources affectées au budget de l'État à 128 792 575 100,74 MRU pour 2026.", theme:"E"},
+    {q:"Le montant total des charges du budget de l'État pour 2026 (Article 7) est de :", choices:["132 180 121 714 MRU","128 792 575 100,74 MRU","10 870 000 000 MRU","62 101 521 714 MRU"], exp:"L'article 7 arrête le montant des charges du budget de l'État à 132 180 121 714 MRU.", theme:"E"},
+    {q:"Quelle est la catégorie de ressources la plus importante en 2026 ?", choices:["Les recettes fiscales (~85,1 milliards MRU)","Les dons et legs","Les revenus du patrimoine","Les produits des Comptes Spéciaux du Trésor"], exp:"Les recettes fiscales (Catégorie 1) représentent environ 85,1 milliards MRU, la plus grosse part des ressources.", theme:"E"},
+    {q:"Le déficit budgétaire fixé à l'Article 8 pour 2026 est d'environ :", choices:["-3,39 milliards MRU","0 MRU (équilibre parfait)","-13 milliards MRU","-85 milliards MRU"], exp:"L'excédent/déficit indiqué à l'article 8 est de -3 387 546 612,98 MRU.", theme:"E"},
+    {q:"Comparées à la LFR 2025, les recettes fiscales de la LF 2026 évoluent de :", choices:["+11,74 %","-11,74 %","+50 %","0 % (stables)"], exp:"Le tableau de l'article 6 indique une évolution de +11,74 % pour les recettes fiscales.", theme:"E"},
+    {q:"Quelle catégorie de ressources connaît la plus forte baisse entre la LFR 2025 et la LF 2026 ?", choices:["Les produits divers (Comptes Spéciaux du Trésor), -26,06 %","Les recettes fiscales","Les revenus du patrimoine","Les produits de vente et redevances"], exp:"Les produits divers (Catégorie 5, Comptes Spéciaux du Trésor) reculent de 26,06 %, la plus forte baisse relative parmi les 5 catégories.", theme:"E"},
+    {q:"Les dépenses d'investissement pour 2026 (Article 7) s'élèvent à environ :", choices:["62,1 milliards MRU","5,1 milliards MRU","132,2 milliards MRU","800 millions MRU"], exp:"L'article 7 chiffre les dépenses d'investissement à 62 101 521 714 MRU.", theme:"E"},
+    {q:"Les intérêts de la dette publique pour 2026 s'élèvent à environ :", choices:["5,08 milliards MRU","62 milliards MRU","128 milliards MRU","800 millions MRU"], exp:"L'article 7 chiffre les intérêts de la dette publique à 5 078 600 000 MRU, en hausse de 27,58 %.", theme:"E"},
+    {q:"Le financement du déficit budgétaire s'appuie notamment sur :", choices:["Le financement bancaire intérieur et le financement extérieur (emprunts, amortissements)","Uniquement une hausse de la TVA","Uniquement des dons internationaux","La suppression de tous les comptes spéciaux"], exp:"Le tableau de financement de l'article 8 détaille un financement intérieur (bancaire/non-bancaire) et un financement extérieur (nouveaux emprunts, amortissements de la dette, compte pétrolier net).", theme:"E"},
+    {q:"Quel article dispose que la loi sera exécutée et publiée au Journal Officiel ?", choices:["Article 9","Article 6","Article 7","Article 8"], exp:"L'article 9 est la disposition finale d'exécution et de publication.", theme:"E"},
+    {q:"Les dépenses courantes (pouvoirs publics et fonctionnement des administrations) pour 2026 représentent environ :", choices:["61 milliards MRU","5 milliards MRU","128 milliards MRU","800 millions MRU"], exp:"L'article 7 chiffre les dépenses courantes à 61 000 000 000 MRU.", theme:"E"},
+    {q:"Les recettes de la catégorie « Produits de vente, de redevances d'occupation et d'amendes » pour 2026 s'élèvent à environ :", choices:["21,06 milliards MRU","4 milliards MRU","85,1 milliards MRU","7,7 milliards MRU"], exp:"La Catégorie 3 des ressources est chiffrée à 21 060 000 000 MRU par l'article 6, en hausse de 27,36 %.", theme:"E"},
+    {q:"Les dons, legs et contributions volontaires pour 2026 s'élèvent à environ :", choices:["7,72 milliards MRU","21 milliards MRU","128 milliards MRU","800 millions MRU"], exp:"La Catégorie 4 des ressources (dons, legs, contributions volontaires) est chiffrée à 7 720 051 042,38 MRU, en baisse de 12,27 %.", theme:"E"},
+    {q:"Le budget de l'État pour 2026 est-il globalement en excédent ou en déficit ?", choices:["En déficit (charges > ressources hors financement)","En excédent","Strictement à l'équilibre","Le texte ne précise pas"], exp:"L'article 8 affiche un déficit d'environ -3,39 milliards MRU, comblé par le financement intérieur et extérieur.", theme:"E"},
+    {q:"Les 5 catégories de ressources définies à l'article 6 sont : recettes fiscales, revenus du patrimoine, produits de vente/redevances/amendes, dons et legs, et :", choices:["Produits divers (Comptes Spéciaux du Trésor)","Recettes douanières","Recettes minières uniquement","Recettes de la pêche uniquement"], exp:"La Catégorie 5 regroupe les produits divers, correspondant aux ressources des Comptes Spéciaux du Trésor.", theme:"E"}
+  ],
+  "F": [
+    {q:"Les annexes détaillent les crédits budgétaires selon quelle hiérarchie ?", choices:["Titre > Section > Article > Paragraphe > Sous-paragraphe","Chapitre > Livre > Tome","Ministère > Direction > Bureau uniquement","Région > Département > Commune"], exp:"Chaque annexe institutionnelle présente ses crédits selon cette hiérarchie budgétaire détaillée.", theme:"F"},
+    {q:"La nomenclature fonctionnelle classe les dépenses budgétaires par :", choices:["Grande fonction de l'État (défense, santé, enseignement, etc.)","Ordre alphabétique des ministères","Date de création du ministère","Nombre de fonctionnaires"], exp:"Ce tableau de synthèse regroupe les dépenses par grande fonction, indépendamment du ministère gestionnaire.", theme:"F"},
+    {q:"Le « marquage budgétaire climatique » sert à :", choices:["Classer chaque projet d'investissement selon sa nature climatique (adaptation, atténuation, neutre)","Fixer le taux de la TTE","Déterminer le budget du Ministère de l'Environnement uniquement","Calculer les droits de douane"], exp:"C'est un outil de suivi transversal appliqué à tous les projets d'investissement du budget, quel que soit le ministère.", theme:"F"},
+    {q:"Parmi les 3 catégories du marquage climatique figure :", choices:["Atténuation","Compensation","Indemnisation","Rétrocession"], exp:"Les 3 catégories sont Adaptation, Atténuation et Neutre.", theme:"F"},
+    {q:"Qui est chargé, entre autres, du contrôle juridictionnel des comptes publics selon la liste des institutions listées en annexe ?", choices:["La Cour des Comptes","Le Conseil Constitutionnel","La Haute Cour de Justice","L'Assemblée Nationale"], exp:"La Cour des Comptes figure dans la liste des institutions dotées d'un titre budgétaire propre, avec une mission de contrôle des comptes publics.", theme:"F"},
+    {q:"Le tableau de synthèse « Dépenses budgétaires des secteurs sociaux » est un sous-ensemble de :", choices:["La nomenclature fonctionnelle globale","Le tableau de financement","Les dispositions diverses","Le chapitre TTE"], exp:"Ce tableau isole, au sein de la nomenclature fonctionnelle générale, les dépenses relevant spécifiquement des secteurs sociaux.", theme:"F"},
+    {q:"Laquelle de ces institutions ouvre la liste des annexes (Titre n°1) ?", choices:["La Présidence de la République","Le Ministère de la Culture","Le Conseil du Prix Chinguitti","L'Autorité de Régulation des Marchés Publics"], exp:"La Présidence de la République ouvre la liste des institutions détaillées en annexe.", theme:"F"},
+    {q:"Les dépenses d'investissement financées sur ressources extérieures « hors administrations publiques » concernent notamment :", choices:["Des structures comme la SOMELEC ou des infrastructures maritimes/portuaires","Uniquement le budget de la Défense","Uniquement les salaires des fonctionnaires","Le remboursement de la dette intérieure"], exp:"Cette annexe présente des projets financés par des bailleurs extérieurs pour des structures telles que la SOMELEC (électricité) ou des infrastructures maritimes/portuaires.", theme:"F"},
+    {q:"Le budget par nomenclature fonctionnelle inclut, parmi ses grandes fonctions :", choices:["Protection de l'environnement","Diplomatie religieuse uniquement","Commerce extérieur exclusivement","Aucune fonction sociale"], exp:"« Protection de l'environnement » est l'une des grandes fonctions identifiées (gestion des eaux usées, biodiversité, etc.).", theme:"F"},
+    {q:"Pourquoi ce résumé ne détaille-t-il pas le budget précis de chaque ministère ligne par ligne ?", choices:["Car ces montants sont très volumineux et changent chaque année, contrairement aux dispositions normatives","Car cette information est secrète","Car elle ne figure pas dans le document","Car elle ne concerne pas le Trésor public"], exp:"Les lignes budgétaires par ministère sont très nombreuses et évoluent d'une loi de finances à l'autre ; le résumé privilégie donc les dispositions normatives et les grands équilibres.", theme:"F"}
+  ]
+};
+const SERIES_LABELS = {
+  "A": "Série A — Présentation générale de la loi",
+  "B": "Série B — Dispositions fiscales et douanières",
+  "C": "Série C — Taxe sur les Transactions Électroniques (TTE)",
+  "D": "Série D — Dispositions diverses et comptes spéciaux",
+  "E": "Série E — Grands équilibres budgétaires",
+  "F": "Série F — Organisation institutionnelle et nomenclature"
+};
+
+const MODE_DESCRIPTIONS = {
+  A: "15 questions · Titre, signataires, structure du document",
+  B: "15 questions · Article 3, code des impôts, code des douanes, accises",
+  C: "15 questions · Chapitre 8 nouveau, articles 293 octies à terdecies",
+  D: "12 questions · Articles 4, 4 bis, 5 — comptes d'affectation spéciale",
+  E: "15 questions · Articles 6, 7, 8 — ressources, charges, déficit",
+  F: "10 questions · Nomenclature fonctionnelle, marquage climatique, institutions",
+};
+
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+let state = null; // {mode, questions[], current, score, answers[], startTime, timerId}
+
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-.5); }
+
+function bestScore(mode){
+  return parseInt(localStorage.getItem(`qcmTresorBest_${mode}`)||"0");
+}
+function saveBestScore(mode, score){
+  const best = bestScore(mode);
+  if(score > best) localStorage.setItem(`qcmTresorBest_${mode}`, String(score));
+}
+function formatTime(sec){
+  const m = Math.floor(sec/60).toString().padStart(2,"0");
+  const s = Math.floor(sec%60).toString().padStart(2,"0");
+  return `${m}:${s}`;
+}
+function questionsForMode(mode){
+  if(mode === "full"){
+    return Object.keys(SERIES).flatMap(k => SERIES[k]);
+  }
+  return SERIES[mode];
+}
+
+/* ══════════════════════════════════════
+   MENU
+══════════════════════════════════════ */
+function renderMenu(){
+  const seriesBox = document.getElementById("quizCardsSeries");
+  seriesBox.innerHTML = "";
+  Object.keys(SERIES).forEach(k => {
+    const total = SERIES[k].length;
+    const best = bestScore(k);
+    const pct = Math.round(best/total*100);
+    const card = document.createElement("div");
+    card.className = "quiz-card";
+    card.innerHTML = `
+      <div class="qc-top">
+        <span class="qc-title">${SERIES_LABELS[k]}</span>
+        <span class="qc-badge">${best>0 ? `Meilleur : ${best}/${total}` : "Pas encore fait"}</span>
+      </div>
+      <div class="qc-desc">${MODE_DESCRIPTIONS[k]}</div>
+      <div class="qc-bar-bg"><div class="qc-bar-fill" style="width:${pct}%"></div></div>
+      <button class="start-btn" data-mode="${k}">Commencer ▶</button>
+    `;
+    seriesBox.appendChild(card);
+  });
+
+  const fullBox = document.getElementById("quizCardsFull");
+  fullBox.innerHTML = "";
+  const fullTotal = Object.values(SERIES).reduce((sum, s) => sum + s.length, 0);
+  const fullBest = bestScore("full");
+  const fullPct = Math.round(fullBest/fullTotal*100);
+  const fullCard = document.createElement("div");
+  fullCard.className = "quiz-card full";
+  fullCard.innerHTML = `
+    <div class="qc-top">
+      <span class="qc-title">📝 Épreuve complète</span>
+      <span class="qc-badge">${fullBest>0 ? `Meilleur : ${fullBest}/${fullTotal}` : "Pas encore fait"}</span>
+    </div>
+    <div class="qc-desc">${fullTotal} questions (séries A à F enchaînées)</div>
+    <div class="qc-bar-bg"><div class="qc-bar-fill" style="width:${fullPct}%"></div></div>
+    <button class="start-btn full" data-mode="full">Démarrer l'épreuve ▶</button>
+  `;
+  fullBox.appendChild(fullCard);
+
+  document.querySelectorAll(".start-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=> startQuiz(btn.dataset.mode));
+  });
+}
+
+/* ══════════════════════════════════════
+   QUIZ FLOW
+══════════════════════════════════════ */
+function startQuiz(mode){
+  const questions = questionsForMode(mode);
+  state = {
+    mode,
+    questions,
+    current: 0,
+    score: 0,
+    answers: [],
+    startTime: Date.now(),
+    timerId: null
+  };
+  document.getElementById("screenMenu").classList.add("hidden");
+  document.getElementById("screenResult").classList.add("hidden");
+  document.getElementById("screenQuiz").classList.remove("hidden");
+  document.getElementById("quizTitlePill").textContent = mode === "full" ? "Épreuve complète" : SERIES_LABELS[mode];
+
+  clearInterval(state.timerId);
+  state.timerId = setInterval(()=>{
+    const elapsed = Math.floor((Date.now()-state.startTime)/1000);
+    document.getElementById("timerPill").textContent = `⏱ ${formatTime(elapsed)}`;
+  }, 1000);
+
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = state.questions[state.current];
+  const total = state.questions.length;
+  document.getElementById("quizBar").style.width = `${Math.round(state.current/total*100)}%`;
+  document.getElementById("scorePill").textContent = `Score : ${state.score}`;
+  document.getElementById("themeBadge").textContent = `${state.current+1}/${total} · ${SERIES_LABELS[q.theme]}`;
+  document.getElementById("questionText").textContent = q.q;
+
+  const options = q.choices.map((text, idx)=>({text, correct: idx===0}));
+  const shuffled = shuffle(options);
+
+  const box = document.getElementById("choicesBox");
+  box.innerHTML = "";
+  shuffled.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.textContent = opt.text;
+    btn.addEventListener("click", ()=> answerQuestion(btn, opt, q));
+    box.appendChild(btn);
+  });
+
+  document.getElementById("explanationBox").classList.remove("show");
+  document.getElementById("explanationBox").textContent = "";
+  document.getElementById("nextBtn").classList.remove("show");
+}
+
+function answerQuestion(btn, opt, q){
+  const allBtns = document.querySelectorAll("#choicesBox .choice");
+  allBtns.forEach(b=> b.disabled = true);
+
+  const correctText = q.choices[0];
+  allBtns.forEach(b=>{
+    if(b.textContent === correctText) b.classList.add("correct");
+  });
+  if(!opt.correct) btn.classList.add("wrong");
+
+  if(opt.correct) state.score++;
+  state.answers.push({
+    question: q.q,
+    correctAnswer: correctText,
+    givenAnswer: opt.text,
+    wasCorrect: opt.correct,
+    explanation: q.exp
+  });
+
+  const expBox = document.getElementById("explanationBox");
+  expBox.textContent = q.exp;
+  expBox.classList.add("show");
+
+  document.getElementById("scorePill").textContent = `Score : ${state.score}`;
+  document.getElementById("nextBtn").classList.add("show");
+}
+
+document.getElementById("nextBtn").addEventListener("click", ()=>{
+  state.current++;
+  if(state.current >= state.questions.length){
+    finishQuiz();
+  } else {
+    renderQuestion();
+  }
+});
+
+function finishQuiz(){
+  clearInterval(state.timerId);
+  const elapsed = Math.floor((Date.now()-state.startTime)/1000);
+  const total = state.questions.length;
+  saveBestScore(state.mode, state.score);
+
+  document.getElementById("screenQuiz").classList.add("hidden");
+  document.getElementById("screenResult").classList.remove("hidden");
+
+  document.getElementById("resultTitle").textContent = state.mode === "full" ? "Épreuve complète terminée" : `${SERIES_LABELS[state.mode]} terminée`;
+  document.getElementById("resultScore").textContent = `${state.score} / ${total}`;
+  const pct = Math.round(state.score/total*100);
+  document.getElementById("resultPct").textContent = `${pct}%`;
+  document.getElementById("resultTime").textContent = `Temps : ${formatTime(elapsed)}`;
+
+  let msg;
+  if(pct >= 80) msg = "🏆 Excellent niveau, continuez ainsi !";
+  else if(pct >= 60) msg = "👍 Bon niveau, quelques révisions à consolider.";
+  else msg = "📚 Encore un peu de révision, revoyez les questions ratées ci-dessous.";
+  document.getElementById("resultMsg").textContent = msg;
+
+  const mistakes = state.answers.filter(a=>!a.wasCorrect);
+  const reviewList = document.getElementById("reviewList");
+  reviewList.innerHTML = "";
+  if(mistakes.length === 0){
+    document.getElementById("reviewSection").innerHTML = `<div class="no-mistakes">🎉 Aucune erreur, sans faute !</div>`;
+  } else {
+    mistakes.forEach(m=>{
+      const div = document.createElement("div");
+      div.className = "review-item";
+      div.innerHTML = `
+        <div class="rq">${m.question}</div>
+        <div class="ra-given">Votre réponse : ${m.givenAnswer}</div>
+        <div class="ra-correct">Bonne réponse : ${m.correctAnswer}</div>
+        <div class="rexp">${m.explanation}</div>
+      `;
+      reviewList.appendChild(div);
+    });
+  }
+}
+
+document.getElementById("retryBtn").addEventListener("click", ()=>{
+  startQuiz(state.mode);
+});
+document.getElementById("menuBtn").addEventListener("click", ()=>{
+  document.getElementById("screenResult").classList.add("hidden");
+  document.getElementById("screenMenu").classList.remove("hidden");
+  renderMenu();
+});
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+renderMenu();
+</script>
+
+</body>
+</html>
