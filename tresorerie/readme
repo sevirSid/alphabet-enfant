@@ -1,0 +1,199 @@
+Prepartion
+
+# Support de préparation
+## Concours / révision — Finances publiques et Trésor
+### Document de référence : Loi de Finances pour l'année 2026 — République Islamique de Mauritanie
+
+> ⚠️ **Précision importante sur le document source.** Le PDF de ce dossier (`Loi de Finances pour l'année 2026.pdf`, ~291 pages) n'est **pas** un manuel de trésorerie associative. C'est le texte officiel de la **Loi de Finances 2026 de la République Islamique de Mauritanie** (Ministère des Finances, janvier 2026) : elle fixe le budget de l'État (ressources, charges, équilibre) et modifie plusieurs dispositions fiscales et douanières. Elle traite notamment du **Trésor public** (comptes spéciaux du Trésor, reversement au Receveur des impôts, etc.), d'où le classement dans ce dossier. Ce résumé est construit à partir du texte extrait directement du PDF (Partie I intégrale + tableaux de synthèse des annexes) ; vérifiez toujours le texte officiel publié au Journal Officiel pour toute utilisation formelle.
+
+---
+
+## 1. Présentation du document
+
+| Élément | Détail |
+|---|---|
+| Titre | Loi de Finances pour l'année 2026 |
+| Émetteur | Ministère des Finances — République Islamique de Mauritanie |
+| Devise nationale | Honneur — Fraternité — Justice |
+| Date | Janvier 2026 (signée le 2 janvier 2026) |
+| Longueur | ~291 pages (PDF natif, non scanné) |
+| Promulgation | Le Président de la République, Mohamed OULD CHEIKH EL GHAZOUANI |
+| Contreseing | Le Premier Ministre, El Moctar OULD DJAY |
+| Ministre des Finances par intérim (signataire) | Abdallah Souleymane CHEIKH-SIDIA (également Ministre des Affaires Économiques et du Développement) |
+
+### Structure générale
+Le document comprend :
+1. **Partie I — Loi de finances pour l'année 2026** (le texte de loi proprement dit, articles 1 à 9), organisée en 4 blocs :
+   - Dispositions de nature générale (article 1)
+   - Dispositions relatives aux ressources (articles 2-3 : fiscalité et douanes)
+   - Dispositions diverses (articles 4, 4 bis, 5 : comptes d'affectation spéciale)
+   - Dispositions relatives à l'équilibre des ressources et des charges (articles 6, 7, 8, 9 : chiffres du budget)
+2. **Annexes détaillées par institution/ministère** : crédits budgétaires ligne par ligne (Titre budgétaire > Section > Article > Paragraphe > Sous-paragraphe) pour chaque institution (Présidence, Assemblée Nationale, Cour des Comptes, ministères sectoriels, etc.).
+3. **Tableaux de synthèse en fin de document** : dépenses par nomenclature fonctionnelle (grandes fonctions de l'État), dépenses des secteurs sociaux, et budget 2026 selon le marquage budgétaire climatique (classification Adaptation / Atténuation / Neutre de chaque projet d'investissement).
+
+Ce résumé se concentre sur la **Partie I (le texte de loi et ses dispositions normatives)** et sur les **grands équilibres chiffrés**, plutôt que sur le détail de chaque ligne budgétaire par ministère (trop volumineux et sujet à modification chaque année).
+
+---
+
+## 2. Dispositions fiscales et douanières (Article 3)
+
+L'article 3 modifie deux codes existants :
+
+| Texte modifié | Référence |
+|---|---|
+| Code Général des Impôts | Loi n° 2019-018 du 29 avril 2019 |
+| Code des Douanes | Loi n° 2017-035 du 21 décembre 2017 |
+
+Points clés à retenir :
+- **Taxe sur les opérations financières (Art. 278 CGI)** : taux normal de **16 %** ; taux de **20 %** sur les commissions perçues sur les transferts, retraits d'espèces et paiements via portefeuilles électroniques (wallets).
+- **Droits d'accises sur les produits pétroliers** (modifiant l'article 263 de la Loi de Finances Rectificative n° 2025-040 du 21 août 2025) : Super Carburant et Essence auto ordinaire 9,45 MRU/litre, Gasoil 5,89 MRU/litre, Carburéacteur/Kérosène 2,16 MRU/litre, Fuel 0,71 MRU/litre — ces trois premiers produits soumis en plus à un droit de douane de 12 %.
+- **Contribution Climat** : portée à **800 MRU par tonne de CO2 émis** (majoration de la taxe prévue par la Loi de Finances Rectificative 2025-040).
+- **Hydrocarbures pour la pêche** : droit d'accise spécifique de 0,12 MRU/litre (Gasoil) et 0,85 MRU/litre (Essence) pour l'avitaillement des navires de pêche.
+- **Fiscalité saisonnière sur les produits agricoles importés** (pomme de terre, tomate, oignon, choux, carotte, aubergine, courge) : taux différenciés selon la période de l'année (ex. 39,23 % en haute saison locale contre 13,73 % en basse saison).
+- **Taxation des smartphones** (modifiant la Loi n° 2025-001 du 16 janvier 2025, LFI 2025) : DD 10 %, RS 1 %, PC 0,5 %, PSC 1 %, TVA 16 % pour les smartphones (position 85.17.13) ; TVA à 0 % pour les téléphones utilitaires (position 85.17.14).
+
+---
+
+## 3. La nouvelle taxe : Taxe sur les Transactions Électroniques (TTE)
+
+Le **Chapitre 8 (nouveau)** du Code Général des Impôts crée cette taxe, en 6 articles (293 octies à 293 terdecies) :
+
+| Article | Objet |
+|---|---|
+| **293 octies** | Champ d'application : institue la TTE au profit du budget de l'État, applicable aux paiements/transferts via Mobile Money, wallets, plateformes électroniques agréées de transfert de fonds et tout autre dispositif électronique équivalent |
+| **293 nonies** | Exonérations : opérations au profit/débit du Trésor public, de la CNSS ou d'autres organismes publics ; transferts humanitaires/sociaux ; transactions unitaires < 5 000 MRU ; opérations sur valeurs mobilières/instruments financiers via prestataires agréés par la BCM ou l'ARMF |
+| **293 decies** | Base d'imposition et taux : **0,1 %** du montant brut des transactions ; **10 %** sur les commissions perçues par les agents agréés |
+| **293 undecies** | Fait générateur : la réalisation effective de l'opération taxable |
+| **293 duodecies** | Recouvrement : taxe prélevée à la source par l'opérateur électronique (collecteur pour le compte du Trésor public), reversée mensuellement au **Receveur des impôts**, au plus tard le **15 du mois suivant** |
+| **293 terdecies** | Obligation déclarative : déclaration mensuelle auprès de la **Direction Générale des Impôts (DGI)** |
+
+---
+
+## 4. Dispositions diverses — comptes d'affectation spéciale
+
+- **Article 4** : création d'un Budget d'Affectation Spécial (BAS) — le **« Fonds d'appui au logement des enseignants »**, rattaché au ministère chargé de l'Enseignement Fondamental et Secondaire, alimenté notamment par les dotations budgétaires, les contributions de partenaires, et le produit de la vente des logements construits par TAAZOUR (programme Dari).
+- **Article 4 bis** : création du **« Compte d'appui aux infrastructures pétrolières »**, alimenté par le contrat d'approvisionnement en produits pétroliers liquides.
+- **Article 5** : **clôture de 13 comptes d'affectation spéciale** dont les soldes sont reversés au budget général (parmi eux : Fonds de secours à l'éducation, Réalisation de 40 forages et axes hydrauliques, Action développement rural, Fonds soutien rapatriés, Fonds de développement de l'élevage, Promotion de la pêche artisanale…).
+
+---
+
+## 5. Grands équilibres budgétaires (Articles 6 à 9)
+
+| Agrégat | LF 2026 (MRU) | Variation vs LFR 2025 |
+|---|---|---|
+| **Total des ressources du budget de l'État** | 128 792 575 100,74 | +10,11 % |
+| dont Recettes fiscales | 85 142 524 058,36 | +11,74 % |
+| dont Revenus du patrimoine (financier/non financier) | 10 870 000 000 | +8,60 % |
+| dont Produits de vente, redevances, amendes | 21 060 000 000 | +27,36 % |
+| dont Dons, legs et contributions volontaires | 7 720 051 042,38 | -12,27 % |
+| dont Produits divers (Comptes Spéciaux du Trésor) | 4 000 000 000 | -26,06 % |
+| **Total des charges du budget de l'État** | 132 180 121 714 | +10,96 % |
+| dont Dépenses courantes | 61 000 000 000 | +8,63 % |
+| dont Intérêts de la dette publique | 5 078 600 000 | +27,58 % |
+| dont Dépenses d'investissement | 62 101 521 714 | +15,92 % |
+| dont Dépenses des Comptes Spéciaux du Trésor | 4 000 000 000 | -26,06 % |
+| **Déficit budgétaire (Article 8)** | -3 387 546 612,98 | — |
+
+- **Article 6** : récapitulatif des ressources (5 catégories : recettes fiscales, revenus du patrimoine, produits de vente/redevances/amendes, dons/legs, produits divers des Comptes Spéciaux du Trésor).
+- **Article 7** : récapitulatif des charges (pouvoirs publics et fonctionnement, intérêts de la dette, dépenses d'investissement, dépenses des Comptes Spéciaux du Trésor).
+- **Article 8** : équilibre général — le déficit est financé notamment par le financement bancaire intérieur (banques commerciales, BT/BIT bancaires) et le financement extérieur (nouveaux emprunts, amortissements de la dette, compte pétrolier net).
+- **Article 9** : disposition d'exécution — la loi est exécutée comme loi de l'État et publiée au Journal Officiel.
+
+---
+
+## 6. Vue d'ensemble institutionnelle et fonctionnelle
+
+- Les annexes détaillent les crédits de **chaque institution** (Présidence de la République, Secrétariat Général de la Présidence, Premier Ministère, Assemblée Nationale, Conseil Constitutionnel, Cour des Comptes, Cour Suprême, Haute Cour de Justice, puis l'ensemble des ministères sectoriels et organismes rattachés).
+- Les **dépenses budgétaires suivant la nomenclature fonctionnelle** classent les dépenses par grande fonction de l'État (services publics généraux, défense, ordre et sécurité publique, affaires économiques, protection de l'environnement, aménagements collectifs et logements, santé, affaires islamiques/culture/loisirs, enseignement, action et protection sociale), avec un sous-ensemble spécifique pour les **secteurs sociaux**.
+- Le **marquage budgétaire climatique** classe chaque projet d'investissement selon sa nature : **Adaptation**, **Atténuation**, ou **Neutre** — un outil de suivi de la contribution du budget aux engagements climatiques du pays.
+
+---
+
+## 7. QCM d'entraînement (avec corrigé)
+
+*Répondez d'abord sans regarder le corrigé.*
+
+1. Le document de ce dossier est en réalité :
+   a) Un manuel de trésorerie associative
+   b) **La Loi de Finances 2026 de la République Islamique de Mauritanie**
+   c) Un rapport de la Cour des Comptes
+   d) Un code des impôts complet
+
+2. Le budget de l'État pour 2026 est exécuté conformément à quel article ?
+   a) Article 2  b) **Article Premier**  c) Article 6  d) Article 9
+
+3. La Taxe sur les Transactions Électroniques (TTE) est instituée par :
+   a) L'article 278 du CGI  **b) L'article 293 octies (Chapitre 8 nouveau)**  c) L'article 3.2.5  d) L'article 6
+
+4. Le taux de la TTE sur le montant brut des transactions électroniques est de :
+   a) 16 %  b) 10 %  **c) 0,1 %**  d) 20 %
+
+5. Le taux de la TTE applicable aux commissions perçues par les agents agréés est de :
+   a) 0,1 %  **b) 10 %**  c) 16 %  d) 5 %
+
+6. Sont exonérées de la TTE, notamment :
+   **a) Les opérations au profit ou au débit du Trésor public et de la CNSS**
+   b) Toutes les transactions supérieures à 5 000 MRU
+   c) Les commissions bancaires classiques uniquement
+   d) Les transactions des sociétés cotées
+
+7. La taxe TTE collectée doit être reversée au :
+   a) Trésorier-payeur général  **b) Receveur des impôts**  c) Percepteur communal  d) Comptable public régional
+
+8. Le Code Général des Impôts modifié par la LF 2026 est issu de :
+   a) La loi n° 2017-035  **b) La loi n° 2019-018 du 29 avril 2019**  c) La loi n° 2025-001  d) La loi n° 2025-040
+
+9. Le Code des Douanes modifié par la LF 2026 est issu de :
+   **a) La loi n° 2017-035 du 21 décembre 2017**  b) La loi n° 2019-018  c) La loi n° 2025-040  d) La loi n° 2000-045
+
+10. La Contribution Climat est portée à combien par tonne de CO2 émis ?
+    a) 500 MRU  b) 600 MRU  **c) 800 MRU**  d) 1000 MRU
+
+11. Le « Fonds d'appui au logement des enseignants » est créé par :
+    **a) L'article 4**  b) L'article 4 bis  c) L'article 5  d) L'article 6
+
+12. Le « Compte d'appui aux infrastructures pétrolières » est créé par :
+    a) L'article 4  **b) L'article 4 bis**  c) L'article 5  d) L'article 9
+
+13. L'article 5 de la LF 2026 a pour effet de :
+    a) Créer 13 nouveaux comptes d'affectation spéciale
+    **b) Clôturer 13 comptes d'affectation spéciale et reverser leur solde au budget général**
+    c) Doubler le budget de l'éducation
+    d) Supprimer la Contribution Climat
+
+14. Le total des ressources du budget de l'État pour 2026 s'élève approximativement à :
+    a) 85 milliards MRU  b) 100 milliards MRU  **c) 128,8 milliards MRU**  d) 200 milliards MRU
+
+15. Le déficit budgétaire de la LF 2026 (Article 8) est d'environ :
+    a) 0 MRU (équilibre parfait)  **b) -3,39 milliards MRU**  c) -13 milliards MRU  d) -128 milliards MRU
+
+16. Le marquage budgétaire climatique classe les projets d'investissement selon 3 catégories :
+    **a) Adaptation, Atténuation, Neutre**  b) Vert, Orange, Rouge  c) Local, National, International  d) Urgent, Prioritaire, Différé
+
+---
+
+## 8. Méthode de révision recommandée (4 semaines)
+
+| Semaine | Focus |
+|---|---|
+| 1 | Structure générale de la loi + dispositions fiscales de l'article 3 (accises pétroliers, contribution climat, fiscalité agricole, smartphones) |
+| 2 | Chapitre 8 nouveau — Taxe sur les Transactions Électroniques (TTE) : champ d'application, exonérations, taux, recouvrement |
+| 3 | Dispositions diverses (comptes d'affectation spéciale) + grands équilibres budgétaires (ressources, charges, déficit, financement) |
+| 4 | Organisation institutionnelle, nomenclature fonctionnelle, marquage climatique + entraînement QCM chronométré |
+
+**Conseils pratiques :**
+- Mémorisez les **numéros exacts des articles clés** (293 octies à terdecies pour la TTE ; articles 4, 4 bis, 5 pour les comptes spéciaux ; articles 6, 7, 8 pour l'équilibre budgétaire) — ce sont les repères les plus testables en QCM.
+- Retenez les **taux précis** (16 % taxe opérations financières, 20 % commissions wallets, 0,1 % TTE transactions, 10 % TTE commissions, 800 MRU/tonne CO2) plutôt que les montants détaillés par ministère, qui changent chaque année.
+- Ne cherchez pas à mémoriser le détail des tableaux budgétaires par ministère (trop volumineux, peu susceptible d'être testé) — concentrez-vous sur la logique générale (ressources/charges/équilibre) et les dispositions normatives.
+
+---
+
+## 9. QCM interactif d'entraînement
+
+Un outil interactif est disponible dans ce dossier :
+
+- [qcm.html](./qcm.html) — QCM organisé en séries thématiques (présentation générale, dispositions fiscales, taxe TTE, dispositions diverses/comptes spéciaux, équilibres budgétaires, organisation institutionnelle), avec une épreuve complète enchaînant toutes les séries. Correction immédiate avec explication après chaque question, et suivi du meilleur score par série.
+
+---
+
+*Document généré comme support d'étude à partir du texte extrait du PDF officiel de la Loi de Finances pour l'année 2026 — à recouper avec la version publiée au Journal Officiel de la République Islamique de Mauritanie pour tout usage officiel.*
